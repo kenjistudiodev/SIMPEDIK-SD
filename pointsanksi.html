@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Point Sanksi - SIMPEDIK</title>
+    <!-- Icon Keren -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary-color:#667eea;--secondary-color:#764ba2;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.menubar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-date{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;opacity:.9;white-space:nowrap}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:22px 12px}
+.head{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.head h1{font-size:clamp(28px,4.5vw,38px);letter-spacing:-.02em;line-height:1.1}
+.head p{opacity:.88;font-size:14px;margin-top:4px}
+.win{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663;text-align:center}
+.tb a{position:absolute;right:12px;font-size:12px;font-weight:600;color:#4c5fd5;text-decoration:none}.tb a:hover{text-decoration:underline}
+.wb{padding:16px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.stat .wb{display:flex;align-items:center;gap:14px}
+.stat .ic{flex:none;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.35)}
+.stat small{display:block;color:var(--muted);font-size:13px}.stat b{font-size:30px;line-height:1.1;color:var(--deep)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.grid2>.win{margin-bottom:16px}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:420px;scrollbar-width:thin}
+.table-responsive::-webkit-scrollbar{height:8px;width:8px}.table-responsive::-webkit-scrollbar-thumb{background:rgba(0,0,0,.28);border-radius:9px}
+.custom-table{width:100%;border-collapse:collapse;font-size:14px;min-width:480px}
+.custom-table th{position:sticky;top:0;background:#efecf7;text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line)}
+.custom-table td{padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.05)}.custom-table tr:last-child td{border:0}.custom-table tbody tr:hover{background:rgba(102,126,234,.07)}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;color:#fff}.bg-danger{background:#e74c3c}.bg-warning{background:#f1c40f;color:#333}.bg-success{background:#2ecc71}
+.main-footer{text-align:center;color:rgba(255,255,255,.85);font-size:12px;padding:8px 0 4px}
+/* Dock */
+.dock{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:6px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.6);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.d{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:74px;padding:6px 8px;border-radius:16px;font-size:11.5px;font-weight:600;color:var(--ink);transition:transform .2s}
+.d:hover{transform:translateY(-6px) scale(1.08)}.d:active{transform:scale(.95)}
+.d .ic,.item .ic{position:relative;overflow:hidden;display:grid;place-items:center;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.d .ic{width:48px;height:48px;border-radius:13px;font-size:21px}
+.d .ic::after,.item .ic::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+.d .ic i,.item .ic i{position:relative;z-index:1}
+/* Slide-up sheet */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(10,8,30,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.sheet{position:fixed;left:50%;bottom:0;z-index:50;width:min(660px,100%);max-height:86vh;overflow:auto;transform:translate(-50%,105%);transition:transform .38s cubic-bezier(.2,.9,.25,1);padding:10px 16px calc(22px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(36,28,86,.62);backdrop-filter:saturate(200%) blur(28px);-webkit-backdrop-filter:saturate(200%) blur(28px);color:#fff;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 -18px 50px rgba(0,0,0,.4)}
+.open .scrim{opacity:1;visibility:visible}.open .sheet{transform:translate(-50%,0)}
+.grab{width:40px;height:5px;border-radius:9px;background:rgba(255,255,255,.5);margin:0 auto 12px}
+.sh{position:relative;display:flex;align-items:center;justify-content:center;min-height:36px;margin-bottom:12px}.sh h2{font-size:19px}
+.x{position:absolute;right:0;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.25);font-size:20px;line-height:1}.x:hover{background:rgba(255,255,255,.4)}
+.list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 6px}
+.item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 4px;border-radius:18px;text-align:center;font-size:13px;font-weight:700;line-height:1.25;color:#fff;text-decoration:none;transition:transform .2s,background .2s}
+.item:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}.item:active{transform:scale(.96)}
+.item .ic{width:60px;height:60px;border-radius:16px;font-size:26px}
+.confirm{text-align:center;padding:4px 8px 6px}.confirm p{opacity:.9;margin-bottom:16px}.confirm .acts{display:flex;gap:10px;justify-content:center}
+/* Modal form -> slide-up */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,8,30,.45);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.modal.active{opacity:1;visibility:visible}
+.modal-content{width:min(560px,100%);max-height:90vh;overflow:auto;padding:12px 20px calc(20px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(250,248,255,.97);box-shadow:0 -18px 50px rgba(0,0,0,.4);transform:translateY(105%);transition:transform .38s cubic-bezier(.2,.9,.25,1)}
+.modal.active .modal-content{transform:none}
+.modal-content::before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:rgba(0,0,0,.18);margin:0 auto 12px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-header h3{font-size:18px;color:var(--deep)}
+.close-modal{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--track);font-size:20px;cursor:pointer;color:var(--muted)}.close-modal:hover{background:#ff5f57;color:#fff}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:0 0 4px 2px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;outline:none}
+.form-group textarea{min-height:110px;resize:vertical}.form-group input[readonly]{background:#f0eef6;color:var(--muted)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.char-counter{display:block;text-align:right;font-size:12px;color:var(--muted)}
+.modal-footer{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 18px;border-radius:10px;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(160deg,#7b8cf5,#5568d8);box-shadow:0 1px 2px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:hover{filter:brightness(1.06)}.btn.alt,.btn-secondary{background:rgba(120,120,128,.2);color:var(--ink);box-shadow:none}.btn.red{background:linear-gradient(160deg,#f2706b,#d63d3a)}
+.btn:disabled,.form-group textarea:disabled,.form-group select:disabled{opacity:.55;cursor:not-allowed}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.list{grid-template-columns:repeat(3,minmax(0,1fr))}.item .ic{width:54px;height:54px}.bar-date i{display:none}.stats{gap:10px}.stat b{font-size:24px}.d{min-width:64px}.dock{gap:2px;padding:6px}.navbar-brand span{max-width:42vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* ===== Komponen khusus halaman Point Sanksi (tema sama dengan nilaisiswaguru) ===== */
+.btn,.d{text-decoration:none}
+.btn-primary{background:linear-gradient(160deg,#7b8cf5,#5568d8)}
+.btn-success{background:linear-gradient(160deg,#34c98d,#1b8a5c)}
+.btn-info{background:linear-gradient(160deg,#4fb6e8,#1f86c0)}
+.btn-danger{background:linear-gradient(160deg,#f2706b,#d63d3a)}
+.btn-sm{height:32px;padding:0 12px;font-size:13px;border-radius:9px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.action-group{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.search-input{height:38px;width:250px;max-width:100%;padding:0 12px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;color:var(--ink);outline:none}
+.search-input:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.table-responsive{max-height:520px}
+.custom-table{min-width:640px}
+.btn-download{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:9px;border:0;cursor:pointer;font:inherit;font-size:13px;font-weight:600;color:#4c5fd5;background:rgba(102,126,234,.14);transition:background .2s,color .2s,transform .2s}
+.btn-download:hover{background:linear-gradient(160deg,#7b8cf5,#5568d8);color:#fff;transform:translateY(-1px)}
+#accessDeniedModal .modal-content{width:min(420px,100%);text-align:center}
+#accessDeniedModal .modal-content .btn{width:100%}
+@media (max-width:768px){
+.toolbar{flex-direction:column;align-items:stretch}
+.action-group{flex-direction:column;width:100%}
+.action-group .btn,.action-group .search-input{width:100%;justify-content:center}
+}
+@media (max-width:520px){.bar-date{font-size:11px;white-space:normal;text-align:right;line-height:1.25}}
+
+.custom-table td,.custom-table th{white-space:nowrap}
+.custom-table{min-width:600px}
+.custom-table td.wrap-cell{white-space:normal;min-width:240px}
+.btn-secondary{background:rgba(120,120,128,.2);color:var(--ink)}
+.note{display:flex;gap:8px;align-items:flex-start;margin:-4px 0 14px;padding:10px 12px;border-radius:10px;font-size:13px;line-height:1.45;color:#7a4b00;background:rgba(245,165,36,.16);border:1px solid rgba(245,165,36,.4)}
+.note i{margin-top:2px;color:#d9820f}
+.pt{display:inline-block;min-width:38px;text-align:center;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;color:#4c5fd5;background:rgba(102,126,234,.16)}
+.bg-ringan{background:#2ecc71}.bg-sedang{background:#f1c40f;color:#333}.bg-berat{background:#e74c3c}
+</style>
+</head>
+<body>
+
+<header class="menubar">
+    <a href="#" class="navbar-brand"><img src="" alt="Logo Sekolah" style="display:none;"><span></span></a>
+    <div class="bar-date"><i class="far fa-clock"></i><span id="liveDateTime"></span></div>
+</header>
+
+<main class="wrap">
+    <div class="head"><h1>Point Sanksi</h1><p>Atur poin untuk setiap jenis pelanggaran siswa.</p></div>
+
+    <section class="win">
+        <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Daftar Point Sanksi</h2></div>
+        <div class="wb">
+            <div class="toolbar">
+                <div class="action-group">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Cari kode / pelanggaran...">
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table" id="pointTable">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Kode</th>
+                            <th>Jenis Pelanggaran</th>
+                            <th>Kategori</th>
+                            <th>Point</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="6" style="text-align:center;">Memuat data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <p>&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik).2026</p>
+        <p>CopyRight Kenji Studio Developer.</p>
+    </footer>
+</main>
+
+<nav class="dock" aria-label="Menu utama">
+    <a class="d" href="dasboradmin.html"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-home"></i></span>Beranda</a>
+    <button class="d" type="button" id="addBtn"><span class="ic" style="background:linear-gradient(160deg,#59d6a0,#1b8a5c)"><i class="fas fa-plus"></i></span>Tambah Point</button>
+    <button class="d" type="button" id="exportPdfBtn"><span class="ic" style="background:linear-gradient(160deg,#f2706b,#c92f2c)"><i class="fas fa-file-pdf"></i></span>Export PDF</button>
+</nav>
+
+<!-- Modal Tambah / Edit -->
+<div id="pointModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Tambah Point Sanksi</h3>
+            <span class="close-modal">&times;</span>
+        </div>
+        <p class="note"><i class="fas fa-info-circle"></i> <b>Catatan:</b> Pastikan saat Anda mengisi point sanksi maka harus berpedoman pada Peraturan Tata Tertib Peserta Didik di KOSP sekolah Anda.</p>
+        <form id="pointForm">
+            <input type="hidden" id="recordId">
+            <div class="form-group">
+                <label for="kode">Kode</label>
+                <input type="text" id="kode" placeholder="Otomatis" readonly>
+            </div>
+            <div class="form-group">
+                <label for="jenisPelanggaran">Jenis Pelanggaran</label>
+                <input type="text" id="jenisPelanggaran" placeholder="Contoh: Bolos" required>
+            </div>
+            <div class="form-group">
+                <label for="kategori">Kategori</label>
+                <select id="kategori" required>
+                    <option value="">Pilih Kategori</option>
+                    <option value="Ringan">Ringan</option>
+                    <option value="Sedang">Sedang</option>
+                    <option value="Berat">Berat</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="point">Point</label>
+                <select id="point" required disabled>
+                    <option value="">Pilih kategori dulu</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary cancel-btn">Batal</button>
+                <button type="submit" class="btn btn-primary" id="simpanBtn">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+    const TABLE = 'pointsanksi';
+
+    let schoolData = {};
+    let rows = [];
+
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+    // --- Identitas sekolah ---
+    async function loadSchoolIdentity() {
+        try {
+            const { data } = await supabaseClient.from('identitassekolah')
+                .select('nama_sekolah, logo, kop_sekolah').limit(1).single();
+            if (data) {
+                schoolData = data;
+                if (data.nama_sekolah) document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                if (data.logo) {
+                    const img = document.querySelector('.navbar-brand img');
+                    img.src = data.logo; img.style.display = 'block';
+                }
+            }
+        } catch (err) { console.error('Error loading school identity:', err); }
+    }
+
+    // --- Jam ---
+    function updateLiveTime() {
+        const now = new Date();
+        const d = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const t = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+        document.getElementById('liveDateTime').textContent =
+            `${now.toLocaleDateString('id-ID', d)} | ${now.toLocaleTimeString('id-ID', t).replace(/\./g, ':')} WIB`;
+    }
+    setInterval(updateLiveTime, 1000); updateLiveTime();
+
+    // --- Rentang point per kategori ---
+    const RANGE = { Ringan: [1, 5], Sedang: [5, 10], Berat: [10, 20] };
+    const kategoriEl = document.getElementById('kategori');
+    const pointEl = document.getElementById('point');
+
+    function fillPointOptions(kategori, selected) {
+        const r = RANGE[kategori];
+        if (!r) {
+            pointEl.innerHTML = '<option value="">Pilih kategori dulu</option>';
+            pointEl.disabled = true;
+            return;
+        }
+        let opts = '<option value="">Pilih Point (' + r[0] + '-' + r[1] + ')</option>';
+        for (let n = r[0]; n <= r[1]; n++) opts += '<option value="' + n + '">' + n + '</option>';
+        pointEl.innerHTML = opts;
+        pointEl.disabled = false;
+        pointEl.value = (selected !== undefined && selected !== null && selected !== '') ? String(selected) : '';
+    }
+    kategoriEl.addEventListener('change', () => fillPointOptions(kategoriEl.value));
+
+    // --- Modal ---
+    const modal = document.getElementById('pointModal');
+    const form = document.getElementById('pointForm');
+    const openModal = () => modal.classList.add('active');
+    const closeModal = () => modal.classList.remove('active');
+
+    document.getElementById('addBtn').addEventListener('click', () => {
+        form.reset();
+        document.getElementById('recordId').value = '';
+        document.getElementById('kode').value = '';
+        fillPointOptions('');
+        document.getElementById('modalTitle').textContent = 'Tambah Point Sanksi';
+        openModal();
+    });
+    document.querySelector('.close-modal').addEventListener('click', closeModal);
+    document.querySelector('.cancel-btn').addEventListener('click', closeModal);
+    window.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+    // --- Muat data ---
+    async function loadData() {
+        const tbody = document.querySelector('#pointTable tbody');
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Memuat data...</td></tr>';
+        try {
+            const { data, error } = await supabaseClient.from(TABLE).select('*')
+                .order('kategori', { ascending: true }).order('point', { ascending: true });
+            if (error) throw error;
+            rows = data || [];
+            if (!rows.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Belum ada data point sanksi.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = rows.map((r, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${esc(r.kode)}</td>
+                    <td>${esc(r.jenis_pelanggaran)}</td>
+                    <td><span class="badge bg-${esc((r.kategori || '').toLowerCase())}">${esc(r.kategori)}</span></td>
+                    <td><span class="pt">${esc(r.point)}</span></td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" data-act="edit" data-id="${r.id}" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" data-act="del" data-id="${r.id}" title="Hapus"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`).join('');
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:red;">Gagal memuat data: ${esc(err.message)}</td></tr>`;
+        }
+    }
+
+    // --- Simpan (tambah / edit) ---
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const id = document.getElementById('recordId').value;
+        const payload = {
+            jenis_pelanggaran: document.getElementById('jenisPelanggaran').value.trim(),
+            kategori: document.getElementById('kategori').value,
+            point: parseInt(document.getElementById('point').value, 10)
+        };
+        const btn = document.getElementById('simpanBtn');
+        btn.disabled = true;
+        try {
+            const res = id
+                ? await supabaseClient.from(TABLE).update(payload).eq('id', id)
+                : await supabaseClient.from(TABLE).insert([payload]);
+            if (res.error) throw res.error;
+            alert('Data berhasil disimpan!');
+            closeModal();
+            loadData();
+        } catch (err) {
+            alert('Gagal menyimpan: ' + (err.message));
+        } finally { btn.disabled = false; }
+    });
+
+    // --- Edit & hapus ---
+    document.querySelector('#pointTable tbody').addEventListener('click', async e => {
+        const b = e.target.closest('button[data-act]');
+        if (!b) return;
+        const id = b.dataset.id;
+        const r = rows.find(x => String(x.id) === String(id));
+        if (b.dataset.act === 'edit' && r) {
+            document.getElementById('recordId').value = r.id;
+            document.getElementById('kode').value = r.kode || '';
+            document.getElementById('jenisPelanggaran').value = r.jenis_pelanggaran || '';
+            document.getElementById('kategori').value = r.kategori || '';
+            fillPointOptions(r.kategori, r.point);
+            document.getElementById('modalTitle').textContent = 'Edit Point Sanksi';
+            openModal();
+        } else if (b.dataset.act === 'del') {
+            if (!confirm('Hapus data point sanksi ini?')) return;
+            const { error } = await supabaseClient.from(TABLE).delete().eq('id', id);
+            if (error) alert('Gagal hapus: ' + error.message); else loadData();
+        }
+    });
+
+    // --- Cari ---
+    document.getElementById('searchInput').addEventListener('input', e => {
+        const term = e.target.value.toLowerCase();
+        document.querySelectorAll('#pointTable tbody tr').forEach(tr => {
+            tr.style.display = tr.innerText.toLowerCase().includes(term) ? '' : 'none';
+        });
+    });
+
+    // --- Export PDF ---
+    document.getElementById('exportPdfBtn').addEventListener('click', async () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('l', 'mm', 'a4');
+        const pageWidth = doc.internal.pageSize.getWidth();
+        let y = 20;
+
+        if (schoolData.kop_sekolah) {
+            try {
+                const blob = await (await fetch(schoolData.kop_sekolah)).blob();
+                const b64 = await new Promise(res => { const fr = new FileReader(); fr.onloadend = () => res(fr.result); fr.readAsDataURL(blob); });
+                const p = doc.getImageProperties(b64);
+                const w = pageWidth - 20, h = (p.height * w) / p.width;
+                doc.addImage(b64, 'PNG', 10, 10, w, h);
+                y = 10 + h + 10;
+            } catch (err) { console.error('Gagal memuat KOP Sekolah:', err); }
+        }
+
+        doc.setFontSize(18);
+        doc.text('Daftar Point Sanksi', pageWidth / 2, y, { align: 'center' });
+        y += 8;
+        doc.setFontSize(12); doc.setTextColor(100);
+        doc.text(schoolData.nama_sekolah || document.querySelector('.navbar-brand span').textContent || '', pageWidth / 2, y, { align: 'center' });
+        y += 10;
+
+        doc.autoTable({
+            startY: y,
+            theme: 'grid',
+            head: [['No', 'Kode', 'Jenis Pelanggaran', 'Kategori', 'Point']],
+            body: rows.map((r, i) => [i + 1, r.kode, r.jenis_pelanggaran, r.kategori, r.point]),
+            headStyles: { fillColor: [85, 104, 216] }
+        });
+        doc.save('Daftar_Point_Sanksi.pdf');
+    });
+
+    document.addEventListener('DOMContentLoaded', () => { loadSchoolIdentity(); loadData(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Backup & Restore - SIMPEDIK</title>
+    <!-- Icon Keren -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Import CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <!-- Buat ZIP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- Simpan File -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary-color:#667eea;--secondary-color:#764ba2;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.menubar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-date{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;opacity:.9;white-space:nowrap}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:22px 12px}
+.head{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.head h1{font-size:clamp(28px,4.5vw,38px);letter-spacing:-.02em;line-height:1.1}
+.head p{opacity:.88;font-size:14px;margin-top:4px}
+.win{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663;text-align:center}
+.tb a{position:absolute;right:12px;font-size:12px;font-weight:600;color:#4c5fd5;text-decoration:none}.tb a:hover{text-decoration:underline}
+.wb{padding:16px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.stat .wb{display:flex;align-items:center;gap:14px}
+.stat .ic{flex:none;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.35)}
+.stat small{display:block;color:var(--muted);font-size:13px}.stat b{font-size:30px;line-height:1.1;color:var(--deep)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.grid2>.win{margin-bottom:16px}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:420px;scrollbar-width:thin}
+.table-responsive::-webkit-scrollbar{height:8px;width:8px}.table-responsive::-webkit-scrollbar-thumb{background:rgba(0,0,0,.28);border-radius:9px}
+.custom-table{width:100%;border-collapse:collapse;font-size:14px;min-width:480px}
+.custom-table th{position:sticky;top:0;background:#efecf7;text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line)}
+.custom-table td{padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.05)}.custom-table tr:last-child td{border:0}.custom-table tbody tr:hover{background:rgba(102,126,234,.07)}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;color:#fff}.bg-danger{background:#e74c3c}.bg-warning{background:#f1c40f;color:#333}.bg-success{background:#2ecc71}
+.main-footer{text-align:center;color:rgba(255,255,255,.85);font-size:12px;padding:8px 0 4px}
+/* Dock */
+.dock{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:6px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.6);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.d{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:74px;padding:6px 8px;border-radius:16px;font-size:11.5px;font-weight:600;color:var(--ink);transition:transform .2s}
+.d:hover{transform:translateY(-6px) scale(1.08)}.d:active{transform:scale(.95)}
+.d .ic,.item .ic{position:relative;overflow:hidden;display:grid;place-items:center;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.d .ic{width:48px;height:48px;border-radius:13px;font-size:21px}
+.d .ic::after,.item .ic::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+.d .ic i,.item .ic i{position:relative;z-index:1}
+/* Slide-up sheet */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(10,8,30,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.sheet{position:fixed;left:50%;bottom:0;z-index:50;width:min(660px,100%);max-height:86vh;overflow:auto;transform:translate(-50%,105%);transition:transform .38s cubic-bezier(.2,.9,.25,1);padding:10px 16px calc(22px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(36,28,86,.62);backdrop-filter:saturate(200%) blur(28px);-webkit-backdrop-filter:saturate(200%) blur(28px);color:#fff;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 -18px 50px rgba(0,0,0,.4)}
+.open .scrim{opacity:1;visibility:visible}.open .sheet{transform:translate(-50%,0)}
+.grab{width:40px;height:5px;border-radius:9px;background:rgba(255,255,255,.5);margin:0 auto 12px}
+.sh{position:relative;display:flex;align-items:center;justify-content:center;min-height:36px;margin-bottom:12px}.sh h2{font-size:19px}
+.x{position:absolute;right:0;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.25);font-size:20px;line-height:1}.x:hover{background:rgba(255,255,255,.4)}
+.list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 6px}
+.item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 4px;border-radius:18px;text-align:center;font-size:13px;font-weight:700;line-height:1.25;color:#fff;text-decoration:none;transition:transform .2s,background .2s}
+.item:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}.item:active{transform:scale(.96)}
+.item .ic{width:60px;height:60px;border-radius:16px;font-size:26px}
+.confirm{text-align:center;padding:4px 8px 6px}.confirm p{opacity:.9;margin-bottom:16px}.confirm .acts{display:flex;gap:10px;justify-content:center}
+/* Modal form -> slide-up */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,8,30,.45);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.modal.active{opacity:1;visibility:visible}
+.modal-content{width:min(560px,100%);max-height:90vh;overflow:auto;padding:12px 20px calc(20px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(250,248,255,.97);box-shadow:0 -18px 50px rgba(0,0,0,.4);transform:translateY(105%);transition:transform .38s cubic-bezier(.2,.9,.25,1)}
+.modal.active .modal-content{transform:none}
+.modal-content::before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:rgba(0,0,0,.18);margin:0 auto 12px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-header h3{font-size:18px;color:var(--deep)}
+.close-modal{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--track);font-size:20px;cursor:pointer;color:var(--muted)}.close-modal:hover{background:#ff5f57;color:#fff}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:0 0 4px 2px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;outline:none}
+.form-group textarea{min-height:110px;resize:vertical}.form-group input[readonly]{background:#f0eef6;color:var(--muted)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.char-counter{display:block;text-align:right;font-size:12px;color:var(--muted)}
+.modal-footer{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 18px;border-radius:10px;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(160deg,#7b8cf5,#5568d8);box-shadow:0 1px 2px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:hover{filter:brightness(1.06)}.btn.alt,.btn-secondary{background:rgba(120,120,128,.2);color:var(--ink);box-shadow:none}.btn.red{background:linear-gradient(160deg,#f2706b,#d63d3a)}
+.btn:disabled,.form-group textarea:disabled,.form-group select:disabled{opacity:.55;cursor:not-allowed}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.list{grid-template-columns:repeat(3,minmax(0,1fr))}.item .ic{width:54px;height:54px}.bar-date i{display:none}.stats{gap:10px}.stat b{font-size:24px}.d{min-width:64px}.dock{gap:2px;padding:6px}.navbar-brand span{max-width:42vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== Tambahan khusus halaman Data Mapel ===== */
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+a.d{text-decoration:none}
+.act{width:30px;height:30px;border-radius:8px;display:inline-grid;place-items:center;font-size:14px;transition:background .15s}
+.act.edit{color:#4c5fd5}.act.edit:hover{background:rgba(76,95,213,.12)}
+.act.del{color:#d63d3a}.act.del:hover{background:rgba(214,61,58,.12)}
+.table-responsive{max-height:none}
+.custom-table{min-width:360px}
+.custom-table td:last-child,.custom-table th:last-child{white-space:nowrap}
+
+/* ===== Tambahan khusus halaman Backup & Restore ===== */
+.accordion{display:flex;flex-direction:column;gap:16px}
+.accordion-item{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.accordion-header{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 44px 0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line);cursor:pointer;user-select:none}
+.accordion-header h2{font-size:13px;font-weight:600;color:#4a4663;text-align:center}
+.accordion-header h2 i{margin-right:6px}
+.accordion-header .chev{position:absolute;right:14px;font-size:12px;color:var(--muted);transition:transform .3s ease}
+.accordion-item.active .chev{transform:rotate(180deg)}
+.accordion-content{max-height:0;overflow-y:auto;transition:max-height .3s ease-out}
+.accordion-body{padding:16px}
+.backup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px 6px;margin-bottom:18px}
+.btn-backup-item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 4px;border-radius:16px;text-align:center;font-size:12.5px;font-weight:700;line-height:1.25;color:var(--ink);transition:transform .2s,background .2s}
+.btn-backup-item:hover{background:rgba(102,126,234,.12);transform:translateY(-3px)}
+.btn-backup-item:active{transform:scale(.96)}
+.btn-backup-item .ic{position:relative;overflow:hidden;display:grid;place-items:center;width:56px;height:56px;border-radius:15px;font-size:24px;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.btn-backup-item .ic::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+.btn-backup-item .ic i{position:relative;z-index:1}
+.btn-large-action{width:100%;height:46px;display:flex;align-items:center;justify-content:center;gap:10px;border-radius:12px;font-size:15px;font-weight:700;color:#fff;background:linear-gradient(160deg,#7b8cf5,#5568d8);box-shadow:0 1px 2px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3);transition:filter .2s,transform .2s}
+.btn-large-action:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn-large-action.import{background:linear-gradient(160deg,#3fd08f,#1b8a5c)}
+</style>
+</head>
+<body>
+
+<!-- Menubar (gaya macOS) -->
+<header class="menubar">
+    <a href="dasboradmin.html" class="navbar-brand"><img src="" alt="Logo Sekolah" style="display:none;"><span></span></a>
+    <div class="bar-date"><i class="far fa-calendar-alt"></i><span id="navbarDate"></span></div>
+</header>
+
+<main class="wrap">
+    <div class="head"><h1>Pengaturan Backup Data</h1><p>Kelola backup dan restore data aplikasi sekolah.</p></div>
+
+    <!-- Wadah Accordion -->
+    <div class="accordion">
+        <!-- 1. Backup Data -->
+            <div class="accordion-item active">
+                <div class="accordion-header" role="button" tabindex="0" onclick="toggleAccordion(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleAccordion(this)}"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2><i class="fas fa-download" style="color:#4c5fd5"></i>Backup Data</h2><i class="fas fa-chevron-down chev"></i></div>
+                <div class="accordion-content" style="max-height: 60vh;"> <!-- Default open -->
+                    <div class="accordion-body">
+                        <div class="backup-grid">
+                            <button class="btn-backup-item" type="button" onclick="handleBackupIdentitas()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-school"></i></span><span>Identitas Sekolah</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleBackupRombel()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-layer-group"></i></span><span>Rombongan Belajar</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleBackupGuru()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-chalkboard-teacher"></i></span><span>Data Guru</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleBackupSiswa()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-user-graduate"></i></span><span>Data Siswa</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleBackupWalikelas()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-user-tie"></i></span><span>Walikelas</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleBackupGuruWali()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-user-friends"></i></span><span>Guru Wali</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleBackupGuruPiket()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-calendar-check"></i></span><span>Guru Piket</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleBackupMappingSiswa()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-users"></i></span><span>Mapping Siswa</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleBackupMataPelajaran()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-book"></i></span><span>Mata Pelajaran</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleBackupPiketHarian()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-clipboard-list"></i></span><span>Piket Harian</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleBackupKehadiranSiswa()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-user-clock"></i></span><span>Kehadiran Siswa</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleBackupPembinaanWali()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-hands-helping"></i></span><span>Pembinaan Guru Wali</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleBackupNilaiAkademis()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-star"></i></span><span>Nilai Akademis</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleBackupKasus()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-exclamation-triangle"></i></span><span>Kasus</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleBackupDispensasi()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-file-signature"></i></span><span>Dispensasi Siswa</span></button>
+                        </div>
+                        <button class="btn-large-action" type="button" onclick="handleBackupAll()">
+                            <i class="fas fa-database"></i> Backup Semua Database
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Import Data -->
+            <div class="accordion-item">
+                <div class="accordion-header" role="button" tabindex="0" onclick="toggleAccordion(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleAccordion(this)}"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2><i class="fas fa-upload" style="color:#1b8a5c"></i>Import Data</h2><i class="fas fa-chevron-down chev"></i></div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <div class="backup-grid">
+                            <button class="btn-backup-item" type="button" onclick="handleImportIdentitas()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-school"></i></span><span>Identitas Sekolah</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleImportRombel()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-layer-group"></i></span><span>Rombongan Belajar</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleImportGuru()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-chalkboard-teacher"></i></span><span>Data Guru</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleImportSiswa()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-user-graduate"></i></span><span>Data Siswa</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleImportWalikelas()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-user-tie"></i></span><span>Walikelas</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleImportGuruWali()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-user-friends"></i></span><span>Guru Wali</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleImportGuruPiket()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-calendar-check"></i></span><span>Guru Piket</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleImportMappingSiswa()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-users"></i></span><span>Mapping Siswa</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleImportMataPelajaran()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-book"></i></span><span>Mata Pelajaran</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleImportPiketHarian()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-clipboard-list"></i></span><span>Piket Harian</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleImportKehadiranSiswa()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-user-clock"></i></span><span>Kehadiran Siswa</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleImportPembinaanWali()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-hands-helping"></i></span><span>Pembinaan Guru Wali</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleImportNilaiAkademis()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-star"></i></span><span>Nilai Akademis</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleImportKasus()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-exclamation-triangle"></i></span><span>Kasus</span></button>
+                            <button class="btn-backup-item" type="button" onclick="handleImportDispensasi()"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-file-signature"></i></span><span>Dispensasi Siswa</span></button>
+                        </div>
+                        <button class="btn-large-action import" type="button" onclick="handleImportAll()">
+                            <i class="fas fa-file-import"></i> Import Semua Database
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <p>&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik) 2026</p>
+        <p>CopyRight Kenji Studio Developer.</p>
+    </footer>
+</main>
+
+<!-- Dock -->
+<nav class="dock" aria-label="Menu utama">
+    <a class="d" href="dasboradmin.html"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-home"></i></span>Dashboard</a>
+    <button class="d" type="button" onclick="openSection(0)"><span class="ic" style="background:linear-gradient(160deg,#ffc861,#d9820f)"><i class="fas fa-download"></i></span>Backup</button>
+    <button class="d" type="button" onclick="openSection(1)"><span class="ic" style="background:linear-gradient(160deg,#59d6a0,#1b8a5c)"><i class="fas fa-upload"></i></span>Import</button>
+</nav>
+
+<!-- Input Tersembunyi buat Import -->
+    <input type="file" id="importFileIdentitas" accept=".csv" style="display: none;">
+    <input type="file" id="importFileRombel" accept=".csv" style="display: none;">
+    <input type="file" id="importFileGuru" accept=".csv" style="display: none;">
+    <input type="file" id="importFileSiswa" accept=".csv" style="display: none;">
+    <input type="file" id="importFileWalikelas" accept=".csv" style="display: none;">
+    <input type="file" id="importFileGuruWali" accept=".csv" style="display: none;">
+    <input type="file" id="importFileGuruPiket" accept=".csv" style="display: none;">
+    <input type="file" id="importFileMappingSiswa" accept=".csv" style="display: none;">
+    <input type="file" id="importFileMataPelajaran" accept=".csv" style="display: none;">
+    <input type="file" id="importFilePiketHarian" accept=".csv" style="display: none;">
+    <input type="file" id="importFileKehadiranSiswa" accept=".csv" style="display: none;">
+    <input type="file" id="importFilePembinaanWali" accept=".csv" style="display: none;">
+    <input type="file" id="importFileNilaiAkademis" accept=".csv" style="display: none;">
+    <input type="file" id="importFileKasus" accept=".csv" style="display: none;">
+    <input type="file" id="importFileDispensasi" accept=".csv" style="display: none;">
+    <input type="file" id="importFileAll" accept=".csv" multiple style="display: none;">
+
+<script>
+        // --- Koneksi Navbar ---
+        const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+
+        let supabaseClient;
+        let absensiClient;
+        let loadSchoolIdentity;
+
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+            absensiClient = supabaseClient;
+
+            loadSchoolIdentity = async function() {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('identitassekolah')
+                        .select('nama_sekolah, logo')
+                        .limit(1)
+                        .single();
+                    
+                    if (data) {
+                        if (data.nama_sekolah) {
+                            document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                        }
+                        if (data.logo) {
+                            const img = document.querySelector('.navbar-brand img');
+                            img.src = data.logo;
+                            img.style.display = 'block';
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error loading school identity:", err);
+                }
+            };
+            document.addEventListener('DOMContentLoaded', loadSchoolIdentity);
+        }
+
+        // --- Tampil Tanggal ---
+        function updateNavbarDate() {
+            const now = new Date();
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            document.getElementById('navbarDate').textContent = now.toLocaleDateString('id-ID', options);
+        }
+        document.addEventListener('DOMContentLoaded', updateNavbarDate);
+
+        // --- Logika Accordion ---
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            const allItems = document.querySelectorAll('.accordion-item');
+            
+            // Tutup item lain yang sedang terbuka
+            allItems.forEach(otherItem => {
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                    otherItem.classList.remove('active');
+                    otherItem.querySelector('.accordion-content').style.maxHeight = null;
+                }
+            });
+
+            const content = item.querySelector('.accordion-content');
+            
+            // Toggle active class
+            item.classList.toggle('active');
+            
+            // Toggle max-height for animation
+            if (item.classList.contains('active')) {
+                content.style.maxHeight = "60vh";
+            } else {
+                content.style.maxHeight = null;
+            }
+        }
+
+        // --- Fungsi Backup & Reset ---
+
+        // Bikin CSV dari JSON
+        function jsonToCsv(jsonData) {
+            if (!jsonData || jsonData.length === 0) return "";
+            const keys = Object.keys(jsonData[0]);
+            const header = keys.join(",");
+            const rows = jsonData.map(row => 
+                keys.map(key => {
+                    let val = row[key] === null || row[key] === undefined ? "" : row[key];
+                    // Escape quotes and wrap in quotes if contains comma, newline or quote
+                    if (typeof val === 'string') {
+                        val = val.replace(/"/g, '""');
+                        if (val.includes(',') || val.includes('\n') || val.includes('"')) {
+                            val = `"${val}"`;
+                        }
+                    }
+                    return val;
+                }).join(",")
+            );
+            return [header, ...rows].join("\n");
+        }
+
+        // Download File CSV
+        function downloadCSV(csvContent, fileName) {
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", fileName);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // 1. Backup Identitas
+        async function handleBackupIdentitas() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh data Identitas Sekolah?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await supabaseClient.from('identitassekolah').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada data Identitas Sekolah untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `identitassekolah_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Pake filter npsn > 0
+                const { error: deleteError } = await supabaseClient
+                    .from('identitassekolah')
+                    .delete()
+                    .gt('npsn', 0); // Asumsi NPSN adalah angka positif
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Identitas Sekolah telah dihapus dari database.");
+                
+                // Update UI (Kosongkan Navbar)
+                document.querySelector('.navbar-brand span').textContent = '';
+                const img = document.querySelector('.navbar-brand img');
+                if(img) img.style.display = 'none';
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 2. Import Identitas
+        function handleImportIdentitas() {
+            document.getElementById('importFileIdentitas').click();
+        }
+
+        document.getElementById('importFileIdentitas').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await supabaseClient.from('identitassekolah').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Identitas Sekolah berhasil direstore!");
+                        loadSchoolIdentity(); // Refresh Navbar
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 3. Backup Rombel
+        async function handleBackupRombel() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh data Rombongan Belajar?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await supabaseClient.from('rombel').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada data Rombongan Belajar untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `rombel_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Asumsi id > 0
+                const { error: deleteError } = await supabaseClient
+                    .from('rombel')
+                    .delete()
+                    .gt('id', 0); 
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Rombongan Belajar telah dihapus dari database.");
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 4. Import Rombel
+        function handleImportRombel() {
+            document.getElementById('importFileRombel').click();
+        }
+
+        document.getElementById('importFileRombel').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await supabaseClient.from('rombel').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Rombongan Belajar berhasil direstore!");
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 5. Backup Guru
+        async function handleBackupGuru() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh Data Guru?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await supabaseClient.from('dataguru').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada Data Guru untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `dataguru_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Filter id_guru gak null
+                const { error: deleteError } = await supabaseClient
+                    .from('dataguru')
+                    .delete()
+                    .not('id_guru', 'is', null);
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Guru telah dihapus dari database.");
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 6. Import Guru
+        function handleImportGuru() {
+            document.getElementById('importFileGuru').click();
+        }
+
+        document.getElementById('importFileGuru').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await supabaseClient.from('dataguru').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Guru berhasil direstore!");
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 7. Backup Siswa
+        async function handleBackupSiswa() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh Data Siswa?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await supabaseClient.from('datasiswa').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada Data Siswa untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `datasiswa_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Filter nisn gak null
+                const { error: deleteError } = await supabaseClient
+                    .from('datasiswa')
+                    .delete()
+                    .not('nisn', 'is', null);
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Siswa telah dihapus dari database.");
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 8. Import Siswa
+        function handleImportSiswa() {
+            document.getElementById('importFileSiswa').click();
+        }
+
+        document.getElementById('importFileSiswa').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await supabaseClient.from('datasiswa').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Siswa berhasil direstore!");
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 9. Backup Walikelas
+        async function handleBackupWalikelas() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh data Walikelas?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await supabaseClient.from('walikelas').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada data Walikelas untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `walikelas_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Filter nip gak null
+                const { error: deleteError } = await supabaseClient
+                    .from('walikelas')
+                    .delete()
+                    .not('nip', 'is', null);
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Walikelas telah dihapus dari database.");
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 10. Import Walikelas
+        function handleImportWalikelas() {
+            document.getElementById('importFileWalikelas').click();
+        }
+
+        document.getElementById('importFileWalikelas').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await supabaseClient.from('walikelas').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Walikelas berhasil direstore!");
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 11. Backup Guru Wali
+        async function handleBackupGuruWali() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh data Guru Wali?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await supabaseClient.from('guruwali').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada data Guru Wali untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `guruwali_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Filter nip gak null
+                const { error: deleteError } = await supabaseClient
+                    .from('guruwali')
+                    .delete()
+                    .not('nip', 'is', null);
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Guru Wali telah dihapus dari database.");
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 12. Import Guru Wali
+        function handleImportGuruWali() {
+            document.getElementById('importFileGuruWali').click();
+        }
+
+        document.getElementById('importFileGuruWali').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await supabaseClient.from('guruwali').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Guru Wali berhasil direstore!");
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 13. Backup Guru Piket
+        async function handleBackupGuruPiket() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh data Guru Piket?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await supabaseClient.from('gurupiket').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada data Guru Piket untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `gurupiket_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Filter id gak null
+                const { error: deleteError } = await supabaseClient
+                    .from('gurupiket')
+                    .delete()
+                    .not('id', 'is', null);
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Guru Piket telah dihapus dari database.");
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 14. Import Guru Piket
+        function handleImportGuruPiket() {
+            document.getElementById('importFileGuruPiket').click();
+        }
+
+        document.getElementById('importFileGuruPiket').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await supabaseClient.from('gurupiket').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Guru Piket berhasil direstore!");
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 15. Backup Mapping Siswa
+        async function handleBackupMappingSiswa() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh data Mapping Siswa?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await absensiClient.from('mappingsiswa').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada data Mapping Siswa untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `mappingsiswa_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Filter kode_maping gak null
+                const { error: deleteError } = await absensiClient
+                    .from('mappingsiswa')
+                    .delete()
+                    .not('kode_maping', 'is', null);
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Mapping Siswa telah dihapus dari database.");
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 16. Import Mapping Siswa
+        function handleImportMappingSiswa() {
+            document.getElementById('importFileMappingSiswa').click();
+        }
+
+        document.getElementById('importFileMappingSiswa').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await absensiClient.from('mappingsiswa').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Mapping Siswa berhasil direstore!");
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 17. Backup Mapel
+        async function handleBackupMataPelajaran() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh data Mata Pelajaran?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await absensiClient.from('matapelajaran').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada data Mata Pelajaran untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `matapelajaran_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Filter id gak null
+                const { error: deleteError } = await absensiClient
+                    .from('matapelajaran')
+                    .delete()
+                    .not('id', 'is', null);
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Mata Pelajaran telah dihapus dari database.");
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 18. Import Mapel
+        function handleImportMataPelajaran() {
+            document.getElementById('importFileMataPelajaran').click();
+        }
+
+        document.getElementById('importFileMataPelajaran').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await absensiClient.from('matapelajaran').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Mata Pelajaran berhasil direstore!");
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 19. Backup Piket Harian
+        async function handleBackupPiketHarian() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh data Piket Harian?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await supabaseClient.from('jurnalpiket').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada data Piket Harian untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `jurnalpiket_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Filter id_piket gak null
+                const { error: deleteError } = await supabaseClient
+                    .from('jurnalpiket')
+                    .delete()
+                    .not('id_piket', 'is', null);
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Piket Harian telah dihapus dari database.");
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 20. Import Piket Harian
+        function handleImportPiketHarian() {
+            document.getElementById('importFilePiketHarian').click();
+        }
+
+        document.getElementById('importFilePiketHarian').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await supabaseClient.from('jurnalpiket').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Piket Harian berhasil direstore!");
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 21. Backup Absensi
+        async function handleBackupKehadiranSiswa() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh data Kehadiran Siswa?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await absensiClient.from('absensiswa').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada data Kehadiran Siswa untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `absensiswa_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Filter kode_absen gak null
+                const { error: deleteError } = await absensiClient
+                    .from('absensiswa')
+                    .delete()
+                    .not('kode_absen', 'is', null);
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Kehadiran Siswa telah dihapus dari database.");
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 22. Import Absensi
+        function handleImportKehadiranSiswa() {
+            document.getElementById('importFileKehadiranSiswa').click();
+        }
+
+        document.getElementById('importFileKehadiranSiswa').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await absensiClient.from('absensiswa').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Kehadiran Siswa berhasil direstore!");
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 23. Backup Pembinaan
+        async function handleBackupPembinaanWali() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh data Pembinaan Guru Wali?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await supabaseClient.from('pembinaanwali').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada data Pembinaan Guru Wali untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `pembinaanwali_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Filter id_pembinaan gak null
+                const { error: deleteError } = await supabaseClient
+                    .from('pembinaanwali')
+                    .delete()
+                    .not('id_pembinaan', 'is', null);
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Pembinaan Guru Wali telah dihapus dari database.");
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 24. Import Pembinaan
+        function handleImportPembinaanWali() {
+            document.getElementById('importFilePembinaanWali').click();
+        }
+
+        document.getElementById('importFilePembinaanWali').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await supabaseClient.from('pembinaanwali').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Pembinaan Guru Wali berhasil direstore!");
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 25. Backup Nilai
+        async function handleBackupNilaiAkademis() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh data Nilai Akademis?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await absensiClient.from('nilaimapel').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada data Nilai Akademis untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `nilaimapel_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Filter id gak null
+                const { error: deleteError } = await absensiClient
+                    .from('nilaimapel')
+                    .delete()
+                    .not('id', 'is', null);
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Nilai Akademis telah dihapus dari database.");
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 26. Import Nilai
+        function handleImportNilaiAkademis() {
+            document.getElementById('importFileNilaiAkademis').click();
+        }
+
+        document.getElementById('importFileNilaiAkademis').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await absensiClient.from('nilaimapel').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Nilai Akademis berhasil direstore!");
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 27. Backup Kasus
+        async function handleBackupKasus() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh data Kasus?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await absensiClient.from('kasussiswa').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada data Kasus untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `kasussiswa_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Filter id_kasus gak null
+                const { error: deleteError } = await absensiClient
+                    .from('kasussiswa')
+                    .delete()
+                    .not('id_kasus', 'is', null);
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Kasus telah dihapus dari database.");
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 28. Import Kasus
+        function handleImportKasus() {
+            document.getElementById('importFileKasus').click();
+        }
+
+        document.getElementById('importFileKasus').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await absensiClient.from('kasussiswa').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Kasus berhasil direstore!");
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 29. Backup Dispen
+        async function handleBackupDispensasi() {
+            if (!confirm("Apakah Anda yakin ingin membackup (Export CSV) dan MENGHAPUS seluruh data Dispensasi Siswa?")) return;
+
+            try {
+                // 1. Ambil Data
+                const { data, error } = await absensiClient.from('dispensasi').select('*');
+                if (error) throw new Error("Gagal mengambil data: " + error.message);
+                
+                if (!data || data.length === 0) {
+                    alert("Tidak ada data Dispensasi Siswa untuk dibackup.");
+                    return;
+                }
+
+                // 2. Ekspor CSV
+                const csv = jsonToCsv(data);
+                const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+                downloadCSV(csv, `dispensasi_backup_${timestamp}.csv`);
+
+                // 3. Hapus Data
+                // Hapus semua data. Filter kode_dispen gak null
+                const { error: deleteError } = await absensiClient
+                    .from('dispensasi')
+                    .delete()
+                    .not('kode_dispen', 'is', null);
+
+                if (deleteError) throw new Error("Gagal menghapus data: " + deleteError.message);
+
+                alert("Backup berhasil! Data Dispensasi Siswa telah dihapus dari database.");
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan: " + err.message);
+            }
+        }
+
+        // 30. Import Dispen
+        function handleImportDispensasi() {
+            document.getElementById('importFileDispensasi').click();
+        }
+
+        document.getElementById('importFileDispensasi').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: async function(results) {
+                    const data = results.data;
+                    if (!data || data.length === 0) {
+                        alert("File CSV kosong atau format tidak valid.");
+                        return;
+                    }
+
+                    try {
+                        const { error } = await absensiClient.from('dispensasi').upsert(data);
+                        if (error) throw new Error(error.message);
+
+                        alert("Data Dispensasi Siswa berhasil direstore!");
+                    } catch (err) {
+                        console.error("Import Error:", err);
+                        alert("Gagal merestore data: " + err.message);
+                    }
+                    event.target.value = ''; // Reset input
+                },
+                error: function(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            });
+        });
+
+        // 31. Backup Semua (ZIP & Reset)
+        async function handleBackupAll() {
+            if (!confirm("PERINGATAN KERAS:\n\nAnda akan membackup SEMUA data ke dalam satu file ZIP dan MENGHAPUS SEMUA data dari database (RESET TOTAL).\n\nTindakan ini tidak dapat dibatalkan.\n\nApakah Anda yakin ingin melanjutkan?")) return;
+
+            const zip = new JSZip();
+            const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+            const folderName = `backup_full_${timestamp}`;
+            const folder = zip.folder(folderName);
+
+            try {
+                // Ambil & Masukin ZIP
+                const fetchAndAddToZip = async (client, tableName, fileName) => {
+                    const { data, error } = await client.from(tableName).select('*');
+                    if (error) throw new Error(`Gagal mengambil data ${tableName}: ${error.message}`);
+                    if (data && data.length > 0) {
+                        const csv = jsonToCsv(data);
+                        folder.file(fileName, csv);
+                    }
+                };
+
+                // 1. Ambil & ZIP Semua
+                await fetchAndAddToZip(supabaseClient, 'identitassekolah', 'identitassekolah.csv');
+                await fetchAndAddToZip(supabaseClient, 'rombel', 'rombel.csv');
+                await fetchAndAddToZip(supabaseClient, 'dataguru', 'dataguru.csv');
+                await fetchAndAddToZip(supabaseClient, 'datasiswa', 'datasiswa.csv');
+                await fetchAndAddToZip(supabaseClient, 'walikelas', 'walikelas.csv');
+                await fetchAndAddToZip(supabaseClient, 'guruwali', 'guruwali.csv');
+                await fetchAndAddToZip(supabaseClient, 'gurupiket', 'gurupiket.csv');
+                await fetchAndAddToZip(absensiClient, 'mappingsiswa', 'mappingsiswa.csv');
+                await fetchAndAddToZip(absensiClient, 'matapelajaran', 'matapelajaran.csv');
+                await fetchAndAddToZip(supabaseClient, 'jurnalpiket', 'jurnalpiket.csv');
+                await fetchAndAddToZip(absensiClient, 'absensiswa', 'absensiswa.csv');
+                await fetchAndAddToZip(supabaseClient, 'pembinaanwali', 'pembinaanwali.csv');
+                await fetchAndAddToZip(absensiClient, 'nilaimapel', 'nilaimapel.csv');
+                await fetchAndAddToZip(absensiClient, 'kasussiswa', 'kasussiswa.csv');
+                await fetchAndAddToZip(absensiClient, 'dispensasi', 'dispensasi.csv');
+                await fetchAndAddToZip(supabaseClient, 'datapiketsiswa', 'datapiketsiswa.csv');
+                await fetchAndAddToZip(supabaseClient, 'perwalian', 'perwalian.csv');
+
+                // 2. Bikin & Download ZIP
+                const content = await zip.generateAsync({ type: "blob" });
+                saveAs(content, `${folderName}.zip`);
+
+                // 3. Hapus Semua Data
+                // Hapus detail dulu
+                const deleteTable = async (client, tableName, filterCol, filterVal) => {
+                    let query = client.from(tableName).delete();
+                    // Pake filter yang sama kayak backup satuan
+                    if (tableName === 'identitassekolah') query = query.gt('npsn', 0);
+                    else if (tableName === 'rombel') query = query.gt('id', 0);
+                    else if (tableName === 'dataguru') query = query.not('id_guru', 'is', null);
+                    else if (tableName === 'datasiswa') query = query.not('nisn', 'is', null);
+                    else if (tableName === 'walikelas') query = query.not('nip', 'is', null);
+                    else if (tableName === 'guruwali') query = query.not('nip', 'is', null);
+                    else if (tableName === 'gurupiket') query = query.not('id', 'is', null);
+                    else if (tableName === 'mappingsiswa') query = query.not('kode_maping', 'is', null);
+                    else if (tableName === 'matapelajaran') query = query.not('id', 'is', null);
+                    else if (tableName === 'jurnalpiket') query = query.not('id_piket', 'is', null);
+                    else if (tableName === 'absensiswa') query = query.not('kode_absen', 'is', null);
+                    else if (tableName === 'pembinaanwali') query = query.not('id_pembinaan', 'is', null);
+                    else if (tableName === 'nilaimapel') query = query.not('id', 'is', null);
+                    else if (tableName === 'kasussiswa') query = query.not('id_kasus', 'is', null);
+                    else if (tableName === 'dispensasi') query = query.not('kode_dispen', 'is', null);
+                    else if (tableName === 'datapiketsiswa') query = query.not('id_piket', 'is', null);
+                    else if (tableName === 'perwalian') query = query.not('kode_id', 'is', null);
+                    
+                    const { error } = await query;
+                    if (error) throw new Error(`Gagal menghapus data ${tableName}: ${error.message}`);
+                };
+
+                // Eksekusi Hapus
+                await Promise.all([
+                    deleteTable(absensiClient, 'dispensasi'),
+                    deleteTable(absensiClient, 'kasussiswa'),
+                    deleteTable(absensiClient, 'nilaimapel'),
+                    deleteTable(supabaseClient, 'pembinaanwali'),
+                    deleteTable(absensiClient, 'absensiswa'),
+                    deleteTable(supabaseClient, 'jurnalpiket'),
+                    deleteTable(supabaseClient, 'datapiketsiswa'),
+                    deleteTable(supabaseClient, 'perwalian')
+                ]);
+
+                await Promise.all([
+                    deleteTable(absensiClient, 'mappingsiswa'),
+                    deleteTable(supabaseClient, 'gurupiket'),
+                    deleteTable(supabaseClient, 'guruwali'),
+                    deleteTable(supabaseClient, 'walikelas')
+                ]);
+
+                await Promise.all([
+                    deleteTable(absensiClient, 'matapelajaran'),
+                    deleteTable(supabaseClient, 'datasiswa'),
+                    deleteTable(supabaseClient, 'dataguru'),
+                    deleteTable(supabaseClient, 'rombel')
+                ]);
+
+                // Hapus identitas terakhir
+                await deleteTable(supabaseClient, 'identitassekolah');
+
+                alert("Backup ZIP berhasil didownload dan Database telah di-RESET total.");
+                location.reload(); // Refresh halaman
+
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan saat proses Backup & Reset: " + err.message);
+            }
+        }
+
+        // 32. Import Semua (Banyak CSV)
+        function handleImportAll() {
+            document.getElementById('importFileAll').click();
+        }
+
+        document.getElementById('importFileAll').addEventListener('change', async function(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+
+            if (!confirm(`Anda akan mengimport ${files.length} file CSV. Pastikan nama file sesuai dengan nama tabel (contoh: datasiswa_backup.csv). Lanjutkan?`)) {
+                this.value = '';
+                return;
+            }
+
+            let successCount = 0;
+            let failCount = 0;
+            let errors = [];
+
+            const tableConfig = {
+                'identitassekolah': { client: supabaseClient, table: 'identitassekolah' },
+                'rombel': { client: supabaseClient, table: 'rombel' },
+                'dataguru': { client: supabaseClient, table: 'dataguru' },
+                'datasiswa': { client: supabaseClient, table: 'datasiswa' },
+                'walikelas': { client: supabaseClient, table: 'walikelas' },
+                'guruwali': { client: supabaseClient, table: 'guruwali' },
+                'gurupiket': { client: supabaseClient, table: 'gurupiket' },
+                'jurnalpiket': { client: supabaseClient, table: 'jurnalpiket' },
+                'pembinaanwali': { client: supabaseClient, table: 'pembinaanwali' },
+                'mappingsiswa': { client: absensiClient, table: 'mappingsiswa' },
+                'matapelajaran': { client: absensiClient, table: 'matapelajaran' },
+                'absensiswa': { client: absensiClient, table: 'absensiswa' },
+                'nilaimapel': { client: absensiClient, table: 'nilaimapel' },
+                'kasussiswa': { client: absensiClient, table: 'kasussiswa' },
+                'dispensasi': { client: absensiClient, table: 'dispensasi' }
+            };
+
+            const processFile = (file) => {
+                return new Promise((resolve) => {
+                    const fileName = file.name.toLowerCase();
+                    let targetConfig = null;
+
+                    // Find matching table
+                    for (const key in tableConfig) {
+                        if (fileName.startsWith(key)) {
+                            targetConfig = tableConfig[key];
+                            break;
+                        }
+                    }
+
+                    if (!targetConfig) {
+                        errors.push(`${file.name}: Tidak dikenali sebagai tabel yang valid.`);
+                        failCount++;
+                        resolve();
+                        return;
+                    }
+
+                    Papa.parse(file, {
+                        header: true,
+                        skipEmptyLines: true,
+                        dynamicTyping: true,
+                        complete: async function(results) {
+                            const data = results.data;
+                            if (!data || data.length === 0) {
+                                errors.push(`${file.name}: File kosong atau format salah.`);
+                                failCount++;
+                                resolve();
+                                return;
+                            }
+
+                            try {
+                                const { error } = await targetConfig.client
+                                    .from(targetConfig.table)
+                                    .upsert(data);
+                                
+                                if (error) throw error;
+                                successCount++;
+                            } catch (err) {
+                                errors.push(`${file.name}: ${err.message}`);
+                                failCount++;
+                            }
+                            resolve();
+                        },
+                        error: function(err) {
+                            errors.push(`${file.name}: Gagal membaca CSV (${err.message})`);
+                            failCount++;
+                            resolve();
+                        }
+                    });
+                });
+            };
+
+            // Process all files
+            const promises = Array.from(files).map(file => processFile(file));
+            
+            await Promise.all(promises);
+
+            let msg = `Proses Import Selesai.\nBerhasil: ${successCount}\nGagal: ${failCount}`;
+            if (errors.length > 0) {
+                msg += `\n\nDetail Error:\n` + errors.join('\n');
+            }
+            alert(msg);
+            this.value = ''; // Reset input
+        });
+    
+        // --- Dock: buka bagian Backup / Import ---
+        function openSection(i) {
+            const item = document.querySelectorAll('.accordion-item')[i];
+            if (!item) return;
+            if (!item.classList.contains('active')) toggleAccordion(item.querySelector('.accordion-header'));
+            item.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+</script>
+</body>
+</html>

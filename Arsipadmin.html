@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Arsip Sekolah - SIMPEDIK</title>
+    <!-- Icon Keren -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- jsPDF + AutoTable (untuk Export PDF) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary-color:#667eea;--secondary-color:#764ba2;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.menubar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-date{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;opacity:.9;white-space:nowrap}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:22px 12px}
+.head{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.head h1{font-size:clamp(28px,4.5vw,38px);letter-spacing:-.02em;line-height:1.1}
+.head p{opacity:.88;font-size:14px;margin-top:4px}
+.win{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663;text-align:center}
+.tb a{position:absolute;right:12px;font-size:12px;font-weight:600;color:#4c5fd5;text-decoration:none}.tb a:hover{text-decoration:underline}
+.wb{padding:16px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.stat .wb{display:flex;align-items:center;gap:14px}
+.stat .ic{flex:none;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.35)}
+.stat small{display:block;color:var(--muted);font-size:13px}.stat b{font-size:30px;line-height:1.1;color:var(--deep)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.grid2>.win{margin-bottom:16px}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:420px;scrollbar-width:thin}
+.table-responsive::-webkit-scrollbar{height:8px;width:8px}.table-responsive::-webkit-scrollbar-thumb{background:rgba(0,0,0,.28);border-radius:9px}
+.custom-table{width:100%;border-collapse:collapse;font-size:14px;min-width:480px}
+.custom-table th{position:sticky;top:0;background:#efecf7;text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line)}
+.custom-table td{padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.05)}.custom-table tr:last-child td{border:0}.custom-table tbody tr:hover{background:rgba(102,126,234,.07)}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;color:#fff}.bg-danger{background:#e74c3c}.bg-warning{background:#f1c40f;color:#333}.bg-success{background:#2ecc71}
+.main-footer{text-align:center;color:rgba(255,255,255,.85);font-size:12px;padding:8px 0 4px}
+/* Dock */
+.dock{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:6px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.6);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.d{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:74px;padding:6px 8px;border-radius:16px;font-size:11.5px;font-weight:600;color:var(--ink);transition:transform .2s}
+.d:hover{transform:translateY(-6px) scale(1.08)}.d:active{transform:scale(.95)}
+.d .ic,.item .ic{position:relative;overflow:hidden;display:grid;place-items:center;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.d .ic{width:48px;height:48px;border-radius:13px;font-size:21px}
+.d .ic::after,.item .ic::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+.d .ic i,.item .ic i{position:relative;z-index:1}
+/* Slide-up sheet */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(10,8,30,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.sheet{position:fixed;left:50%;bottom:0;z-index:50;width:min(660px,100%);max-height:86vh;overflow:auto;transform:translate(-50%,105%);transition:transform .38s cubic-bezier(.2,.9,.25,1);padding:10px 16px calc(22px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(36,28,86,.62);backdrop-filter:saturate(200%) blur(28px);-webkit-backdrop-filter:saturate(200%) blur(28px);color:#fff;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 -18px 50px rgba(0,0,0,.4)}
+.open .scrim{opacity:1;visibility:visible}.open .sheet{transform:translate(-50%,0)}
+.grab{width:40px;height:5px;border-radius:9px;background:rgba(255,255,255,.5);margin:0 auto 12px}
+.sh{position:relative;display:flex;align-items:center;justify-content:center;min-height:36px;margin-bottom:12px}.sh h2{font-size:19px}
+.x{position:absolute;right:0;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.25);font-size:20px;line-height:1}.x:hover{background:rgba(255,255,255,.4)}
+.list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 6px}
+.item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 4px;border-radius:18px;text-align:center;font-size:13px;font-weight:700;line-height:1.25;color:#fff;text-decoration:none;transition:transform .2s,background .2s}
+.item:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}.item:active{transform:scale(.96)}
+.item .ic{width:60px;height:60px;border-radius:16px;font-size:26px}
+.confirm{text-align:center;padding:4px 8px 6px}.confirm p{opacity:.9;margin-bottom:16px}.confirm .acts{display:flex;gap:10px;justify-content:center}
+/* Modal form -> slide-up */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,8,30,.45);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.modal.active{opacity:1;visibility:visible}
+.modal-content{width:min(560px,100%);max-height:90vh;overflow:auto;padding:12px 20px calc(20px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(250,248,255,.97);box-shadow:0 -18px 50px rgba(0,0,0,.4);transform:translateY(105%);transition:transform .38s cubic-bezier(.2,.9,.25,1)}
+.modal.active .modal-content{transform:none}
+.modal-content::before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:rgba(0,0,0,.18);margin:0 auto 12px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-header h3{font-size:18px;color:var(--deep)}
+.close-modal{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--track);font-size:20px;cursor:pointer;color:var(--muted)}.close-modal:hover{background:#ff5f57;color:#fff}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:0 0 4px 2px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;outline:none}
+.form-group textarea{min-height:110px;resize:vertical}.form-group input[readonly]{background:#f0eef6;color:var(--muted)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.char-counter{display:block;text-align:right;font-size:12px;color:var(--muted)}
+.modal-footer{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 18px;border-radius:10px;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(160deg,#7b8cf5,#5568d8);box-shadow:0 1px 2px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:hover{filter:brightness(1.06)}.btn.alt,.btn-secondary{background:rgba(120,120,128,.2);color:var(--ink);box-shadow:none}.btn.red{background:linear-gradient(160deg,#f2706b,#d63d3a)}
+.btn:disabled,.form-group textarea:disabled,.form-group select:disabled{opacity:.55;cursor:not-allowed}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.list{grid-template-columns:repeat(3,minmax(0,1fr))}.item .ic{width:54px;height:54px}.bar-date i{display:none}.stats{gap:10px}.stat b{font-size:24px}.d{min-width:64px}.dock{gap:2px;padding:6px}.navbar-brand span{max-width:42vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== Tambahan khusus halaman Data Mapel ===== */
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+a.d{text-decoration:none}
+.act{width:30px;height:30px;border-radius:8px;display:inline-grid;place-items:center;font-size:14px;transition:background .15s}
+.act.edit{color:#4c5fd5}.act.edit:hover{background:rgba(76,95,213,.12)}
+.act.del{color:#d63d3a}.act.del:hover{background:rgba(214,61,58,.12)}
+.table-responsive{max-height:none}
+.custom-table{min-width:360px}
+.custom-table td:last-child,.custom-table th:last-child{white-space:nowrap}
+
+/* ===== Tambahan khusus halaman Arsip ===== */
+.table-responsive{max-height:65vh}
+.custom-table{min-width:1100px}
+.custom-table th,.custom-table td{white-space:nowrap}
+.custom-table td.wrap{white-space:normal;min-width:160px}
+.badge{background:#667eea}
+.file-link{color:#4c5fd5;text-decoration:none;font-weight:600}.file-link:hover{text-decoration:underline}
+.file-none{color:#aaa;font-style:italic}
+.empty-state{text-align:center;padding:30px;color:var(--muted)}
+.d:disabled{opacity:.55;cursor:wait}
+.modal-content{width:min(640px,100%)}
+#jenisInfoModal{z-index:70}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.form-group.full{grid-column:1 / -1}
+@media (max-width:600px){.form-grid{grid-template-columns:minmax(0,1fr)}}
+.jenis-arsip-group{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+.jenis-option{display:flex;align-items:center;gap:8px;margin:0!important;padding:9px 10px;border-radius:10px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px!important;font-weight:500!important;color:var(--ink)!important;cursor:pointer}
+.jenis-option:has(input:checked){border-color:var(--primary-color);background:rgba(102,126,234,.1);font-weight:600!important}
+.jenis-option input[type=radio]{width:auto;padding:0;border:0;box-shadow:none;accent-color:var(--primary-color)}
+.jenis-option span{flex:1}
+.info-icon{width:20px;height:20px;min-width:20px;border-radius:50%;background:#667eea;color:#fff;font-size:10px;display:grid;place-items:center;padding:0}
+.info-icon:hover{background:#764ba2}
+.jenis-info-examples{margin:10px 0 0;padding-left:18px}.jenis-info-examples li{margin-bottom:4px}
+.file-current{font-size:12px;color:var(--muted);margin-top:5px}
+.upload-progress{font-size:12px;color:var(--primary-color);margin-top:6px;display:none}
+.action-icons{display:flex;gap:4px}
+.action-icons button{width:30px;height:30px;border-radius:8px;display:inline-grid;place-items:center;font-size:14px;transition:background .15s}
+.icon-edit{color:#4c5fd5}.icon-edit:hover{background:rgba(76,95,213,.12)}
+.icon-delete{color:#d63d3a}.icon-delete:hover{background:rgba(214,61,58,.12)}
+</style>
+</head>
+<body>
+
+<!-- Menubar (gaya macOS) -->
+<header class="menubar">
+    <a href="dasboradmin.html" class="navbar-brand"><img src="" alt="Logo Sekolah" style="display:none;"><span></span></a>
+    <div class="bar-date"><i class="far fa-calendar-alt"></i><span id="navbarDate"></span></div>
+</header>
+
+<main class="wrap">
+    <div class="head"><h1>Arsip Sekolah</h1><p>Kelola data arsip sekolah, lengkap dengan file pendukungnya.</p></div>
+
+    <section class="win">
+        <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Daftar Arsip</h2><a href="dasboradmin.html">Dashboard</a></div>
+        <div class="wb">
+            <div class="table-responsive">
+                <table class="custom-table" id="arsipTable">
+                    <thead>
+                        <tr>
+                            <th>No</th><th>Kode Arsip</th><th>Kategori Arsip</th><th>Jenis Arsip</th>
+                            <th>Judul / Nama Arsip</th><th>No. Dokumen / Surat</th><th>Unit Pengolah</th>
+                            <th>Jml Berkas</th><th>Tahun</th><th>Lokasi Simpan</th><th>File</th><th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="arsipTableBody">
+                        <tr><td colspan="12" style="text-align:center;">Memuat data arsip...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <p>&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik) 2026</p>
+        <p>CopyRight Kenji Studio Developer.</p>
+    </footer>
+</main>
+
+<!-- Dock -->
+<nav class="dock" aria-label="Menu utama">
+    <a class="d" href="dasboradmin.html"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-home"></i></span>Dashboard</a>
+    <button class="d" type="button" id="btnTambahArsip"><span class="ic" style="background:linear-gradient(160deg,#59d6a0,#1b8a5c)"><i class="fas fa-plus"></i></span>Tambah</button>
+    <button class="d" type="button" id="btnExportPdf"><span class="ic" style="background:linear-gradient(160deg,#f2706b,#c92f2c)"><i class="fas fa-file-pdf"></i></span>Export PDF</button>
+</nav>
+
+<!-- Modal Tambah / Edit Arsip -->
+    <div id="arsipModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="arsipModalTitle"><i class="fas fa-archive" style="color: var(--primary-color); margin-right: 10px;"></i> Tambah Arsip</h3>
+                <span class="close-modal" id="closeArsipModal">&times;</span>
+            </div>
+            <form id="arsipForm">
+                <input type="hidden" id="arsipRecordId" value="">
+                <input type="hidden" id="arsipExistingFileUrl" value="">
+                <input type="hidden" id="arsipExistingFileName" value="">
+
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label for="kodeArsip">Kode Arsip (otomatis)</label>
+                        <input type="text" id="kodeArsip" readonly placeholder="Akan dibuat otomatis">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kategoriArsip">Kategori Arsip</label>
+                        <select id="kategoriArsip" required>
+                            <option value="">Pilih Kategori</option>
+                            <option value="Akademik">Akademik</option>
+                            <option value="Kepegawaian">Kepegawaian</option>
+                            <option value="Kesiswaan">Kesiswaan</option>
+                            <option value="Keuangan">Keuangan</option>
+                            <option value="Sarana Prasarana">Sarana Prasarana</option>
+                            <option value="Surat Menyurat">Surat Menyurat</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Jenis Arsip</label>
+                        <div class="jenis-arsip-group" id="jenisArsipGroup">
+                            <label class="jenis-option">
+                                <input type="radio" name="jenisArsip" value="Arsip Aktif" required>
+                                <span>Arsip Aktif</span>
+                                <button type="button" class="info-icon" data-jenis="Arsip Aktif" title="Info Arsip Aktif"><i class="fas fa-info"></i></button>
+                            </label>
+                            <label class="jenis-option">
+                                <input type="radio" name="jenisArsip" value="Arsip Inaktif" required>
+                                <span>Arsip Inaktif</span>
+                                <button type="button" class="info-icon" data-jenis="Arsip Inaktif" title="Info Arsip Inaktif"><i class="fas fa-info"></i></button>
+                            </label>
+                            <label class="jenis-option">
+                                <input type="radio" name="jenisArsip" value="Arsip Vital" required>
+                                <span>Arsip Vital</span>
+                                <button type="button" class="info-icon" data-jenis="Arsip Vital" title="Info Arsip Vital"><i class="fas fa-info"></i></button>
+                            </label>
+                            <label class="jenis-option">
+                                <input type="radio" name="jenisArsip" value="Arsip Statis" required>
+                                <span>Arsip Statis</span>
+                                <button type="button" class="info-icon" data-jenis="Arsip Statis" title="Info Arsip Statis"><i class="fas fa-info"></i></button>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="judulArsip">Judul / Nama Arsip / Berkas</label>
+                        <input type="text" id="judulArsip" placeholder="Contoh: Buku Induk Siswa 2025/2026" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nomorDokumen">Nomor Dokumen / Surat / Berkas</label>
+                        <input type="text" id="nomorDokumen" placeholder="Contoh: 421/123/SMA/2026">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unitPengolah">Unit Pengolah</label>
+                        <input type="text" id="unitPengolah" placeholder="Contoh: Tata Usaha">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jumlahBerkas">Jumlah Berkas</label>
+                        <input type="number" id="jumlahBerkas" min="1" value="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tahunPenciptaan">Tahun Penciptaan</label>
+                        <input type="number" id="tahunPenciptaan" min="1900" max="2100" placeholder="Contoh: 2026">
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="lokasiSimpan">Lokasi Simpan</label>
+                        <input type="text" id="lokasiSimpan" placeholder="Contoh: Ruang Arsip - Rak B2">
+                    </div>
+
+                    <div class="form-group full">
+                        <label for="uploadFile">Upload File (maks. 1 MB)</label>
+                        <input type="file" id="uploadFile">
+                        <div class="file-current" id="fileCurrentInfo"></div>
+                        <div class="file-current" id="fileSizeWarning" style="color:#d63d3a; display:none;"></div>
+                        <div class="upload-progress" id="uploadProgress"><i class="fas fa-spinner fa-spin"></i> Mengunggah file...</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelArsipBtn">
+                        <i class="fas fa-times"></i> Batal
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="saveArsipBtn">
+                        <i class="fas fa-save"></i> Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Info Jenis Arsip -->
+    <div id="jenisInfoModal" class="modal">
+        <div class="modal-content" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3 id="jenisInfoTitle"><i class="fas fa-info-circle" style="color: var(--primary-color); margin-right: 10px;"></i> Info Jenis Arsip</h3>
+                <span class="close-modal" id="closeJenisInfoModal">&times;</span>
+            </div>
+            <div id="jenisInfoBody" style="font-size: 0.92rem; color: #444; line-height: 1.6;"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="closeJenisInfoBtn">
+                    <i class="fas fa-times"></i> Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+<script>
+        // --- Koneksi Supabase ---
+        const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+
+        let supabaseClient = null;
+        const ARSIP_TABLE = 'arsip_sekolah';
+        const ARSIP_BUCKET = 'aset';
+        const MAX_FILE_SIZE_MB = 1;
+        const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+        let arsipCache = [];
+
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        }
+
+        let schoolData = {}; // Menyimpan data sekolah untuk keperluan export PDF (termasuk kop surat)
+
+        // --- Identitas Sekolah di Navbar ---
+        async function loadSchoolIdentity() {
+            if (!supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('identitassekolah')
+                    .select('nama_sekolah, logo, kop_sekolah')
+                    .limit(1)
+                    .single();
+
+                if (data) {
+                    schoolData = data;
+                    if (data.nama_sekolah) {
+                        document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                    }
+                    if (data.logo) {
+                        const img = document.querySelector('.navbar-brand img');
+                        img.src = data.logo;
+                        img.style.display = 'block';
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading school identity:', err);
+            }
+        }
+
+        // --- Tanggal Navbar ---
+        function updateNavbarDate() {
+            const now = new Date();
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            document.getElementById('navbarDate').textContent = now.toLocaleDateString('id-ID', options);
+        }
+
+        // --- Format Tanggal Helper ---
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;');
+        }
+
+        // --- Muat Data Arsip ---
+        async function loadArsipData() {
+            const tbody = document.getElementById('arsipTableBody');
+            if (!supabaseClient) {
+                tbody.innerHTML = `<tr><td colspan="12" style="text-align:center; color:#e74c3c;">Supabase client tidak tersedia.</td></tr>`;
+                return;
+            }
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from(ARSIP_TABLE)
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                arsipCache = data || [];
+
+                if (!arsipCache.length) {
+                    tbody.innerHTML = `<tr><td colspan="12" class="empty-state">Belum ada data arsip.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = arsipCache.map((row, idx) => `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td><span class="badge">${escapeHtml(row.kode_arsip)}</span></td>
+                        <td>${escapeHtml(row.kategori_arsip)}</td>
+                        <td>${escapeHtml(row.jenis_arsip)}</td>
+                        <td class="wrap">${escapeHtml(row.judul_arsip)}</td>
+                        <td>${escapeHtml(row.nomor_dokumen)}</td>
+                        <td>${escapeHtml(row.unit_pengolah)}</td>
+                        <td>${escapeHtml(row.jumlah_berkas)}</td>
+                        <td>${escapeHtml(row.tahun_penciptaan)}</td>
+                        <td class="wrap">${escapeHtml(row.lokasi_simpan)}</td>
+                        <td>${row.file_url ? `<a class="file-link" href="${row.file_url}" target="_blank" rel="noopener"><i class="fas fa-paperclip"></i> Lihat</a>` : `<span class="file-none">Tidak ada</span>`}</td>
+                        <td>
+                            <div class="action-icons">
+                                <button type="button" class="icon-edit" title="Edit" onclick="editArsip('${row.id}')"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="icon-delete" title="Hapus" onclick="deleteArsip('${row.id}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error('Error loading arsip:', err);
+                tbody.innerHTML = `<tr><td colspan="12" style="text-align:center; color:#e74c3c;">Gagal memuat data: ${escapeHtml(err.message)}</td></tr>`;
+            }
+        }
+
+        // --- Generate Kode Arsip Otomatis ---
+        async function generateKodeArsip() {
+            const year = new Date().getFullYear();
+            try {
+                const { count, error } = await supabaseClient
+                    .from(ARSIP_TABLE)
+                    .select('*', { count: 'exact', head: true })
+                    .gte('created_at', `${year}-01-01`)
+                    .lte('created_at', `${year}-12-31`);
+
+                const nextNum = (error ? arsipCache.length : (count || 0)) + 1;
+                return `ARS-${year}-${String(nextNum).padStart(4, '0')}`;
+            } catch (err) {
+                return `ARS-${year}-${String(arsipCache.length + 1).padStart(4, '0')}`;
+            }
+        }
+
+        // --- Buka Modal (Tambah / Edit) ---
+        async function openArsipModal() {
+            document.getElementById('arsipForm').reset();
+            document.getElementById('arsipRecordId').value = '';
+            document.getElementById('arsipExistingFileUrl').value = '';
+            document.getElementById('arsipExistingFileName').value = '';
+            document.getElementById('fileCurrentInfo').textContent = '';
+            document.getElementById('arsipModalTitle').innerHTML = '<i class="fas fa-archive" style="color: var(--primary-color); margin-right: 10px;"></i> Tambah Arsip';
+            document.getElementById('jumlahBerkas').value = 1;
+
+            const kodeInput = document.getElementById('kodeArsip');
+            kodeInput.value = 'Membuat kode...';
+            kodeInput.value = await generateKodeArsip();
+
+            document.getElementById('arsipModal').classList.add('active');
+        }
+
+        function closeArsipModal() {
+            document.getElementById('arsipModal').classList.remove('active');
+        }
+
+        // --- Edit Arsip ---
+        async function editArsip(id) {
+            const row = arsipCache.find(r => String(r.id) === String(id));
+            if (!row) return;
+
+            document.getElementById('arsipForm').reset();
+            document.getElementById('arsipModalTitle').innerHTML = '<i class="fas fa-edit" style="color: var(--primary-color); margin-right: 10px;"></i> Edit Arsip';
+            document.getElementById('arsipRecordId').value = row.id;
+            document.getElementById('kodeArsip').value = row.kode_arsip || '';
+            document.getElementById('kategoriArsip').value = row.kategori_arsip || '';
+            const jenisRadio = document.querySelector(`input[name="jenisArsip"][value="${(row.jenis_arsip || '').replace(/"/g, '\\"')}"]`);
+            if (jenisRadio) jenisRadio.checked = true;
+            document.getElementById('judulArsip').value = row.judul_arsip || '';
+            document.getElementById('nomorDokumen').value = row.nomor_dokumen || '';
+            document.getElementById('unitPengolah').value = row.unit_pengolah || '';
+            document.getElementById('jumlahBerkas').value = row.jumlah_berkas || 1;
+            document.getElementById('tahunPenciptaan').value = row.tahun_penciptaan || '';
+            document.getElementById('lokasiSimpan').value = row.lokasi_simpan || '';
+            document.getElementById('arsipExistingFileUrl').value = row.file_url || '';
+            document.getElementById('arsipExistingFileName').value = row.file_name || '';
+            document.getElementById('fileCurrentInfo').textContent = row.file_name ? `File saat ini: ${row.file_name} (pilih file baru untuk mengganti)` : '';
+
+            document.getElementById('arsipModal').classList.add('active');
+        }
+
+        // --- Hapus Arsip ---
+        async function deleteArsip(id) {
+            if (!confirm('Yakin ingin menghapus data arsip ini?')) return;
+            try {
+                const { error } = await supabaseClient
+                    .from(ARSIP_TABLE)
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                alert('Data arsip berhasil dihapus.');
+                loadArsipData();
+            } catch (err) {
+                console.error('Error deleting arsip:', err);
+                alert('Gagal menghapus data: ' + err.message);
+            }
+        }
+
+        // --- Simpan Arsip (Tambah / Update) ---
+        async function saveArsip(e) {
+            e.preventDefault();
+
+            if (!supabaseClient) {
+                alert('Supabase client tidak tersedia. Silakan refresh halaman.');
+                return;
+            }
+
+            const saveBtn = document.getElementById('saveArsipBtn');
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+            try {
+                const recordId = document.getElementById('arsipRecordId').value;
+                const kodeArsip = document.getElementById('kodeArsip').value;
+
+                let fileUrl = document.getElementById('arsipExistingFileUrl').value || null;
+                let fileName = document.getElementById('arsipExistingFileName').value || null;
+
+                const fileInput = document.getElementById('uploadFile');
+                if (fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+
+                    if (file.size > MAX_FILE_SIZE_BYTES) {
+                        alert(`Ukuran file (${(file.size / (1024 * 1024)).toFixed(2)} MB) melebihi batas maksimal ${MAX_FILE_SIZE_MB} MB.`);
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = '<i class="fas fa-save"></i> Simpan';
+                        return;
+                    }
+
+                    const progressEl = document.getElementById('uploadProgress');
+                    progressEl.style.display = 'block';
+
+                    const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+                    const path = `${kodeArsip}/${Date.now()}_${safeName}`;
+
+                    const { error: uploadError } = await supabaseClient
+                        .storage
+                        .from(ARSIP_BUCKET)
+                        .upload(path, file, { upsert: true });
+
+                    progressEl.style.display = 'none';
+
+                    if (uploadError) throw uploadError;
+
+                    const { data: publicUrlData } = supabaseClient
+                        .storage
+                        .from(ARSIP_BUCKET)
+                        .getPublicUrl(path);
+
+                    fileUrl = publicUrlData.publicUrl;
+                    fileName = file.name;
+                }
+
+                const payload = {
+                    kode_arsip: kodeArsip,
+                    kategori_arsip: document.getElementById('kategoriArsip').value,
+                    jenis_arsip: document.querySelector('input[name="jenisArsip"]:checked')?.value || '',
+                    judul_arsip: document.getElementById('judulArsip').value,
+                    nomor_dokumen: document.getElementById('nomorDokumen').value,
+                    unit_pengolah: document.getElementById('unitPengolah').value,
+                    jumlah_berkas: parseInt(document.getElementById('jumlahBerkas').value) || 1,
+                    tahun_penciptaan: parseInt(document.getElementById('tahunPenciptaan').value) || null,
+                    lokasi_simpan: document.getElementById('lokasiSimpan').value,
+                    file_url: fileUrl,
+                    file_name: fileName
+                };
+
+                let error;
+                if (recordId) {
+                    ({ error } = await supabaseClient.from(ARSIP_TABLE).update(payload).eq('id', recordId));
+                } else {
+                    ({ error } = await supabaseClient.from(ARSIP_TABLE).insert([payload]));
+                }
+
+                if (error) throw error;
+
+                alert(recordId ? 'Data arsip berhasil diperbarui.' : 'Data arsip berhasil ditambahkan.');
+                closeArsipModal();
+                loadArsipData();
+            } catch (err) {
+                console.error('Error saving arsip:', err);
+                alert('Gagal menyimpan data: ' + err.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Simpan';
+            }
+        }
+
+        // --- Export PDF ---
+        async function exportPdf() {
+            if (!arsipCache.length) {
+                alert('Belum ada data arsip untuk diexport.');
+                return;
+            }
+
+            const exportBtn = document.getElementById('btnExportPdf');
+            exportBtn.disabled = true; // dock: cukup dinonaktifkan selama PDF dibuat
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const margin = 28; // setara kira-kira 10mm
+                let yPos = margin;
+
+                // Tambah KOP Sekolah kalau ada
+                if (schoolData.kop_sekolah) {
+                    try {
+                        const response = await fetch(schoolData.kop_sekolah);
+                        const blob = await response.blob();
+                        const base64data = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.readAsDataURL(blob);
+                        });
+
+                        const imgProps = doc.getImageProperties(base64data);
+                        const pdfWidth = pageWidth - margin * 2;
+                        const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                        const fmt = /^data:image\/jpe?g/i.test(base64data) ? 'JPEG' : 'PNG';
+                        doc.addImage(base64data, fmt, margin, margin, pdfWidth, imgHeight);
+                        yPos = margin + imgHeight + 18;
+                    } catch (err) {
+                        console.error('Gagal memuat KOP Sekolah:', err);
+                    }
+                }
+
+                // Judul Dokumen
+                const namaSekolah = schoolData.nama_sekolah || document.querySelector('.navbar-brand span')?.textContent || 'Sekolah';
+                doc.setFontSize(15);
+                doc.setTextColor(0);
+                doc.text('Data Arsip Sekolah', pageWidth / 2, yPos, { align: 'center' });
+                yPos += 16;
+
+                doc.setFontSize(10);
+                doc.setTextColor(100);
+                doc.text(namaSekolah, pageWidth / 2, yPos, { align: 'center' });
+                yPos += 12;
+
+                doc.setFontSize(8.5);
+                doc.text(`Dicetak: ${new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`, pageWidth / 2, yPos, { align: 'center' });
+                yPos += 14;
+
+                const rows = arsipCache.map((row, idx) => [
+                    idx + 1,
+                    row.kode_arsip || '-',
+                    row.kategori_arsip || '-',
+                    row.jenis_arsip || '-',
+                    row.judul_arsip || '-',
+                    row.nomor_dokumen || '-',
+                    row.unit_pengolah || '-',
+                    row.jumlah_berkas || '-',
+                    row.tahun_penciptaan || '-',
+                    row.lokasi_simpan || '-'
+                ]);
+
+                doc.autoTable({
+                    startY: yPos,
+                    head: [['No', 'Kode Arsip', 'Kategori', 'Jenis', 'Judul/Nama Arsip', 'No. Dokumen', 'Unit Pengolah', 'Jml Berkas', 'Tahun', 'Lokasi Simpan']],
+                    body: rows,
+                    styles: { fontSize: 7.5, cellPadding: 4 },
+                    headStyles: { fillColor: [102, 126, 234] },
+                    theme: 'grid'
+                });
+
+                doc.save(`Arsip_Sekolah_${new Date().toISOString().slice(0, 10)}.pdf`);
+            } catch (err) {
+                console.error('Error exporting PDF:', err);
+                alert('Gagal membuat PDF: ' + err.message);
+            } finally {
+                exportBtn.disabled = false;
+            }
+        }
+
+        // --- Data Informasi Jenis Arsip ---
+        const jenisArsipInfo = {
+            'Arsip Aktif': {
+                deskripsi: 'Arsip yang masih sering digunakan dan diakses langsung oleh unit kerja karena kegiatan yang berkaitan dengannya masih berjalan. Biasanya disimpan di unit pengolah/ruang kerja untuk memudahkan akses harian.',
+                contoh: [
+                    'Surat masuk & keluar tahun berjalan',
+                    'Absensi/daftar hadir bulan ini',
+                    'Buku kas / laporan keuangan tahun berjalan',
+                    'Data siswa aktif tahun ajaran berjalan',
+                    'SK pegawai yang masih berlaku'
+                ]
+            },
+            'Arsip Inaktif': {
+                deskripsi: 'Arsip yang frekuensi penggunaannya sudah menurun karena kegiatannya telah selesai, namun masih perlu disimpan sesuai jadwal retensi arsip. Biasanya dipindahkan ke pusat arsip (records center), tidak lagi di unit kerja.',
+                contoh: [
+                    'Laporan tahunan tahun-tahun sebelumnya',
+                    'Surat-surat lama yang sudah jarang dipakai',
+                    'Berkas kepegawaian pegawai yang sudah pindah/pensiun',
+                    'Dokumen keuangan tahun lalu yang sudah diaudit'
+                ]
+            },
+            'Arsip Vital': {
+                deskripsi: 'Arsip yang keberadaannya merupakan syarat dasar bagi kelangsungan operasional sekolah. Jika hilang atau rusak, arsip ini tidak dapat digantikan atau dibuat ulang, sehingga harus disimpan dengan pengamanan khusus.',
+                contoh: [
+                    'Akta pendirian / izin operasional sekolah',
+                    'Sertifikat tanah dan bangunan sekolah',
+                    'Ijazah dan dokumen kelulusan asli',
+                    'SK pengangkatan Kepala Sekolah',
+                    'Dokumen akreditasi sekolah'
+                ]
+            },
+            'Arsip Statis': {
+                deskripsi: 'Arsip yang sudah tidak digunakan untuk kegiatan administrasi sehari-hari, tetapi memiliki nilai kesejarahan, kebuktian, atau pertanggungjawaban jangka panjang. Biasanya disimpan secara permanen sebagai bahan dokumentasi/sejarah.',
+                contoh: [
+                    'Buku induk siswa lulusan lama',
+                    'Dokumentasi sejarah berdirinya sekolah',
+                    'Piagam penghargaan sekolah',
+                    'Foto/video kegiatan bersejarah sekolah'
+                ]
+            }
+        };
+
+        function openJenisInfo(jenis) {
+            const info = jenisArsipInfo[jenis];
+            if (!info) return;
+
+            document.getElementById('jenisInfoTitle').innerHTML = `<i class="fas fa-info-circle" style="color: var(--primary-color); margin-right: 10px;"></i> ${escapeHtml(jenis)}`;
+            document.getElementById('jenisInfoBody').innerHTML = `
+                <p>${escapeHtml(info.deskripsi)}</p>
+                <p style="margin-top: 12px; font-weight: 600; color: #333;">Contoh arsipnya:</p>
+                <ul class="jenis-info-examples">
+                    ${info.contoh.map(c => `<li>${escapeHtml(c)}</li>`).join('')}
+                </ul>
+            `;
+            document.getElementById('jenisInfoModal').classList.add('active');
+        }
+
+        function closeJenisInfo() {
+            document.getElementById('jenisInfoModal').classList.remove('active');
+        }
+
+        // --- Event Listener ---
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNavbarDate();
+            loadSchoolIdentity();
+            loadArsipData();
+
+            document.getElementById('uploadFile').addEventListener('change', (e) => {
+                const warningEl = document.getElementById('fileSizeWarning');
+                const file = e.target.files && e.target.files[0];
+                if (file && file.size > MAX_FILE_SIZE_BYTES) {
+                    warningEl.textContent = `File terlalu besar (${(file.size / (1024 * 1024)).toFixed(2)} MB). Maksimal ${MAX_FILE_SIZE_MB} MB.`;
+                    warningEl.style.display = 'block';
+                    e.target.value = '';
+                } else {
+                    warningEl.style.display = 'none';
+                    warningEl.textContent = '';
+                }
+            });
+
+            document.getElementById('btnTambahArsip').addEventListener('click', openArsipModal);
+            document.getElementById('btnExportPdf').addEventListener('click', exportPdf);
+            document.getElementById('closeArsipModal').addEventListener('click', closeArsipModal);
+            document.getElementById('cancelArsipBtn').addEventListener('click', closeArsipModal);
+            document.getElementById('arsipForm').addEventListener('submit', saveArsip);
+
+            document.querySelectorAll('#jenisArsipGroup .info-icon').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openJenisInfo(btn.dataset.jenis);
+                });
+            });
+
+            document.getElementById('closeJenisInfoModal').addEventListener('click', closeJenisInfo);
+            document.getElementById('closeJenisInfoBtn').addEventListener('click', closeJenisInfo);
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key !== 'Escape') return;
+                if (document.getElementById('jenisInfoModal').classList.contains('active')) closeJenisInfo();
+                else if (document.getElementById('arsipModal').classList.contains('active')) closeArsipModal();
+            });
+
+            window.addEventListener('click', (e) => {
+                const modal = document.getElementById('arsipModal');
+                if (e.target === modal) closeArsipModal();
+
+                const infoModal = document.getElementById('jenisInfoModal');
+                if (e.target === infoModal) closeJenisInfo();
+            });
+        });
+    </script>
+</body>
+</html>

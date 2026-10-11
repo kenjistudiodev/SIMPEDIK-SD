@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Laporan Piket Umum Siswa - SIMPEDIK</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary:#667eea;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16);--text-muted:#66627f;--border-color:rgba(0,0,0,.15)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
+body{color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,url('bg1.png') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.navbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.container{width:100%;max-width:860px;margin:0 auto;padding:22px 12px}
+.container>header{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.container>header h1{font-size:clamp(26px,4.5vw,36px);letter-spacing:-.02em;line-height:1.1}
+.container>header h1 i{margin-right:8px;font-size:.8em}
+.container>header p{opacity:.88;font-size:14px;margin-top:4px}
+.content{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663}
+.hint{font-size:12px;color:var(--muted);margin:3px 0 0 2px}
+.message{display:none;margin:14px 16px 0;padding:10px 14px;border-radius:10px;font-size:14px;font-weight:600}
+.message.success{background:#e7f7ee;color:#1b6b46}.message.error{background:#fdeaea;color:#a12622}
+/* Dock */
+.button-group{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:4px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.62);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.button-group button,.button-group a{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:70px;padding:6px 6px;border-radius:16px;border:0;background:none;font-size:11.5px;font-weight:600;color:var(--ink);text-decoration:none;cursor:pointer;transition:transform .2s}
+.button-group button:hover:not(:disabled),.button-group a:hover{transform:translateY(-6px) scale(1.08)}.button-group button:active,.button-group a:active{transform:scale(.95)}
+.button-group button:disabled{opacity:.5;cursor:not-allowed}
+.button-group button>i,.button-group a>i{position:relative;overflow:hidden;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;font-size:21px;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.button-group button>i::after,.button-group a>i::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+@media (max-width:520px){.button-group{gap:0;padding:6px}.button-group button,.button-group a{min-width:58px;font-size:10.5px;padding:4px}.button-group button>i,.button-group a>i{width:44px;height:44px;font-size:19px}.navbar-brand span{max-width:60vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+#dashboardBtn>i{background:linear-gradient(160deg,#8fa4ff,#4c5fd5)}#refreshBtn>i{background:linear-gradient(160deg,#6cb8ff,#2a74d6)}
+#addRombelBtn>i{background:linear-gradient(160deg,#59d6a0,#1b8a5c)}#exportPdfBtn>i{background:linear-gradient(160deg,#f2706b,#c92f2c)}
+.message{display:none;margin:14px 16px 0;padding:10px 14px;border-radius:10px;font-size:14px;font-weight:600}
+.message.success{background:#e7f7ee;color:#1b6b46}.message.error{background:#fdeaea;color:#a12622}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:16px 16px 0}
+.stat{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:30px;line-height:1.1;color:var(--deep)}
+.stat small{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:2px}
+.stat i{flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font-size:18px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1.5px 0 rgba(255,255,255,.4)}
+.sec{padding:16px}
+.sec>h2{font-size:13px;font-weight:600;color:var(--muted);margin:0 0 7px 6px}
+.tablebox{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:340px}
+th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:11px 14px;background:#f7f5fc;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid rgba(0,0,0,.05)}
+tr:last-child td{border:0}
+tbody tr:hover{background:rgba(102,126,234,.06)}
+td.n{width:52px;color:var(--muted)}td.act{text-align:right;white-space:nowrap;width:96px}
+.kls{display:inline-block;min-width:36px;text-align:center;font-weight:700;padding:2px 11px;border-radius:99px;background:#e9edff;color:#3a46a8}
+.ib{width:32px;height:32px;border-radius:9px;border:0;background:rgba(0,0,0,.06);color:#4c5fd5;cursor:pointer;font-size:14px}
+.ib.del{color:#c92f2c}.ib:hover{background:rgba(102,126,234,.2)}.ib.del:hover{background:rgba(229,72,77,.18)}
+.empty{padding:26px 14px;text-align:center;color:var(--muted);font-size:14px}
+.empty.err{color:#a12622}
+.foot{text-align:center;color:rgba(255,255,255,.75);font-size:12px;margin-top:16px;text-shadow:0 1px 6px rgba(0,0,0,.4)}
+/* Modal */
+.overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:12px;background:rgba(20,15,50,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:60}
+.overlay.on{display:flex}
+.modal{width:100%;max-width:420px;border-radius:14px;overflow:hidden;background:rgba(250,248,255,.97);box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 30px 80px rgba(0,0,0,.45);animation:pop .2s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes pop{from{opacity:0;transform:scale(.95) translateY(8px)}}
+.tb .x{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.08);font-size:17px;line-height:1;color:#4a4663;cursor:pointer}
+.tb .x:hover{background:rgba(0,0,0,.16)}
+.modal form{padding:16px}
+.fg{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:12px}
+.fg label{display:block;font-size:12px;font-weight:600;line-height:16px;color:var(--muted);margin:0 0 4px 2px}
+.fg label.req::after{content:" *";color:#e5484d}
+.fg input{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none}
+.fg input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.hint{font-size:12px;color:var(--muted);margin:3px 0 0 2px}
+.merr{display:none;margin-top:12px;padding:9px 12px;border-radius:10px;font-size:13px;font-weight:600;background:#fdeaea;color:#a12622}
+.acts{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+.btn{height:38px;padding:0 18px;border:0;border-radius:10px;font-size:14px;font-weight:600;color:#fff;cursor:pointer;background:linear-gradient(#7b8ff0,#4c5fd5);box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn:hover{filter:brightness(1.06)}.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn.alt{background:rgba(0,0,0,.08);color:var(--ink);box-shadow:none}
+@media (max-width:520px){.stats{grid-template-columns:minmax(0,1fr)}.sec,.modal form{padding:12px}.stats{padding:12px 12px 0}}
+
+/* ===== Tambahan khusus halaman Piket Harian ===== */
+.container{max-width:1180px}
+.navbar .clock{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;opacity:.92;white-space:nowrap}
+.content{margin-bottom:16px}
+.tb .tbadge{position:absolute;right:12px;font-size:11.5px;font-weight:700;color:#fff;padding:2px 10px;border-radius:99px;background:linear-gradient(160deg,#f2706b,#c92f2c);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.guru-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.guru-grid>p{grid-column:1/-1;text-align:center;color:var(--muted)}
+.toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.toolbar .grp{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.toolbar .grp.end{margin-left:auto}
+.search{position:relative}
+.search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px}
+.search input{height:36px;width:230px;padding:0 12px 0 32px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none}
+.sel{height:36px;padding:0 10px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none;cursor:pointer}
+.search input:focus,.sel:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.custom-table{min-width:640px}
+.custom-table th,.custom-table td{white-space:nowrap}
+#jurnalPagination{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:14px;font-size:13px;color:var(--muted)}
+/* tombol (gaya rombel.html, dipakai juga oleh tombol hasil render JS) */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:auto;padding:8px 16px;text-decoration:none;font-family:inherit}
+.btn-danger{background:linear-gradient(#f2706b,#d63d3a)}
+.btn-warning{background:linear-gradient(#ffc861,#e08a0c)}
+.btn-secondary{background:rgba(0,0,0,.08);color:var(--ink);box-shadow:none}
+.btn-secondary:disabled{opacity:.45}
+/* dock */
+#dashboardBtn>i{background:linear-gradient(160deg,#8fa4ff,#4c5fd5)}
+#settingPiketSiswaBtn>i{background:linear-gradient(160deg,#ffc861,#d9820f)}
+#inputJurnalBtn>i{background:linear-gradient(160deg,#59d6a0,#1b8a5c)}
+#viewAllPiketBtn>i{background:linear-gradient(160deg,#b58cf5,#7a45d6)}
+/* ===== Tambahan khusus halaman Laporan Piket Umum Siswa ===== */
+.stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:600px){.stats{grid-template-columns:minmax(0,1fr)}}
+.st{display:inline-block;font-weight:700;font-size:12px;padding:2px 11px;border-radius:99px}
+.st.ya{background:#dff7ec;color:#13734c}.st.tidak{background:#fdeaea;color:#a12622}
+#paginationControls{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:14px;font-size:13px;color:var(--muted)}
+.sel[type="date"]{min-width:150px}
+@media (max-width:520px){.navbar-brand span{max-width:60vw}.search,.search input{width:100%}.toolbar .grp{width:100%}.toolbar .grp.end{margin-left:0}}
+</style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="dasboradmin.html" class="navbar-brand">
+            <img src="" alt="Logo Sekolah" style="display: none;">
+            <span></span>
+        </a>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <header>
+                <h1><i class="fas fa-clipboard-check"></i> Laporan Piket Umum Siswa</h1>
+                <p>Rekap pelaksanaan piket umum siswa berdasarkan jurnal piket</p>
+            </header>
+
+            <div class="content">
+                <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Jurnal Piket Siswa</h2></div>
+
+                <div class="stats">
+                    <div class="stat">
+                        <div><b id="statSiswaAktif">0</b><small>Jumlah Siswa Aktif</small></div>
+                        <i class="fas fa-users" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"></i>
+                    </div>
+                    <div class="stat">
+                        <div><b id="statMelaksanakan">0</b><small>Jumlah Melaksanakan Piket</small></div>
+                        <i class="fas fa-check-circle" style="background:linear-gradient(160deg,#59d6a0,#1b8a5c)"></i>
+                    </div>
+                    <div class="stat">
+                        <div><b id="statTidakMelaksanakan">0</b><small>Jumlah Tidak Melaksanakan Piket</small></div>
+                        <i class="fas fa-times-circle" style="background:linear-gradient(160deg,#f2706b,#c92f2c)"></i>
+                    </div>
+                </div>
+
+                <div class="sec">
+                    <div class="toolbar">
+                        <div class="grp">
+                            <input type="date" id="filterDate" class="sel" title="Filter Tanggal">
+                            <select id="filterKelas" class="sel" title="Filter Kelas">
+                                <option value="">Semua Kelas</option>
+                            </select>
+                        </div>
+                        <div class="grp end">
+                            <label class="search"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Cari data..."></label>
+                        </div>
+                    </div>
+
+                    <div class="tablebox"><div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Id Petugas</th>
+                                    <th>Tanggal</th>
+                                    <th>Nama Siswa</th>
+                                    <th>NISN</th>
+                                    <th>Kelas</th>
+                                    <th>Area Piket</th>
+                                    <th>Status Piket</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="jurnalTableBody"></tbody>
+                        </table>
+                    </div></div>
+                    <div id="paginationControls"></div>
+                </div>
+            </div>
+
+            <p class="foot">&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik) 2026<br>CopyRight Kenji Studio Developer.</p>
+        </div>
+    </main>
+
+    <!-- Dock -->
+    <div class="button-group">
+        <a href="dasboradmin.html" id="dashboardBtn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+        <button type="button" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+        <button type="button" id="exportPdfBtn"><i class="fas fa-file-pdf"></i> Export Pdf</button>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+        
+        let supabaseClient;
+        let schoolData = {}; 
+
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            async function loadSchoolIdentity() {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('identitassekolah')
+                        .select('nama_sekolah, logo, kop_sekolah')
+                        .limit(1)
+                        .single();
+                    
+                    if (data) {
+                        schoolData = data; 
+                        if (data.nama_sekolah) {
+                            document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                        }
+                        if (data.logo) {
+                            const img = document.querySelector('.navbar-brand img');
+                            img.src = data.logo;
+                            img.style.display = 'block';
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error loading school identity:", err);
+                }
+            }
+            document.addEventListener('DOMContentLoaded', loadSchoolIdentity);
+
+            async function loadKelasOptions() {
+                const select = document.getElementById('filterKelas');
+                if (!select) return;
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('rombel')
+                        .select('nama_kelas')
+                        .order('nama_kelas');
+                    
+                    if (error) throw error;
+                    
+                    if (data) {
+                        data.forEach(r => {
+                            const opt = document.createElement('option');
+                            opt.value = r.nama_kelas;
+                            opt.textContent = r.nama_kelas;
+                            select.appendChild(opt);
+                        });
+                    }
+                } catch (err) {
+                    console.error("Error loading kelas options:", err);
+                }
+            }
+            document.addEventListener('DOMContentLoaded', loadKelasOptions);
+        }
+
+
+        const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+        let jurnalDataList = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        async function loadStats() {
+            try {
+                const { count: siswaCount, error: siswaError } = await supabaseClient
+                    .from('datasiswa')
+                    .select('*', { count: 'exact', head: true });
+                
+                if (!siswaError) {
+                    document.getElementById('statSiswaAktif').textContent = siswaCount || 0;
+                }
+
+                const { data: jurnalData, error: jurnalError } = await supabaseClient
+                    .from('jurnalpiket')
+                    .select('status');
+
+                if (!jurnalError && jurnalData) {
+                    const melaksanakan = jurnalData.filter(item => item.status === 'Ya').length;
+                    const tidakMelaksanakan = jurnalData.filter(item => item.status === 'Tidak').length;
+                    
+                    document.getElementById('statMelaksanakan').textContent = melaksanakan;
+                    document.getElementById('statTidakMelaksanakan').textContent = tidakMelaksanakan;
+                }
+
+            } catch (err) {
+                console.error("Error loading stats:", err);
+            }
+        }
+
+        async function loadJurnalData() {
+            const tableBody = document.getElementById('jurnalTableBody');
+            tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">Memuat data...</td></tr>';
+
+            try {
+                if (!supabaseClient) {
+                    throw new Error("Koneksi database belum siap.");
+                }
+
+                const { data, error } = await supabaseClient
+                    .from('jurnalpiket')
+                    .select('*')
+                    .order('tanggal', { ascending: false });
+
+                if (error) throw error;
+
+                jurnalDataList = data || [];
+                renderTable(1);
+                loadStats(); 
+
+            } catch (err) {
+                console.error(err);
+                tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:red;">Gagal memuat: ${err.message}</td></tr>`;
+            }
+        }
+
+        function renderTable(page = 1) {
+            currentPage = page;
+            const tableBody = document.getElementById('jurnalTableBody');
+            const searchFilter = document.getElementById('searchInput').value.toLowerCase();
+            const dateFilter = document.getElementById('filterDate').value;
+            const kelasFilter = document.getElementById('filterKelas').value;
+
+            const filteredData = jurnalDataList.filter(item => {
+                const matchesSearch = (
+                    (item.id_piket || '') + ' ' +
+                    (item.nama_siswa || '') + ' ' + 
+                    (item.kelas || '') + ' ' + 
+                    (item.area || '') + ' ' + 
+                    (item.nisn || '') + ' ' +
+                    (item.id_petugas || '')
+                ).toLowerCase().includes(searchFilter);
+
+                const matchesDate = !dateFilter || (item.tanggal && item.tanggal === dateFilter);
+                const matchesKelas = !kelasFilter || (item.kelas && item.kelas === kelasFilter);
+
+                return matchesSearch && matchesDate && matchesKelas;
+            });
+
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedData = filteredData.slice(start, end);
+
+            tableBody.innerHTML = '';
+
+            if (paginatedData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px;">Data tidak ditemukan.</td></tr>';
+            } else {
+                paginatedData.forEach(item => {
+                    let formattedDate = item.tanggal;
+                    if (item.tanggal) {
+                        const dateObj = new Date(item.tanggal);
+                        formattedDate = dateObj.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                    }
+
+                    const row = document.createElement('tr');
+                    const statusClass = item.status === 'Ya' ? 'ya' : 'tidak';
+                    row.innerHTML = `
+                        <td>${esc(item.id_piket)}</td>
+                        <td>${esc(item.id_petugas || '-')}</td>
+                        <td>${esc(formattedDate)}</td>
+                        <td>${esc(item.nama_siswa)}</td>
+                        <td>${esc(item.nisn || '-')}</td>
+                        <td><span class="kls">${esc(item.kelas)}</span></td>
+                        <td>${esc(item.area)}</td>
+                        <td><span class="st ${statusClass}">${esc(item.status)}</span></td>
+                        <td class="act">
+                            <button type="button" class="ib del" onclick="deleteJurnal('${esc(item.id_piket)}')" title="Hapus Jurnal"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            renderPaginationControls(totalPages, page);
+        }
+
+        function renderPaginationControls(totalPages, page) {
+            const container = document.getElementById('paginationControls');
+            container.innerHTML = '';
+            
+            if (totalPages <= 1) return;
+
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'btn btn-secondary';
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.disabled = page === 1;
+            prevBtn.onclick = () => renderTable(page - 1);
+            container.appendChild(prevBtn);
+
+            const info = document.createElement('span');
+            info.style.fontWeight = '600';
+            info.textContent = `Halaman ${page} dari ${totalPages}`;
+            container.appendChild(info);
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'btn btn-secondary';
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.disabled = page === totalPages;
+            nextBtn.onclick = () => renderTable(page + 1);
+            container.appendChild(nextBtn);
+        }
+
+        window.deleteJurnal = async function(id) {
+            if(confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                try {
+                    const { error } = await supabaseClient.from('jurnalpiket').delete().eq('id_piket', id);
+                    if(error) throw error;
+                    loadJurnalData();
+                    loadStats();
+                } catch(err) {
+                    alert('Gagal menghapus: ' + err.message);
+                }
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', () => renderTable(1));
+        document.getElementById('filterDate').addEventListener('change', () => renderTable(1));
+        document.getElementById('filterKelas').addEventListener('change', () => renderTable(1));
+        document.getElementById('refreshBtn').addEventListener('click', loadJurnalData);
+
+        document.getElementById('exportPdfBtn').addEventListener('click', async () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('l', 'mm', 'a4'); // Landscape
+            const pageWidth = doc.internal.pageSize.getWidth();
+            let yPos = 20;
+
+            if (schoolData.kop_sekolah) {
+                try {
+                    const response = await fetch(schoolData.kop_sekolah);
+                    const blob = await response.blob();
+                    const base64data = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.readAsDataURL(blob);
+                    });
+
+                    const imgProps = doc.getImageProperties(base64data);
+                    const pdfWidth = pageWidth - 20; 
+                    const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    
+                    doc.addImage(base64data, 'PNG', 10, 10, pdfWidth, imgHeight);
+                    yPos = 10 + imgHeight + 10; // Update posisi Y di bawah gambar
+                } catch (err) {
+                    console.error("Gagal memuat KOP Sekolah:", err);
+                }
+            }
+            
+            doc.setFontSize(18);
+            doc.text("Laporan Piket Umum Siswa", pageWidth / 2, yPos, { align: 'center' });
+            yPos += 8;
+            
+            const schoolName = schoolData.nama_sekolah || document.querySelector('.navbar-brand span').textContent || 'SMK Negeri 1 Mentok';
+            doc.setFontSize(12);
+            doc.setTextColor(100);
+            doc.text(schoolName, pageWidth / 2, yPos, { align: 'center' });
+            yPos += 10;
+
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            const dateFilter = document.getElementById('filterDate').value;
+            const kelasFilter = document.getElementById('filterKelas').value;
+            
+            let dataToExport = jurnalDataList.filter(item => {
+                const matchesSearch = (
+                    (item.id_piket || '') + ' ' +
+                    (item.nama_siswa || '') + ' ' + 
+                    (item.kelas || '') + ' ' + 
+                    (item.area || '') + ' ' + 
+                    (item.nisn || '') + ' ' +
+                    (item.id_petugas || '')
+                ).toLowerCase().includes(searchTerm);
+
+                const matchesDate = !dateFilter || (item.tanggal && item.tanggal === dateFilter);
+                const matchesKelas = !kelasFilter || (item.kelas && item.kelas === kelasFilter);
+
+                return matchesSearch && matchesDate && matchesKelas;
+            });
+
+            const tableBody = dataToExport.map(item => {
+                let formattedDate = item.tanggal;
+                if (item.tanggal) {
+                    const dateObj = new Date(item.tanggal);
+                    formattedDate = dateObj.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                }
+                return [
+                    item.id_piket,
+                    item.id_petugas || '-',
+                    formattedDate,
+                    item.nama_siswa,
+                    item.nisn || '-',
+                    item.kelas,
+                    item.area,
+                    item.status
+                ];
+            });
+
+            doc.autoTable({
+                head: [['Id', 'Id Petugas', 'Tanggal', 'Nama Siswa', 'NISN', 'Kelas', 'Area Piket', 'Status Piket']],
+                body: tableBody,
+                startY: yPos,
+                theme: 'grid',
+                headStyles: { fillColor: [102, 126, 234] },
+                styles: { fontSize: 9 }
+            });
+
+            doc.save('Laporan_Piket_Umum_Siswa.pdf');
+        });
+
+        document.addEventListener('DOMContentLoaded', loadJurnalData);
+    </script>
+</body>
+</html>

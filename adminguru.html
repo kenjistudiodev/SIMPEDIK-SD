@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>SIMPEDIK</title>
+    <!-- Icon Kece -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Lib Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary-color:#667eea;--secondary-color:#764ba2;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.menubar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-date{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;opacity:.9;white-space:nowrap}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:22px 12px}
+.head{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.head h1{font-size:clamp(28px,4.5vw,38px);letter-spacing:-.02em;line-height:1.1}
+.head p{opacity:.88;font-size:14px;margin-top:4px}
+.win{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663;text-align:center}
+.tb a{position:absolute;right:12px;font-size:12px;font-weight:600;color:#4c5fd5;text-decoration:none}.tb a:hover{text-decoration:underline}
+.wb{padding:16px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.stat .wb{display:flex;align-items:center;gap:14px}
+.stat .ic{flex:none;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.35)}
+.stat small{display:block;color:var(--muted);font-size:13px}.stat b{font-size:30px;line-height:1.1;color:var(--deep)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.grid2>.win{margin-bottom:16px}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:420px;scrollbar-width:thin}
+.table-responsive::-webkit-scrollbar{height:8px;width:8px}.table-responsive::-webkit-scrollbar-thumb{background:rgba(0,0,0,.28);border-radius:9px}
+.custom-table{width:100%;border-collapse:collapse;font-size:14px;min-width:480px}
+.custom-table th{position:sticky;top:0;background:#efecf7;text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line)}
+.custom-table td{padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.05)}.custom-table tr:last-child td{border:0}.custom-table tbody tr:hover{background:rgba(102,126,234,.07)}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;color:#fff}.bg-danger{background:#e74c3c}.bg-warning{background:#f1c40f;color:#333}.bg-success{background:#2ecc71}
+.main-footer{text-align:center;color:rgba(255,255,255,.85);font-size:12px;padding:8px 0 4px}
+/* Dock */
+.dock{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:6px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.6);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.d{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:74px;padding:6px 8px;border-radius:16px;font-size:11.5px;font-weight:600;color:var(--ink);transition:transform .2s}
+.d:hover{transform:translateY(-6px) scale(1.08)}.d:active{transform:scale(.95)}
+.d .ic,.item .ic{position:relative;overflow:hidden;display:grid;place-items:center;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.d .ic{width:48px;height:48px;border-radius:13px;font-size:21px}
+.d .ic::after,.item .ic::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+.d .ic i,.item .ic i{position:relative;z-index:1}
+/* Slide-up sheet */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(10,8,30,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.sheet{position:fixed;left:50%;bottom:0;z-index:50;width:min(660px,100%);max-height:86vh;overflow:auto;transform:translate(-50%,105%);transition:transform .38s cubic-bezier(.2,.9,.25,1);padding:10px 16px calc(22px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(36,28,86,.62);backdrop-filter:saturate(200%) blur(28px);-webkit-backdrop-filter:saturate(200%) blur(28px);color:#fff;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 -18px 50px rgba(0,0,0,.4)}
+.open .scrim{opacity:1;visibility:visible}.open .sheet{transform:translate(-50%,0)}
+.grab{width:40px;height:5px;border-radius:9px;background:rgba(255,255,255,.5);margin:0 auto 12px}
+.sh{position:relative;display:flex;align-items:center;justify-content:center;min-height:36px;margin-bottom:12px}.sh h2{font-size:19px}
+.x{position:absolute;right:0;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.25);font-size:20px;line-height:1}.x:hover{background:rgba(255,255,255,.4)}
+.list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 6px}
+.item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 4px;border-radius:18px;text-align:center;font-size:13px;font-weight:700;line-height:1.25;color:#fff;text-decoration:none;transition:transform .2s,background .2s}
+.item:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}.item:active{transform:scale(.96)}
+.item .ic{width:60px;height:60px;border-radius:16px;font-size:26px}
+.confirm{text-align:center;padding:4px 8px 6px}.confirm p{opacity:.9;margin-bottom:16px}.confirm .acts{display:flex;gap:10px;justify-content:center}
+/* Modal form -> slide-up */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,8,30,.45);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.modal.active{opacity:1;visibility:visible}
+.modal-content{width:min(560px,100%);max-height:90vh;overflow:auto;padding:12px 20px calc(20px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(250,248,255,.97);box-shadow:0 -18px 50px rgba(0,0,0,.4);transform:translateY(105%);transition:transform .38s cubic-bezier(.2,.9,.25,1)}
+.modal.active .modal-content{transform:none}
+.modal-content::before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:rgba(0,0,0,.18);margin:0 auto 12px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-header h3{font-size:18px;color:var(--deep)}
+.close-modal{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--track);font-size:20px;cursor:pointer;color:var(--muted)}.close-modal:hover{background:#ff5f57;color:#fff}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:0 0 4px 2px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;outline:none}
+.form-group textarea{min-height:110px;resize:vertical}.form-group input[readonly]{background:#f0eef6;color:var(--muted)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.char-counter{display:block;text-align:right;font-size:12px;color:var(--muted)}
+.modal-footer{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 18px;border-radius:10px;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(160deg,#7b8cf5,#5568d8);box-shadow:0 1px 2px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:hover{filter:brightness(1.06)}.btn.alt,.btn-secondary{background:rgba(120,120,128,.2);color:var(--ink);box-shadow:none}.btn.red{background:linear-gradient(160deg,#f2706b,#d63d3a)}
+.btn:disabled,.form-group textarea:disabled,.form-group select:disabled{opacity:.55;cursor:not-allowed}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.list{grid-template-columns:repeat(3,minmax(0,1fr))}.item .ic{width:54px;height:54px}.bar-date i{display:none}.stats{gap:10px}.stat b{font-size:24px}.d{min-width:64px}.dock{gap:2px;padding:6px}.navbar-brand span{max-width:42vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* ===== Komponen khusus halaman guru (tema sama dengan dasboradmin) ===== */
+.biodata-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;width:100%}
+.biodata-item{display:flex;align-items:center;gap:14px;background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 0 0 .5px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.06)}
+.biodata-icon{flex:none;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.35)}
+.biodata-text{display:flex;flex-direction:column;min-width:0}
+.biodata-text .label{font-size:12px;color:var(--muted);font-weight:600}
+.biodata-text .value{font-size:17px;font-weight:700;color:var(--deep);word-break:break-word}
+.bio-photo{width:120px;height:120px;object-fit:cover;border-radius:50%;border:4px solid #fff;box-shadow:0 6px 16px rgba(102,126,234,.35);background:#f0eef6}
+.d.active{transform:translateY(-6px) scale(1.08)}
+.overlay{position:fixed;inset:0;z-index:40;background:rgba(10,8,30,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.overlay.active{opacity:1;visibility:visible}
+.menu-sheet{position:fixed;left:50%;bottom:0;z-index:50;width:min(660px,100%);max-height:86vh;overflow:auto;transform:translate(-50%,105%);transition:transform .38s cubic-bezier(.2,.9,.25,1);padding:10px 16px calc(22px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(36,28,86,.62);backdrop-filter:saturate(200%) blur(28px);-webkit-backdrop-filter:saturate(200%) blur(28px);color:#fff;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 -18px 50px rgba(0,0,0,.4)}
+.menu-sheet.active{transform:translate(-50%,0)}
+.menu-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 6px}
+.menu-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 4px;border-radius:18px;text-align:center;font-size:13px;font-weight:700;line-height:1.25;color:#fff;text-decoration:none;transition:transform .2s,background .2s}
+.menu-card:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}.menu-card:active{transform:scale(.96)}
+.icon-box{position:relative;overflow:hidden;width:60px;height:60px;border-radius:16px;font-size:26px;display:grid;place-items:center;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.icon-box::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+.icon-box i{position:relative;z-index:1}
+.pw-wrap{position:relative}.pw-wrap input{padding-right:40px}.pw-wrap i{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted)}
+.form-group small{color:var(--muted);font-size:12px}
+.notice{text-align:center}.notice .big{font-size:3.4rem;color:#f5a524;margin-bottom:12px}.notice h3{color:var(--deep);margin-bottom:8px}.notice p{color:var(--muted);margin-bottom:18px}
+.notice .btn{width:100%}
+.ann-box{white-space:pre-wrap;text-align:left;background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:14px;color:var(--ink);margin-bottom:12px}
+.ann-role{color:var(--muted);font-size:13px;font-style:italic;margin-bottom:16px}
+/* Modal pengumuman: tampil di tengah halaman (modal lain tetap slide-up dari bawah) */
+#pengumumanModal{align-items:center;padding:16px}
+#pengumumanModal .modal-content{width:min(500px,100%);max-height:85vh;padding:22px 22px 20px;border-radius:22px;box-shadow:0 24px 70px rgba(0,0,0,.45);transform:translateY(14px) scale(.94);opacity:0;transition:transform .3s cubic-bezier(.2,.9,.25,1),opacity .25s}
+#pengumumanModal .modal-content::before{display:none}
+#pengumumanModal.active .modal-content{transform:none;opacity:1}
+@media (max-width:520px){.menu-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.icon-box{width:54px;height:54px}.bar-date{font-size:11px;white-space:normal;text-align:right;line-height:1.25}}
+</style>
+</head>
+<body>
+<header class="menubar">
+    <a href="#" class="navbar-brand"><img src="" alt="Logo Sekolah" style="display:none;"><span></span></a>
+    <div class="bar-date"><i class="far fa-clock"></i><span id="liveDateTime"></span></div>
+</header>
+<main class="wrap">
+    <div class="head"><h1 id="welcomeHeading">Selamat Datang, Admin Guru!</h1><p>Ini adalah halaman dashboard khusus untuk pengelolaan data guru dan kesiswaan.</p></div>
+
+    <!-- Wadah Biodata Guru -->
+    <section class="win" id="biodataContainer" style="display:none;">
+        <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Biodata Guru</h2></div>
+        <div class="wb">
+            <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+                <button id="btnUpdateProfil" type="button" class="btn"><i class="fas fa-edit"></i> Update Profil</button>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:18px;">
+                <img id="bioPhoto" class="bio-photo" src="" alt="Foto Guru">
+                <div class="biodata-grid">
+                    <div class="biodata-item">
+                        <div class="biodata-icon" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-user"></i></div>
+                        <div class="biodata-text"><span class="label">Nama Lengkap</span><span class="value" id="bioNama">-</span></div>
+                    </div>
+                    <div class="biodata-item">
+                        <div class="biodata-icon" style="background:linear-gradient(160deg,#6cb8ff,#2a74d6)"><i class="fas fa-id-badge"></i></div>
+                        <div class="biodata-text"><span class="label">NIP</span><span class="value" id="bioNip">-</span></div>
+                    </div>
+                    <div class="biodata-item">
+                        <div class="biodata-icon" style="background:linear-gradient(160deg,#59d6a0,#1b8a5c)"><i class="fas fa-book"></i></div>
+                        <div class="biodata-text"><span class="label">Mata Pelajaran</span><span class="value" id="bioMapel">-</span></div>
+                    </div>
+                    <div class="biodata-item">
+                        <div class="biodata-icon" style="background:linear-gradient(160deg,#ffc861,#e08a0c)"><i class="fas fa-phone-alt"></i></div>
+                        <div class="biodata-text"><span class="label">No. Telepon</span><span class="value" id="bioTlp">-</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer"><p>&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik) 2026</p><p>CopyRight Kenji Studio Developer.</p></footer>
+</main>
+
+<!-- Dock -->
+<nav class="dock" aria-label="Menu utama">
+    <button class="d" type="button" id="menuToggleBtn"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-th-large"></i></span>Menu</button>
+    <button class="d" type="button" id="logoutFooterBtn"><span class="ic" style="background:linear-gradient(160deg,#f2706b,#c92f2c)"><i class="fas fa-sign-out-alt"></i></span>Log Out</button>
+</nav>
+
+<!-- Overlay + Menu Sheet (Slide Up) -->
+<div id="menuSheetOverlay" class="overlay"></div>
+<section id="menuSheet" class="menu-sheet" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="grab"></div>
+    <div class="sh"><h2>Menu</h2><button class="x" id="menuSheetCloseBtn" type="button" aria-label="Tutup menu">&times;</button></div>
+    <div class="menu-grid">
+            <a href="piketharin.html" class="menu-card" id="piketLink">
+                <div class="icon-box" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-calendar-check"></i></div>
+                <span>Piket Umum</span>
+            </a>
+            <a href="dispensasiguru.html" class="menu-card">
+                <div class="icon-box" style="background:linear-gradient(160deg,#ffc861,#d9820f)"><i class="fas fa-file-signature"></i></div>
+                <span>Dispensasi Siswa</span>
+            </a>
+            <a href="#" class="menu-card" id="walikelasLink">
+                <div class="icon-box" style="background:linear-gradient(160deg,#59d6a0,#1b8a5c)"><i class="fas fa-chalkboard-teacher"></i></div>
+                <span>Walikelas</span>
+            </a>
+            <a href="nilaisiswaguru.html" class="menu-card">
+                <div class="icon-box" style="background:linear-gradient(160deg,#ff8a96,#c13a4a)"><i class="fas fa-newspaper"></i></div>
+                <span>Nilai Mata Pelajaran</span>
+            </a>
+            <a href="arsipguru.html" class="menu-card">
+                <div class="icon-box" style="background:linear-gradient(160deg,#6cb8ff,#2a74d6)"><i class="fas fa-archive"></i></div>
+                <span>Arsip Guru</span>
+            </a>
+            <a href="kasussiswaguru.html" class="menu-card">
+                <div class="icon-box" style="background:linear-gradient(160deg,#c19bff,#7a3fe0)"><i class="fas fa-exclamation-triangle"></i></div>
+                <span>Kasus Pembelajaran</span>
+            </a>
+    </div>
+</section>
+
+<!-- Modal Ganti Profil -->
+<div id="updateProfilModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-edit" style="color:var(--primary-color);margin-right:10px;"></i>Update Profil</h3>
+            <span class="close-modal" id="closeUpdateModal">&times;</span>
+        </div>
+        <form id="updateProfilForm">
+            <div class="form-group"><label for="editNama">Nama Lengkap</label><input type="text" id="editNama" required></div>
+            <div class="form-group"><label for="editNip">NIP</label><input type="text" id="editNip"><small>Ubah NIP jika diperlukan.</small></div>
+            <div class="form-group"><label for="editMapel">Mata Pelajaran</label><input type="text" id="editMapel"></div>
+            <div class="form-group"><label for="editTlp">No. Telepon</label><input type="text" id="editTlp"></div>
+            <div class="form-group"><label for="editPassword">Password</label>
+                <div class="pw-wrap"><input type="password" id="editPassword"><i class="fas fa-eye" id="toggleEditPassword"></i></div>
+            </div>
+            <div class="form-group"><label for="editPhoto">Foto Profil</label>
+                <input type="file" id="editPhoto" accept="image/*"><small>Upload foto baru untuk mengganti.</small>
+                <div id="editPhotoPreviewContainer" style="margin-top:10px;display:none;text-align:center;">
+                    <img id="editPhotoPreview" src="" alt="Preview Foto" style="max-width:150px;max-height:150px;border-radius:12px;border:1px solid rgba(0,0,0,.12);padding:5px;background:#fff;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="cancelUpdateBtn" class="btn alt">Batal</button>
+                <button type="submit" id="saveUpdateBtn" class="btn">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Awas Walikelas -->
+<div id="walikelasWarningModal" class="modal">
+    <div class="modal-content notice" style="max-width:400px;">
+        <div class="big"><i class="fas fa-exclamation-circle"></i></div>
+        <h3>Akses Ditolak</h3>
+        <p>Maaf, anda tidak memiliki tugas tambahan sebagai walikelas...!</p>
+        <button class="btn" type="button" onclick="document.getElementById('walikelasWarningModal').classList.remove('active')">Tutup</button>
+    </div>
+</div>
+
+<!-- Modal Pengumuman -->
+<div id="pengumumanModal" class="modal">
+    <div class="modal-content notice" role="dialog" aria-modal="true" aria-label="Pengumuman">
+        <div class="big"><i class="fas fa-bullhorn"></i></div>
+        <h3>Pengumuman</h3>
+        <div id="pengumumanContent" class="ann-box"></div>
+        <div id="pengumumanRole" class="ann-role"></div>
+        <button class="btn" type="button" onclick="document.getElementById('pengumumanModal').classList.remove('active')">Tutup</button>
+    </div>
+</div>
+
+    <script>
+        // --- Koneksi Navbar ---
+        const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+        
+        let supabaseClient;
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            async function loadSchoolIdentity() {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('identitassekolah')
+                        .select('nama_sekolah, logo')
+                        .limit(1)
+                        .single();
+                    
+                    if (data) {
+                        if (data.nama_sekolah) {
+                            document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                        }
+                        if (data.logo) {
+                            const img = document.querySelector('.navbar-brand img');
+                            img.src = data.logo;
+                            img.style.display = 'block';
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error loading school identity:", err);
+                }
+            }
+            document.addEventListener('DOMContentLoaded', loadSchoolIdentity);
+
+            // --- Load Pengumuman ---
+            async function loadPengumuman() {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('pengumuman')
+                        .select('*')
+                        .limit(1)
+                        .single();
+
+                    if (error && error.code !== 'PGRST116') {
+                        console.error('Error loading pengumuman:', error);
+                        return;
+                    }
+
+                    if (data) {
+                        // Show pengumuman modal
+                        document.getElementById('pengumumanContent').textContent = data.deskripsi || '';
+                        document.getElementById('pengumumanRole').textContent = `- ${data.admin_role || ''}`;
+                        document.getElementById('pengumumanModal').classList.add('active');
+                    }
+                } catch (err) {
+                    console.error('Error loading pengumuman:', err);
+                }
+            }
+            document.addEventListener('DOMContentLoaded', loadPengumuman);
+        }
+
+        // --- Ambil Data Guru ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = JSON.parse(sessionStorage.getItem('guru_session'));
+            
+            if (session) {
+                // Ganti Judul Sambutan
+                const welcomeHeading = document.getElementById('welcomeHeading');
+                if (welcomeHeading) welcomeHeading.textContent = `Selamat Datang, ${session.nama}!`;
+
+            }
+        });
+
+        // --- Jam Jalan ---
+        function updateLiveTime() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            document.getElementById('liveDateTime').textContent = `${now.toLocaleDateString('id-ID', dateOptions)} | ${now.toLocaleTimeString('id-ID', timeOptions).replace(/\./g, ':')} WIB`;
+        }
+        setInterval(updateLiveTime, 1000);
+        updateLiveTime();
+
+        let currentGuruData = null; // Simpen data guru global
+
+        // --- Muat Biodata Guru ---
+        async function loadGuruBiodata() {
+            const session = JSON.parse(sessionStorage.getItem('guru_session'));
+            if (!session || !session.nama) return;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('dataguru')
+                    .select('*') // Mengambil semua kolom agar lebih aman
+                    .eq('nama_guru', session.nama)
+                    .maybeSingle(); // Menggunakan maybeSingle agar tidak throw error jika data tidak ditemukan
+
+                if (error) {
+                    console.error('Gagal mengambil data guru:', error);
+                    return;
+                }
+
+                if (data) {
+                    currentGuruData = data; // Simpen ke global
+                    document.getElementById('biodataContainer').style.display = 'block';
+                    document.getElementById('bioNama').textContent = data.nama_guru || '-';
+                    let maskedNip = '-';
+                    if (data.nip) {
+                        const nipStr = data.nip.toString();
+                        maskedNip = nipStr.length > 8 ? nipStr.slice(0, -8) + '********' : '********';
+                    }
+                    document.getElementById('bioNip').textContent = maskedNip;
+                    document.getElementById('bioMapel').textContent = data.mapel || '-';
+                    document.getElementById('bioTlp').textContent = data.tlp || '-';
+                    
+                    const photoEl = document.getElementById('bioPhoto');
+                    if (data.photo) {
+                        photoEl.src = data.photo;
+                    } else {
+                        photoEl.src = 'https://via.placeholder.com/120?text=No+Photo'; 
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading biodata:', err);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadGuruBiodata);
+
+        // --- Logika Ganti Profil ---
+        const updateModal = document.getElementById('updateProfilModal');
+        const btnUpdate = document.getElementById('btnUpdateProfil');
+        const closeUpdate = document.getElementById('closeUpdateModal');
+        const cancelUpdate = document.getElementById('cancelUpdateBtn');
+        const updateForm = document.getElementById('updateProfilForm');
+
+        if(btnUpdate) {
+            btnUpdate.addEventListener('click', () => {
+                if(currentGuruData) {
+                    document.getElementById('editNama').value = currentGuruData.nama_guru || '';
+                    document.getElementById('editNip').value = currentGuruData.nip || '';
+                    document.getElementById('editMapel').value = currentGuruData.mapel || '';
+                    document.getElementById('editTlp').value = currentGuruData.tlp || '';
+                    document.getElementById('editPassword').value = currentGuruData.password || '';
+                    document.getElementById('editPhoto').value = ''; // Reset file input
+                    document.getElementById('editPhotoPreview').src = '';
+                    document.getElementById('editPhotoPreviewContainer').style.display = 'none';
+                    updateModal.classList.add('active');
+                }
+            });
+        }
+
+        function closeUpdateModalFunc() {
+            updateModal.classList.remove('active');
+        }
+
+        if(closeUpdate) closeUpdate.addEventListener('click', closeUpdateModalFunc);
+        if(cancelUpdate) cancelUpdate.addEventListener('click', closeUpdateModalFunc);
+
+        // Logika Toggle Password Update Profil
+        const toggleEditPassword = document.getElementById('toggleEditPassword');
+        const editPasswordInput = document.getElementById('editPassword');
+
+        if (toggleEditPassword && editPasswordInput) {
+            toggleEditPassword.addEventListener('click', function() {
+                const type = editPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                editPasswordInput.setAttribute('type', type);
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        }
+
+        // Logika Pratinjau Gambar
+        const editPhotoInput = document.getElementById('editPhoto');
+        const editPhotoPreviewContainer = document.getElementById('editPhotoPreviewContainer');
+        const editPhotoPreview = document.getElementById('editPhotoPreview');
+
+        if(editPhotoInput) {
+            editPhotoInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        editPhotoPreview.src = e.target.result;
+                        editPhotoPreviewContainer.style.display = 'block';
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+
+        if(updateForm) {
+            updateForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const saveBtn = document.getElementById('saveUpdateBtn');
+                const originalText = saveBtn.textContent;
+                saveBtn.textContent = 'Menyimpan...';
+                saveBtn.disabled = true;
+
+                // Cek ID Guru dulu
+                if (!currentGuruData || !currentGuruData.id_guru) {
+                    alert("Terjadi kesalahan: ID Guru tidak ditemukan. Silakan refresh halaman.");
+                    location.reload();
+                    return;
+                }
+
+                try {
+                    const nama = document.getElementById('editNama').value.trim();
+                    const nip = document.getElementById('editNip').value.trim();
+                    const mapel = document.getElementById('editMapel').value.trim();
+                    const tlp = document.getElementById('editTlp').value.trim();
+                    const password = document.getElementById('editPassword').value;
+                    const photoInput = document.getElementById('editPhoto');
+                    
+                    // Cek Input Angka (Hanya jika field diisi)
+                    const isNumeric = (str) => /^\d+$/.test(str);
+                    if (nip && !isNumeric(nip)) {
+                        throw new Error("NIP harus berkarakter angka");
+                    }
+
+                    let photoUrl = currentGuruData.photo;
+
+                    // Upload foto kalo ada
+                    if(photoInput.files.length > 0) {
+                        const file = photoInput.files[0];
+                        const fileExt = file.name.split('.').pop();
+                        const fileName = `guru_${currentGuruData.id_guru}_${Date.now()}.${fileExt}`;
+                        
+                        const { error: uploadError } = await supabaseClient.storage
+                            .from('aset')
+                            .upload(fileName, file);
+                        
+                        if(uploadError) throw uploadError;
+                        
+                        const { data: urlData } = supabaseClient.storage
+                            .from('aset')
+                            .getPublicUrl(fileName);
+                            
+                        photoUrl = urlData.publicUrl;
+                    }
+
+                    // Update Database
+                    const { error } = await supabaseClient
+                        .from('dataguru')
+                        .update({
+                            nama_guru: nama,
+                            nip: nip || null,
+                            mapel: mapel || null,
+                            tlp: tlp || null,
+                            photo: photoUrl,
+                            password: password
+                        })
+                        .eq('id_guru', currentGuruData.id_guru);
+
+                    if(error) throw error;
+
+                    // Update Sesi kalo berubah
+                    const session = JSON.parse(sessionStorage.getItem('guru_session'));
+                    if(session) {
+                        session.nama = nama;
+                        session.nip = nip;
+                        session.photo = photoUrl;
+                        sessionStorage.setItem('guru_session', JSON.stringify(session));
+                    }
+
+                    alert('Profil berhasil diperbarui!');
+                    closeUpdateModalFunc();
+                    
+                    // Muat ulang data & UI
+                    loadGuruBiodata();
+                    
+                    // Update Sidebar & Sambutan langsung
+                    const welcomeHeading = document.getElementById('welcomeHeading');
+                    if (welcomeHeading) welcomeHeading.textContent = `Selamat Datang, ${nama}!`;
+
+                } catch(err) {
+                    console.error(err);
+                    alert('Gagal memperbarui profil: ' + err.message);
+                } finally {
+                    saveBtn.textContent = originalText;
+                    saveBtn.disabled = false;
+                }
+            });
+        }
+
+        // --- Cek Walikelas ---
+        const walikelasLink = document.getElementById('walikelasLink');
+        const walikelasWarningModal = document.getElementById('walikelasWarningModal');
+
+        if (walikelasLink) {
+            walikelasLink.addEventListener('click', async (e) => {
+                e.preventDefault();
+                
+                const session = JSON.parse(sessionStorage.getItem('guru_session'));
+                if (!session || !session.nama) {
+                    alert("Sesi tidak valid. Silakan login ulang.");
+                    return;
+                }
+
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('walikelas')
+                        .select('nama_guru')
+                        .eq('nama_guru', session.nama)
+                        .maybeSingle();
+
+                    if (data) {
+                        window.location.href = 'walikelasguru.html';
+                    } else {
+                        walikelasWarningModal.classList.add('active');
+                    }
+                } catch (err) {
+                    console.error("Error validating walikelas:", err);
+                }
+            });
+        }
+
+        // --- Bottom Sheet Menu & Footer Sticky ---
+        const menuSheet = document.getElementById('menuSheet');
+        const menuSheetOverlay = document.getElementById('menuSheetOverlay');
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        const menuSheetCloseBtn = document.getElementById('menuSheetCloseBtn');
+        const logoutFooterBtn = document.getElementById('logoutFooterBtn');
+
+        function openMenuSheet() {
+            menuSheet.classList.add('active');
+            menuSheetOverlay.classList.add('active');
+            menuToggleBtn.classList.add('active');
+        }
+
+        function closeMenuSheet() {
+            menuSheet.classList.remove('active');
+            menuSheetOverlay.classList.remove('active');
+            menuToggleBtn.classList.remove('active');
+        }
+
+        if (menuToggleBtn) {
+            menuToggleBtn.addEventListener('click', () => {
+                if (menuSheet.classList.contains('active')) {
+                    closeMenuSheet();
+                } else {
+                    openMenuSheet();
+                }
+            });
+        }
+
+        if (menuSheetCloseBtn) menuSheetCloseBtn.addEventListener('click', closeMenuSheet);
+        if (menuSheetOverlay) menuSheetOverlay.addEventListener('click', closeMenuSheet);
+
+        // Tutup sheet otomatis kalau salah satu menu diklik (biar transisi ke halaman lain mulus)
+        document.querySelectorAll('#menuSheet .menu-card').forEach((card) => {
+            card.addEventListener('click', () => {
+                closeMenuSheet();
+            });
+        });
+
+        if (logoutFooterBtn) {
+            logoutFooterBtn.addEventListener('click', () => {
+                if (confirm('Apakah Anda yakin ingin keluar?')) {
+                    window.location.href = 'index.html';
+                }
+            });
+        }
+
+    </script>
+</body>
+</html>

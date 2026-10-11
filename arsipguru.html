@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Arsip Guru - SIMPEDIK</title>
+    <!-- Icon Keren -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary-color:#667eea;--secondary-color:#764ba2;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.menubar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-date{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;opacity:.9;white-space:nowrap}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:22px 12px}
+.head{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.head h1{font-size:clamp(28px,4.5vw,38px);letter-spacing:-.02em;line-height:1.1}
+.head p{opacity:.88;font-size:14px;margin-top:4px}
+.win{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663;text-align:center}
+.tb a{position:absolute;right:12px;font-size:12px;font-weight:600;color:#4c5fd5;text-decoration:none}.tb a:hover{text-decoration:underline}
+.wb{padding:16px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.stat .wb{display:flex;align-items:center;gap:14px}
+.stat .ic{flex:none;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.35)}
+.stat small{display:block;color:var(--muted);font-size:13px}.stat b{font-size:30px;line-height:1.1;color:var(--deep)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.grid2>.win{margin-bottom:16px}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:420px;scrollbar-width:thin}
+.table-responsive::-webkit-scrollbar{height:8px;width:8px}.table-responsive::-webkit-scrollbar-thumb{background:rgba(0,0,0,.28);border-radius:9px}
+.custom-table{width:100%;border-collapse:collapse;font-size:14px;min-width:480px}
+.custom-table th{position:sticky;top:0;background:#efecf7;text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line)}
+.custom-table td{padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.05)}.custom-table tr:last-child td{border:0}.custom-table tbody tr:hover{background:rgba(102,126,234,.07)}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;color:#fff}.bg-danger{background:#e74c3c}.bg-warning{background:#f1c40f;color:#333}.bg-success{background:#2ecc71}
+.main-footer{text-align:center;color:rgba(255,255,255,.85);font-size:12px;padding:8px 0 4px}
+/* Dock */
+.dock{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:6px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.6);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.d{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:74px;padding:6px 8px;border-radius:16px;font-size:11.5px;font-weight:600;color:var(--ink);transition:transform .2s}
+.d:hover{transform:translateY(-6px) scale(1.08)}.d:active{transform:scale(.95)}
+.d .ic,.item .ic{position:relative;overflow:hidden;display:grid;place-items:center;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.d .ic{width:48px;height:48px;border-radius:13px;font-size:21px}
+.d .ic::after,.item .ic::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+.d .ic i,.item .ic i{position:relative;z-index:1}
+/* Slide-up sheet */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(10,8,30,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.sheet{position:fixed;left:50%;bottom:0;z-index:50;width:min(660px,100%);max-height:86vh;overflow:auto;transform:translate(-50%,105%);transition:transform .38s cubic-bezier(.2,.9,.25,1);padding:10px 16px calc(22px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(36,28,86,.62);backdrop-filter:saturate(200%) blur(28px);-webkit-backdrop-filter:saturate(200%) blur(28px);color:#fff;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 -18px 50px rgba(0,0,0,.4)}
+.open .scrim{opacity:1;visibility:visible}.open .sheet{transform:translate(-50%,0)}
+.grab{width:40px;height:5px;border-radius:9px;background:rgba(255,255,255,.5);margin:0 auto 12px}
+.sh{position:relative;display:flex;align-items:center;justify-content:center;min-height:36px;margin-bottom:12px}.sh h2{font-size:19px}
+.x{position:absolute;right:0;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.25);font-size:20px;line-height:1}.x:hover{background:rgba(255,255,255,.4)}
+.list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 6px}
+.item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 4px;border-radius:18px;text-align:center;font-size:13px;font-weight:700;line-height:1.25;color:#fff;text-decoration:none;transition:transform .2s,background .2s}
+.item:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}.item:active{transform:scale(.96)}
+.item .ic{width:60px;height:60px;border-radius:16px;font-size:26px}
+.confirm{text-align:center;padding:4px 8px 6px}.confirm p{opacity:.9;margin-bottom:16px}.confirm .acts{display:flex;gap:10px;justify-content:center}
+/* Modal form -> slide-up */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,8,30,.45);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.modal.active{opacity:1;visibility:visible}
+.modal-content{width:min(560px,100%);max-height:90vh;overflow:auto;padding:12px 20px calc(20px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(250,248,255,.97);box-shadow:0 -18px 50px rgba(0,0,0,.4);transform:translateY(105%);transition:transform .38s cubic-bezier(.2,.9,.25,1)}
+.modal.active .modal-content{transform:none}
+.modal-content::before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:rgba(0,0,0,.18);margin:0 auto 12px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-header h3{font-size:18px;color:var(--deep)}
+.close-modal{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--track);font-size:20px;cursor:pointer;color:var(--muted)}.close-modal:hover{background:#ff5f57;color:#fff}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:0 0 4px 2px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;outline:none}
+.form-group textarea{min-height:110px;resize:vertical}.form-group input[readonly]{background:#f0eef6;color:var(--muted)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.char-counter{display:block;text-align:right;font-size:12px;color:var(--muted)}
+.modal-footer{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 18px;border-radius:10px;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(160deg,#7b8cf5,#5568d8);box-shadow:0 1px 2px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:hover{filter:brightness(1.06)}.btn.alt,.btn-secondary{background:rgba(120,120,128,.2);color:var(--ink);box-shadow:none}.btn.red{background:linear-gradient(160deg,#f2706b,#d63d3a)}
+.btn:disabled,.form-group textarea:disabled,.form-group select:disabled{opacity:.55;cursor:not-allowed}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.list{grid-template-columns:repeat(3,minmax(0,1fr))}.item .ic{width:54px;height:54px}.bar-date i{display:none}.stats{gap:10px}.stat b{font-size:24px}.d{min-width:64px}.dock{gap:2px;padding:6px}.navbar-brand span{max-width:42vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* ===== Komponen khusus halaman Arsip Guru (tema sama dengan nilaisiswaguru) ===== */
+.btn,.d{text-decoration:none}
+.btn-primary{background:linear-gradient(160deg,#7b8cf5,#5568d8)}
+.btn-success{background:linear-gradient(160deg,#34c98d,#1b8a5c)}
+.btn-info{background:linear-gradient(160deg,#4fb6e8,#1f86c0)}
+.btn-danger{background:linear-gradient(160deg,#f2706b,#d63d3a)}
+.btn-sm{height:32px;padding:0 12px;font-size:13px;border-radius:9px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.action-group{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.search-input{height:38px;width:250px;max-width:100%;padding:0 12px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;color:var(--ink);outline:none}
+.search-input:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.table-responsive{max-height:520px}
+.custom-table{min-width:640px}
+.btn-download{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:9px;border:0;cursor:pointer;font:inherit;font-size:13px;font-weight:600;color:#4c5fd5;background:rgba(102,126,234,.14);transition:background .2s,color .2s,transform .2s}
+.btn-download:hover{background:linear-gradient(160deg,#7b8cf5,#5568d8);color:#fff;transform:translateY(-1px)}
+#accessDeniedModal .modal-content{width:min(420px,100%);text-align:center}
+#accessDeniedModal .modal-content .btn{width:100%}
+@media (max-width:768px){
+.toolbar{flex-direction:column;align-items:stretch}
+.action-group{flex-direction:column;width:100%}
+.action-group .btn,.action-group .search-input{width:100%;justify-content:center}
+}
+@media (max-width:520px){.bar-date{font-size:11px;white-space:normal;text-align:right;line-height:1.25}}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="menubar">
+    <a href="#" class="navbar-brand"><img src="" alt="Logo Sekolah" style="display:none;"><span></span></a>
+    <div class="bar-date"><i class="far fa-clock"></i><span id="liveDateTime"></span></div>
+</header>
+
+<main class="wrap">
+    <div class="head"><h1>Halaman Arsip Guru</h1><p>Kelola data arsip sekolah di sini.</p></div>
+
+    <section class="win">
+        <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Daftar Arsip</h2></div>
+        <div class="wb">
+            <!-- Wadah Cari & Tombol -->
+            <div class="toolbar">
+                <div class="action-group">
+                    <input type="text" id="searchArsip" class="search-input" placeholder="Cari Arsip...">
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Kode Arsip</th>
+                            <th>Nama Arsip</th>
+                            <th>Tanggal Upload</th>
+                            <th>File Arsip</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Memuat data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kaki Halaman -->
+    <footer class="main-footer">
+        <p>&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik).2026</p>
+        <p>CopyRight Kenji Studio Developer.</p>
+    </footer>
+</main>
+
+<nav class="dock" aria-label="Menu utama">
+    <a class="d" href="adminguru.html"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-home"></i></span>Beranda</a>
+    <button class="d" type="button" id="addArsipBtn"><span class="ic" style="background:linear-gradient(160deg,#59d6a0,#1b8a5c)"><i class="fas fa-plus"></i></span>Tambah Arsip</button>
+    <button class="d" type="button" id="exportPdfBtn"><span class="ic" style="background:linear-gradient(160deg,#f2706b,#c92f2c)"><i class="fas fa-file-pdf"></i></span>Export PDF</button>
+</nav>
+
+    <!-- Modal Tambah Arsip -->
+    <div id="arsipModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Tambah Arsip Baru</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <form id="arsipForm">
+                <div class="form-group">
+                    <label for="kodeArsip">Kode Arsip</label>
+                    <input type="text" id="kodeArsip" name="kodeArsip" placeholder="Masukkan Kode Arsip" required>
+                </div>
+                <div class="form-group">
+                    <label for="namaArsip">Nama Arsip</label>
+                    <input type="text" id="namaArsip" name="namaArsip" placeholder="Masukkan Nama Arsip" required>
+                </div>
+                <div class="form-group">
+                    <label for="tanggalUpload">Tanggal Upload</label>
+                    <input type="date" id="tanggalUpload" name="tanggalUpload" required>
+                </div>
+                <div class="form-group">
+                    <label for="fileArsip">Upload File</label>                
+                    <input type="file" id="fileArsip" name="fileArsip" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="simpanArsip">Simpan</button>
+                </div>
+             </form>
+        </div>
+    </div>
+
+    <!-- Modal Akses Ditolak -->
+    <div id="accessDeniedModal" class="modal">
+        <div class="modal-content" style="text-align: center;">
+            <div style="margin-bottom: 20px;">
+                <i class="fas fa-ban" style="font-size: 4rem; color: #ef4444;"></i>
+            </div>
+            <h3 style="color: var(--deep); margin-bottom: 10px;">Akses Ditolak</h3>
+            <p style="color: var(--muted); margin-bottom: 25px;">Maaf, anda tidak memiliki tugas tambahan sebagai guru piket.</p>
+            <button type="button" class="btn btn-danger" onclick="document.getElementById('accessDeniedModal').classList.remove('active')">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Koneksi Supabase ---
+        const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // --- Ambil Identitas Sekolah ---
+        async function loadSchoolIdentity() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('identitassekolah')
+                    .select('nama_sekolah, logo')
+                    .limit(1)
+                    .single();
+                
+                if (data) {
+                    if (data.nama_sekolah) {
+                        document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                    }
+                    if (data.logo) {
+                        const img = document.querySelector('.navbar-brand img');
+                        img.src = data.logo;
+                        img.style.display = 'block';
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading school identity:", err);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadSchoolIdentity);
+
+        // --- Ambil Data Guru ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = JSON.parse(sessionStorage.getItem('guru_session'));
+            
+            if (session) {
+                // Update Nama di Sidebar
+                const adminNameEl = document.querySelector('.admin-name');
+                if (adminNameEl) adminNameEl.textContent = session.nama;
+
+                // Update Avatar jika ada foto
+                const adminAvatarEl = document.querySelector('.admin-avatar');
+                if (session.photo && adminAvatarEl) {
+                    adminAvatarEl.innerHTML = `<img src="${session.photo}" alt="Foto" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+                    adminAvatarEl.style.backgroundColor = 'transparent';
+                } else if (adminAvatarEl) {
+                    adminAvatarEl.textContent = session.nama.charAt(0).toUpperCase();
+                }
+            } else {
+                // Jika tidak ada sesi, redirect ke login
+                window.location.href = 'index.html';
+            }
+        });
+
+        // --- Jam Jalan ---
+        function updateLiveTime() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            document.getElementById('liveDateTime').textContent = `${now.toLocaleDateString('id-ID', dateOptions)} | ${now.toLocaleTimeString('id-ID', timeOptions).replace(/\./g, ':')} WIB`;
+        }
+        setInterval(updateLiveTime, 1000);
+        updateLiveTime();
+
+        // --- Logika Arsip ---
+        const modal = document.getElementById('arsipModal');
+        const addBtn = document.getElementById('addArsipBtn');
+        const closeSpan = document.querySelector('.close-modal');
+        const cancelBtn = document.querySelector('.cancel-btn');
+        const arsipForm = document.getElementById('arsipForm');
+        const kodeArsipInput = document.getElementById('kodeArsip');
+
+        // Buka Modal
+        if (addBtn) {
+            addBtn.addEventListener('click', () => {
+                modal.classList.add('active');
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('tanggalUpload').value = today;
+
+                const randomNum = Math.floor(1000 + Math.random() * 9000);
+                const newId = `IDA-${randomNum}`;
+                if(kodeArsipInput) kodeArsipInput.value = newId;
+            });
+        }
+
+        // Tutup Modal
+        function closeModal() {
+            modal.classList.remove('active');
+            arsipForm.reset();
+        }
+
+        if (closeSpan) closeSpan.addEventListener('click', closeModal);
+        if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Simpan Data
+        arsipForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const kodeArsip = document.getElementById('kodeArsip').value;
+            const namaArsip = document.getElementById('namaArsip').value;
+            const tanggalUpload = document.getElementById('tanggalUpload').value;
+            const fileArsip = document.getElementById('fileArsip').files[0];
+
+            if (!fileArsip) {
+                alert('Harap pilih file arsip untuk diupload.');
+                return;
+            }
+
+            const submitBtn = document.getElementById('simpanArsip');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Menyimpan...';
+            submitBtn.disabled = true;
+
+            try {
+                const timestamp = Date.now();
+                const fileExt = fileArsip.name.split('.').pop();
+                const fileName = `arsip_${kodeArsip}_${timestamp}.${fileExt}`;
+                const { data, error } = await supabaseClient.storage.from('aset').upload(fileName, fileArsip);
+
+                if (error) throw new Error(`Gagal mengunggah file: ${error.message}`);
+
+                const fileUrl = supabaseClient.storage.from('aset').getPublicUrl(fileName).data.publicUrl;
+
+                const { error: dbError } = await supabaseClient
+                    .from('arsip')
+                    .insert([{ kode_arsip: kodeArsip, nama_arsip: namaArsip, tanggal_upload: tanggalUpload, file: fileUrl }]);
+
+                if (dbError) throw new Error(`Gagal menyimpan data ke database: ${dbError.message}`);
+
+                alert('Arsip berhasil disimpan!');
+                closeModal();
+                loadArsipData();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Muat Data Arsip
+        async function loadArsipData() {
+            const tableBody = document.querySelector('.custom-table tbody');
+            tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Memuat data...</td></tr>';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('arsip')
+                    .select('*')
+                    .order('tanggal_upload', { ascending: false });
+
+                if (error) throw error;
+
+                tableBody.innerHTML = '';
+
+                if (!data || data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada data arsip.</td></tr>';
+                    return;
+                }
+
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.kode_arsip}</td>
+                        <td>${item.nama_arsip}</td>
+                        <td>${item.tanggal_upload}</td>
+                        <td>
+                            <button onclick="downloadFile('${item.file}')" class="btn-download">
+                                <i class="fas fa-file-download"></i> Download
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deleteArsip('${item.kode_arsip}', '${item.file}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading data:', error);
+                tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Gagal memuat data: ${error.message}</td></tr>`;
+            }
+        }
+
+        async function downloadFile(url) {
+            try {
+                const fileName = url.split('/').pop();
+                const { data, error } = await supabaseClient.storage.from('aset').download(fileName);
+                if (error) throw error;
+
+                const blob = data;
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = fileName;
+                link.click();
+                URL.revokeObjectURL(link.href);
+            } catch (err) {
+                alert("Gagal mendownload: " + err.message);
+            }
+        }
+
+        // --- Hapus Arsip ---
+        window.deleteArsip = async function(kodeArsip, fileUrl) {
+            if (!confirm(`Apakah Anda yakin ingin menghapus arsip dengan kode ${kodeArsip}?`)) return;
+
+            try {
+                // 1. Hapus file dari Storage jika ada
+                if (fileUrl) {
+                    const pathParts = fileUrl.split('/aset/');
+                    if (pathParts.length > 1) {
+                        const fileName = decodeURIComponent(pathParts[1]);
+                        const { error: storageError } = await supabaseClient.storage
+                            .from('aset')
+                            .remove([fileName]);
+                        
+                        if (storageError) console.warn('Gagal menghapus file dari storage:', storageError);
+                    }
+                }
+
+                // 2. Hapus data dari Database
+                const { error: dbError } = await supabaseClient
+                    .from('arsip')
+                    .delete()
+                    .eq('kode_arsip', kodeArsip);
+
+                if (dbError) throw dbError;
+
+                alert('Data arsip berhasil dihapus.');
+                loadArsipData();
+            } catch (err) {
+                console.error('Error deleting arsip:', err);
+                alert('Gagal menghapus arsip: ' + err.message);
+            }
+        };
+
+        // Export PDF
+        document.getElementById('exportPdfBtn').addEventListener('click', () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(18);
+            doc.text("Laporan Data Arsip", 14, 22);
+            
+            const schoolName = document.querySelector('.navbar-brand span').textContent || 'SMK Negeri 1 Muntok';
+            doc.setFontSize(12);
+            doc.setTextColor(100);
+            doc.text(schoolName, 14, 30);
+
+            doc.autoTable({
+                head: [['Kode Arsip', 'Nama Arsip', 'Tanggal Upload']],
+                body: Array.from(document.querySelectorAll('.custom-table tbody tr')).map(row => {
+                    const cells = row.querySelectorAll('td');
+                    return [cells[0].innerText, cells[1].innerText, cells[2].innerText];
+                }),
+                startY: 40,
+                theme: 'grid',
+                headStyles: { fillColor: [102, 126, 234] }
+            });
+
+            doc.save('Data_Arsip.pdf');
+        });
+
+        document.addEventListener('DOMContentLoaded', loadArsipData);
+    </script>
+</body>
+</html>

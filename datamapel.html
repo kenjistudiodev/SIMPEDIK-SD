@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Data Mata Pelajaran - SIMPEDIK</title>
+    <!-- Icon Keren -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary-color:#667eea;--secondary-color:#764ba2;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.menubar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-date{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;opacity:.9;white-space:nowrap}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:22px 12px}
+.head{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.head h1{font-size:clamp(28px,4.5vw,38px);letter-spacing:-.02em;line-height:1.1}
+.head p{opacity:.88;font-size:14px;margin-top:4px}
+.win{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663;text-align:center}
+.tb a{position:absolute;right:12px;font-size:12px;font-weight:600;color:#4c5fd5;text-decoration:none}.tb a:hover{text-decoration:underline}
+.wb{padding:16px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.stat .wb{display:flex;align-items:center;gap:14px}
+.stat .ic{flex:none;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.35)}
+.stat small{display:block;color:var(--muted);font-size:13px}.stat b{font-size:30px;line-height:1.1;color:var(--deep)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.grid2>.win{margin-bottom:16px}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:420px;scrollbar-width:thin}
+.table-responsive::-webkit-scrollbar{height:8px;width:8px}.table-responsive::-webkit-scrollbar-thumb{background:rgba(0,0,0,.28);border-radius:9px}
+.custom-table{width:100%;border-collapse:collapse;font-size:14px;min-width:480px}
+.custom-table th{position:sticky;top:0;background:#efecf7;text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line)}
+.custom-table td{padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.05)}.custom-table tr:last-child td{border:0}.custom-table tbody tr:hover{background:rgba(102,126,234,.07)}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;color:#fff}.bg-danger{background:#e74c3c}.bg-warning{background:#f1c40f;color:#333}.bg-success{background:#2ecc71}
+.main-footer{text-align:center;color:rgba(255,255,255,.85);font-size:12px;padding:8px 0 4px}
+/* Dock */
+.dock{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:6px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.6);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.d{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:74px;padding:6px 8px;border-radius:16px;font-size:11.5px;font-weight:600;color:var(--ink);transition:transform .2s}
+.d:hover{transform:translateY(-6px) scale(1.08)}.d:active{transform:scale(.95)}
+.d .ic,.item .ic{position:relative;overflow:hidden;display:grid;place-items:center;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.d .ic{width:48px;height:48px;border-radius:13px;font-size:21px}
+.d .ic::after,.item .ic::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+.d .ic i,.item .ic i{position:relative;z-index:1}
+/* Slide-up sheet */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(10,8,30,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.sheet{position:fixed;left:50%;bottom:0;z-index:50;width:min(660px,100%);max-height:86vh;overflow:auto;transform:translate(-50%,105%);transition:transform .38s cubic-bezier(.2,.9,.25,1);padding:10px 16px calc(22px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(36,28,86,.62);backdrop-filter:saturate(200%) blur(28px);-webkit-backdrop-filter:saturate(200%) blur(28px);color:#fff;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 -18px 50px rgba(0,0,0,.4)}
+.open .scrim{opacity:1;visibility:visible}.open .sheet{transform:translate(-50%,0)}
+.grab{width:40px;height:5px;border-radius:9px;background:rgba(255,255,255,.5);margin:0 auto 12px}
+.sh{position:relative;display:flex;align-items:center;justify-content:center;min-height:36px;margin-bottom:12px}.sh h2{font-size:19px}
+.x{position:absolute;right:0;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.25);font-size:20px;line-height:1}.x:hover{background:rgba(255,255,255,.4)}
+.list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 6px}
+.item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 4px;border-radius:18px;text-align:center;font-size:13px;font-weight:700;line-height:1.25;color:#fff;text-decoration:none;transition:transform .2s,background .2s}
+.item:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}.item:active{transform:scale(.96)}
+.item .ic{width:60px;height:60px;border-radius:16px;font-size:26px}
+.confirm{text-align:center;padding:4px 8px 6px}.confirm p{opacity:.9;margin-bottom:16px}.confirm .acts{display:flex;gap:10px;justify-content:center}
+/* Modal form -> slide-up */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,8,30,.45);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.modal.active{opacity:1;visibility:visible}
+.modal-content{width:min(560px,100%);max-height:90vh;overflow:auto;padding:12px 20px calc(20px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(250,248,255,.97);box-shadow:0 -18px 50px rgba(0,0,0,.4);transform:translateY(105%);transition:transform .38s cubic-bezier(.2,.9,.25,1)}
+.modal.active .modal-content{transform:none}
+.modal-content::before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:rgba(0,0,0,.18);margin:0 auto 12px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-header h3{font-size:18px;color:var(--deep)}
+.close-modal{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--track);font-size:20px;cursor:pointer;color:var(--muted)}.close-modal:hover{background:#ff5f57;color:#fff}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:0 0 4px 2px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;outline:none}
+.form-group textarea{min-height:110px;resize:vertical}.form-group input[readonly]{background:#f0eef6;color:var(--muted)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.char-counter{display:block;text-align:right;font-size:12px;color:var(--muted)}
+.modal-footer{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 18px;border-radius:10px;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(160deg,#7b8cf5,#5568d8);box-shadow:0 1px 2px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:hover{filter:brightness(1.06)}.btn.alt,.btn-secondary{background:rgba(120,120,128,.2);color:var(--ink);box-shadow:none}.btn.red{background:linear-gradient(160deg,#f2706b,#d63d3a)}
+.btn:disabled,.form-group textarea:disabled,.form-group select:disabled{opacity:.55;cursor:not-allowed}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.list{grid-template-columns:repeat(3,minmax(0,1fr))}.item .ic{width:54px;height:54px}.bar-date i{display:none}.stats{gap:10px}.stat b{font-size:24px}.d{min-width:64px}.dock{gap:2px;padding:6px}.navbar-brand span{max-width:42vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== Tambahan khusus halaman Data Mapel ===== */
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.search{position:relative;flex:1 1 180px;max-width:260px}
+.search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px}
+.search input{width:100%;height:36px;padding:0 12px 0 32px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;font-size:14px;outline:none}
+.search input:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+a.d{text-decoration:none}
+.act{width:30px;height:30px;border-radius:8px;display:inline-grid;place-items:center;font-size:14px;transition:background .15s}
+.act.edit{color:#4c5fd5}.act.edit:hover{background:rgba(76,95,213,.12)}
+.act.del{color:#d63d3a}.act.del:hover{background:rgba(214,61,58,.12)}
+.table-responsive{max-height:none}
+.custom-table{min-width:560px}
+.custom-table td:last-child,.custom-table th:last-child{white-space:nowrap}
+</style>
+</head>
+<body>
+
+<!-- Menubar (gaya macOS) -->
+<header class="menubar">
+    <a href="#" class="navbar-brand"><img src="" alt="Logo Sekolah" style="display:none;"><span></span></a>
+    <div class="bar-date"><i class="far fa-calendar-alt"></i><span id="navbarDate"></span></div>
+</header>
+
+<main class="wrap">
+    <div class="head"><h1>Data Mata Pelajaran</h1><p>Kelola data mata pelajaran sekolah di sini.</p></div>
+
+    <!-- Jendela tabel Mapel -->
+    <section class="win">
+        <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Daftar Mata Pelajaran</h2><a href="dasboradmin.html">Dashboard</a></div>
+        <div class="wb">
+            <div class="toolbar">
+                <button class="btn" id="btnTambahMapel" type="button"><i class="fas fa-plus"></i> Tambah Mapel</button>
+                <label class="search"><i class="fas fa-search"></i><input type="search" id="searchMapel" placeholder="Cari Mapel..."></label>
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr><th>Id Mapel</th><th>Kode Mapel</th><th>Nama Mapel</th><th>Guru Pengajar</th><th>Aksi</th></tr>
+                    </thead>
+                    <tbody id="mapelTableBody">
+                        <tr><td colspan="5" style="text-align:center;">Belum ada data mata pelajaran.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <p>&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik) 2026</p>
+        <p>CopyRight Kenji Studio Developer.</p>
+    </footer>
+</main>
+
+<!-- Dock -->
+<nav class="dock" aria-label="Menu utama">
+    <a class="d" href="dasboradmin.html"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-home"></i></span>Dashboard</a>
+    <button class="d" type="button" id="dockAdd" onclick="document.getElementById('btnTambahMapel').click()"><span class="ic" style="background:linear-gradient(160deg,#59d6a0,#1b8a5c)"><i class="fas fa-plus"></i></span>Tambah</button>
+    <button class="d" type="button" id="dockSet"><span class="ic" style="background:linear-gradient(160deg,#ffc861,#d9820f)"><i class="fas fa-cogs"></i></span>Pengaturan</button>
+</nav>
+
+<!-- Slide-up menu pengaturan -->
+<div id="root">
+    <div class="scrim" id="scrim"></div>
+    <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" aria-hidden="true">
+        <div class="grab"></div>
+        <div class="sh"><h2 id="sheetTitle"></h2><button class="x" id="closeSheet" type="button" aria-label="Tutup menu">&times;</button></div>
+        <div id="sheetBody"></div>
+    </section>
+</div>
+
+<!-- Modal Tambah / Edit Mapel (slide-up) -->
+<div id="modalMapel" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Tambah Mata Pelajaran</h3>
+            <span class="close-modal" onclick="toggleModal('modalMapel')">&times;</span>
+        </div>
+        <form id="formMapel">
+            <div class="form-group">
+                <label for="idMapel">Id</label>
+                <input type="text" id="idMapel" readonly placeholder="Otomatis terisi (IDM-...)">
+            </div>
+            <div class="form-group">
+                <label for="kodeMapel">Kode Mapel</label>
+                <input type="text" id="kodeMapel" required placeholder="Contoh: MTK">
+            </div>
+            <div class="form-group">
+                <label for="namaMapel">Nama Mapel</label>
+                <input type="text" id="namaMapel" required placeholder="Contoh: Matematika">
+            </div>
+            <div class="form-group">
+                <label for="guruMapel">Guru Yang Mengajar</label>
+                <select id="guruMapel" required><option value="">Pilih Guru</option></select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="toggleModal('modalMapel')">Batal</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+        // --- Koneksi Navbar ---
+        const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+        
+        let editingId = null; // null = mode tambah, berisi id = mode edit
+
+        if (typeof supabase !== 'undefined') {
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+            const absensiClient = supabaseClient;
+
+            async function loadSchoolIdentity() {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('identitassekolah')
+                        .select('nama_sekolah, logo')
+                        .limit(1)
+                        .single();
+                    
+                    if (data) {
+                        if (data.nama_sekolah) {
+                            document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                        }
+                        if (data.logo) {
+                            const img = document.querySelector('.navbar-brand img');
+                            img.src = data.logo;
+                            img.style.display = 'block';
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error loading school identity:", err);
+                }
+            }
+            document.addEventListener('DOMContentLoaded', loadSchoolIdentity);
+            document.addEventListener('DOMContentLoaded', loadMapelData);
+            document.addEventListener('DOMContentLoaded', loadGuruOptions);
+
+            // --- Ambil SEMUA data mapel (halaman demi halaman, tanpa batas jumlah) ---
+            async function fetchAllMapel() {
+                const PAGE_SIZE = 1000;
+                let from = 0, total = null, rows = [];
+                while (true) {
+                    const { data, error, count } = await absensiClient
+                        .from('matapelajaran')
+                        .select('*', { count: 'exact' })
+                        .order('nama_mapel', { ascending: true })
+                        .order('id', { ascending: true })
+                        .range(from, from + PAGE_SIZE - 1);
+                    if (error) return { error };
+                    if (total === null) total = count;
+                    if (!data || data.length === 0) break;
+                    rows = rows.concat(data);
+                    from += data.length;
+                    if (total !== null && from >= total) break;
+                }
+                return { data: rows };
+            }
+
+            // --- Muat Data Mapel ---
+            async function loadMapelData() {
+                const tableBody = document.querySelector('.custom-table tbody');
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Memuat data...</td></tr>';
+
+                const { data, error } = await fetchAllMapel();
+
+                if (error) {
+                    console.error(error);
+                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#e74c3c;">Gagal memuat data: ${error.message}</td></tr>`;
+                    return;
+                }
+
+                tableBody.innerHTML = '';
+                if (!data || data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada data mata pelajaran.</td></tr>';
+                    return;
+                }
+
+                data.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.id}</td>
+                        <td>${item.kode_mapel}</td>
+                        <td>${item.nama_mapel}</td>
+                        <td>${item.nama_guru || '-'}</td>
+                        <td>
+                            <button class="act edit" onclick="editMapel('${item.id}')" title="Edit" aria-label="Edit"><i class="fas fa-edit"></i></button>
+                            <button class="act del" onclick="deleteMapel('${item.id}')" title="Hapus" aria-label="Hapus"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            // --- Muat Data Guru ---
+            async function loadGuruOptions() {
+                const select = document.getElementById('guruMapel');
+                const { data, error } = await supabaseClient
+                    .from('dataguru')
+                    .select('nama_guru')
+                    .order('nama_guru');
+                
+                if (data) {
+                    select.innerHTML = '<option value="">Pilih Guru</option>';
+                    data.forEach(guru => {
+                        const option = document.createElement('option');
+                        option.value = guru.nama_guru;
+                        option.textContent = guru.nama_guru;
+                        select.appendChild(option);
+                    });
+                }
+            }
+
+            // --- Simpan Data Mapel ---
+            document.getElementById('formMapel').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('idMapel').value;
+                const kode = document.getElementById('kodeMapel').value;
+                const nama = document.getElementById('namaMapel').value;
+                const guru = document.getElementById('guruMapel').value;
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                
+                submitBtn.textContent = 'Menyimpan...';
+                submitBtn.disabled = true;
+
+                let error;
+                if (editingId) {
+                    ({ error } = await absensiClient
+                        .from('matapelajaran')
+                        .update({ kode_mapel: kode, nama_mapel: nama, nama_guru: guru })
+                        .eq('id', editingId));
+                } else {
+                    ({ error } = await absensiClient
+                        .from('matapelajaran')
+                        .insert({ id: id, kode_mapel: kode, nama_mapel: nama, nama_guru: guru }));
+                }
+
+                submitBtn.textContent = 'Simpan';
+                submitBtn.disabled = false;
+
+                if (error) {
+                    if (error.code === '23505') {
+                        alert('Gagal menyimpan: Kode mapel "' + kode + '" sudah dipakai (ID ' + id + '). Gunakan kode lain.');
+                    } else {
+                        alert('Gagal menyimpan: ' + error.message);
+                    }
+                } else {
+                    alert('Data berhasil disimpan!');
+                    toggleModal('modalMapel');
+                    loadMapelData();
+                }
+            });
+
+            // --- Hapus Data Mapel ---
+            window.deleteMapel = async (id) => {
+                if(confirm('Hapus mata pelajaran ini?')) {
+                    const { error } = await absensiClient.from('matapelajaran').delete().eq('id', id);
+                    if(error) alert('Gagal hapus: ' + error.message);
+                    else loadMapelData();
+                }
+            };
+
+            // --- Edit Data Mapel ---
+            window.editMapel = async (id) => {
+                const { data, error } = await absensiClient.from('matapelajaran').select('*').eq('id', id).single();
+                if(data) {
+                    editingId = data.id;
+                    document.getElementById('modalTitle').textContent = 'Edit Mata Pelajaran';
+                    document.getElementById('idMapel').value = data.id;
+                    document.getElementById('kodeMapel').value = data.kode_mapel;
+                    document.getElementById('namaMapel').value = data.nama_mapel;
+                    document.getElementById('guruMapel').value = data.nama_guru || '';
+                    document.getElementById('modalMapel').classList.add('active');
+                }
+            };
+        }
+
+        // --- Logika Modal ---
+        const btnTambahMapel = document.getElementById('btnTambahMapel');
+        const modalMapel = document.getElementById('modalMapel');
+        const inputKode = document.getElementById('kodeMapel');
+        const inputId = document.getElementById('idMapel');
+
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.toggle('active');
+            // Setiap modal mapel ditutup, kembalikan form ke kondisi kosong (mode tambah)
+            if (modalId === 'modalMapel' && !modal.classList.contains('active')) {
+                document.getElementById('formMapel').reset();
+                editingId = null;
+                document.getElementById('modalTitle').textContent = 'Tambah Mata Pelajaran';
+            }
+        }
+
+        btnTambahMapel.addEventListener('click', () => {
+            document.getElementById('formMapel').reset();
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'Tambah Mata Pelajaran';
+            modalMapel.classList.add('active');
+        });
+
+        // --- Isi ID Otomatis ---
+        inputKode.addEventListener('input', function() {
+            if (editingId) return; // saat edit, ID tidak boleh berubah
+            inputId.value = 'IDM-' + this.value.trim().toUpperCase().replace(/\s+/g, '-');
+        });
+    
+        // --- Pencarian di tabel ---
+        document.getElementById('searchMapel').addEventListener('input', function () {
+            const q = this.value.trim().toLowerCase();
+            document.querySelectorAll('#mapelTableBody tr').forEach(tr => {
+                if (tr.children.length < 2) return; // baris pesan (memuat / kosong)
+                tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        });
+
+        // --- Tanggal di menubar ---
+        (function () {
+            const el = document.getElementById('navbarDate');
+            el.textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        })();
+
+        // --- Dock & Slide-up menu ---
+        (function () {
+            const $ = s => document.querySelector(s), root = $('#root');
+            const PAL = ['#8fa4ff,#4c5fd5', '#ffc861,#d9820f', '#59d6a0,#1b8a5c', '#ff8a96,#c13a4a', '#6cb8ff,#2a74d6', '#c19bff,#7a3fe0'];
+            const SET = [['Identitas Sekolah','school','identitassekolah.html'],['Rombongan Belajar','layer-group','rombel.html'],['Data Guru','chalkboard-teacher','dataguru.html'],['Data Siswa','user-graduate','datasiswa.html'],['Walikelas','user-tie','walikelas.html'],['Guru Piket','user-shield','gurupiket.html'],['Mapping Kelas Siswa','th-large','mappingsiswa.html'],['Mata Pelajaran','book','datamapel.html'],['Area Piket','map-marker-alt','areapiket.html'],['Arsip','archive','Arsipadmin.html'],['Backup dan Reset','history','backup.html']];
+            const tiles = a => '<div class="list">' + a.map((m, i) => {
+                const c = PAL[i % PAL.length].split(',');
+                return '<a class="item" href="' + m[2] + '"><span class="ic" style="background:linear-gradient(160deg,' + c[0] + ',' + c[1] + ')"><i class="fas fa-' + m[1] + '"></i></span><span>' + m[0] + '</span></a>';
+            }).join('') + '</div>';
+            let last = null;
+            function openSheet(t, h) { last = document.activeElement; $('#sheetTitle').textContent = t; $('#sheetBody').innerHTML = h; root.classList.add('open'); $('#sheet').setAttribute('aria-hidden', 'false'); $('#closeSheet').focus(); }
+            function closeSheet() { root.classList.remove('open'); $('#sheet').setAttribute('aria-hidden', 'true'); if (last) last.focus(); }
+            $('#dockSet').addEventListener('click', () => openSheet('Menu Pengaturan', tiles(SET)));
+            $('#scrim').addEventListener('click', closeSheet);
+            $('#closeSheet').addEventListener('click', closeSheet);
+            document.addEventListener('keydown', e => {
+                if (e.key !== 'Escape') return;
+                if (root.classList.contains('open')) closeSheet();
+                else if (modalMapel.classList.contains('active')) toggleModal('modalMapel');
+            });
+        })();
+
+        // Tutup modal saat klik area gelap di luar form
+        modalMapel.addEventListener('click', e => { if (e.target === modalMapel) toggleModal('modalMapel'); });
+</script>
+</body>
+</html>

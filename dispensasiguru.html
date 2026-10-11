@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Dispensasi Siswa - SMKN 1 Simpang Teritip</title>
+    <!-- Icon Keren -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary:#667eea;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16);--text-muted:#66627f;--border-color:rgba(0,0,0,.15)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
+body{color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,url('bg1.png') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.navbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.container{width:100%;max-width:860px;margin:0 auto;padding:22px 12px}
+.container>header{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.container>header h1{font-size:clamp(26px,4.5vw,36px);letter-spacing:-.02em;line-height:1.1}
+.container>header h1 i{margin-right:8px;font-size:.8em}
+.container>header p{opacity:.88;font-size:14px;margin-top:4px}
+.content{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663}
+.hint{font-size:12px;color:var(--muted);margin:3px 0 0 2px}
+.message{display:none;margin:14px 16px 0;padding:10px 14px;border-radius:10px;font-size:14px;font-weight:600}
+.message.success{background:#e7f7ee;color:#1b6b46}.message.error{background:#fdeaea;color:#a12622}
+/* Dock */
+.button-group{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:4px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.62);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.button-group button,.button-group a{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:70px;padding:6px 6px;border-radius:16px;border:0;background:none;font-size:11.5px;font-weight:600;color:var(--ink);text-decoration:none;cursor:pointer;transition:transform .2s}
+.button-group button:hover:not(:disabled),.button-group a:hover{transform:translateY(-6px) scale(1.08)}.button-group button:active,.button-group a:active{transform:scale(.95)}
+.button-group button:disabled{opacity:.5;cursor:not-allowed}
+.button-group button>i,.button-group a>i{position:relative;overflow:hidden;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;font-size:21px;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.button-group button>i::after,.button-group a>i::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+@media (max-width:520px){.button-group{gap:0;padding:6px}.button-group button,.button-group a{min-width:58px;font-size:10.5px;padding:4px}.button-group button>i,.button-group a>i{width:44px;height:44px;font-size:19px}.navbar-brand span{max-width:60vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+#dashboardBtn>i{background:linear-gradient(160deg,#8fa4ff,#4c5fd5)}#refreshBtn>i{background:linear-gradient(160deg,#6cb8ff,#2a74d6)}
+#addRombelBtn>i{background:linear-gradient(160deg,#59d6a0,#1b8a5c)}#exportPdfBtn>i{background:linear-gradient(160deg,#f2706b,#c92f2c)}
+.message{display:none;margin:14px 16px 0;padding:10px 14px;border-radius:10px;font-size:14px;font-weight:600}
+.message.success{background:#e7f7ee;color:#1b6b46}.message.error{background:#fdeaea;color:#a12622}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:16px 16px 0}
+.stat{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:30px;line-height:1.1;color:var(--deep)}
+.stat small{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:2px}
+.stat i{flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font-size:18px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1.5px 0 rgba(255,255,255,.4)}
+.sec{padding:16px}
+.sec>h2{font-size:13px;font-weight:600;color:var(--muted);margin:0 0 7px 6px}
+.tablebox{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:340px}
+th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:11px 14px;background:#f7f5fc;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid rgba(0,0,0,.05)}
+tr:last-child td{border:0}
+tbody tr:hover{background:rgba(102,126,234,.06)}
+td.n{width:52px;color:var(--muted)}td.act{text-align:right;white-space:nowrap;width:96px}
+.kls{display:inline-block;min-width:36px;text-align:center;font-weight:700;padding:2px 11px;border-radius:99px;background:#e9edff;color:#3a46a8}
+.ib{width:32px;height:32px;border-radius:9px;border:0;background:rgba(0,0,0,.06);color:#4c5fd5;cursor:pointer;font-size:14px}
+.ib.del{color:#c92f2c}.ib:hover{background:rgba(102,126,234,.2)}.ib.del:hover{background:rgba(229,72,77,.18)}
+.empty{padding:26px 14px;text-align:center;color:var(--muted);font-size:14px}
+.empty.err{color:#a12622}
+.foot{text-align:center;color:rgba(255,255,255,.75);font-size:12px;margin-top:16px;text-shadow:0 1px 6px rgba(0,0,0,.4)}
+/* Modal */
+.overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:12px;background:rgba(20,15,50,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:60}
+.overlay.on{display:flex}
+.modal{width:100%;max-width:420px;border-radius:14px;overflow:hidden;background:rgba(250,248,255,.97);box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 30px 80px rgba(0,0,0,.45);animation:pop .2s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes pop{from{opacity:0;transform:scale(.95) translateY(8px)}}
+.tb .x{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.08);font-size:17px;line-height:1;color:#4a4663;cursor:pointer}
+.tb .x:hover{background:rgba(0,0,0,.16)}
+.modal form{padding:16px}
+.fg{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:12px}
+.fg label{display:block;font-size:12px;font-weight:600;line-height:16px;color:var(--muted);margin:0 0 4px 2px}
+.fg label.req::after{content:" *";color:#e5484d}
+.fg input{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none}
+.fg input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.hint{font-size:12px;color:var(--muted);margin:3px 0 0 2px}
+.merr{display:none;margin-top:12px;padding:9px 12px;border-radius:10px;font-size:13px;font-weight:600;background:#fdeaea;color:#a12622}
+.acts{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+.btn{height:38px;padding:0 18px;border:0;border-radius:10px;font-size:14px;font-weight:600;color:#fff;cursor:pointer;background:linear-gradient(#7b8ff0,#4c5fd5);box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn:hover{filter:brightness(1.06)}.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn.alt{background:rgba(0,0,0,.08);color:var(--ink);box-shadow:none}
+@media (max-width:520px){.stats{grid-template-columns:minmax(0,1fr)}.sec,.modal form{padding:12px}.stats{padding:12px 12px 0}}
+
+/* ===== Tambahan khusus halaman Piket Harian ===== */
+.container{max-width:1180px}
+.navbar .clock{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;opacity:.92;white-space:nowrap}
+.content{margin-bottom:16px}
+.tb .tbadge{position:absolute;right:12px;font-size:11.5px;font-weight:700;color:#fff;padding:2px 10px;border-radius:99px;background:linear-gradient(160deg,#f2706b,#c92f2c);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.guru-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.guru-grid>p{grid-column:1/-1;text-align:center;color:var(--muted)}
+.toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.toolbar .grp{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.toolbar .grp.end{margin-left:auto}
+.search{position:relative}
+.search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px}
+.search input{height:36px;width:230px;padding:0 12px 0 32px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none}
+.sel{height:36px;padding:0 10px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none;cursor:pointer}
+.search input:focus,.sel:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.custom-table{min-width:640px}
+.custom-table th,.custom-table td{white-space:nowrap}
+#jurnalPagination{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:14px;font-size:13px;color:var(--muted)}
+/* tombol (gaya rombel.html, dipakai juga oleh tombol hasil render JS) */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:auto;padding:8px 16px;text-decoration:none;font-family:inherit}
+.btn-danger{background:linear-gradient(#f2706b,#d63d3a)}
+.btn-warning{background:linear-gradient(#ffc861,#e08a0c)}
+.btn-secondary{background:rgba(0,0,0,.08);color:var(--ink);box-shadow:none}
+.btn-secondary:disabled{opacity:.45}
+/* dock */
+#dashboardBtn>i{background:linear-gradient(160deg,#8fa4ff,#4c5fd5)}
+#settingPiketSiswaBtn>i{background:linear-gradient(160deg,#ffc861,#d9820f)}
+#inputJurnalBtn>i{background:linear-gradient(160deg,#59d6a0,#1b8a5c)}
+#viewAllPiketBtn>i{background:linear-gradient(160deg,#b58cf5,#7a45d6)}
+/* modal */
+.overlay.active{display:flex}
+.modal{max-width:460px;max-height:92vh;display:flex;flex-direction:column}
+.modal form{overflow:auto}
+.mbody{padding:16px;overflow:auto;flex:1}
+.mfoot{display:flex;justify-content:flex-end;gap:10px;padding:12px 16px;border-top:1px solid var(--line)}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+.fg .form-group{margin:0}
+.form-group label{display:block;font-size:12px;font-weight:600;line-height:16px;color:var(--muted);margin:0 0 4px 2px}
+.form-group input,.form-group select{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none}
+.form-group input:focus,.form-group select:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.form-group input[readonly]{background:#f0eef6;color:var(--muted)}
+.searchable-dropdown{position:relative}
+.dropdown-options{position:absolute;top:100%;left:0;right:0;margin-top:4px;background:#fff;border:1px solid var(--line);border-radius:10px;max-height:200px;overflow-y:auto;z-index:10;display:none;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.dropdown-options.show{display:block}
+.dropdown-option{padding:9px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,.05);font-size:14px;color:var(--ink)}
+.dropdown-option:last-child{border-bottom:0}
+.dropdown-option:hover{background:rgba(102,126,234,.1);color:#3a46a8}
+.no-results{padding:10px;color:var(--muted);font-size:13px;text-align:center}
+@media (max-width:520px){.navbar .clock{font-size:11px}.navbar-brand span{max-width:38vw}.search,.search input{width:100%}.toolbar .grp{width:100%}.toolbar .grp.end{margin-left:0}}
+/* ===== Tambahan khusus halaman Dispensasi Siswa ===== */
+#btnAddDispensasi>i{background:linear-gradient(160deg,#59d6a0,#1b8a5c)}
+#btnExportPdf>i{background:linear-gradient(160deg,#f2706b,#c92f2c)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:520px){.form-row{grid-template-columns:1fr}}
+.form-group textarea{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-family:inherit;font-size:14px;color:var(--ink);outline:none;resize:vertical}
+.form-group textarea:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.kode{display:inline-block;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;font-weight:700;padding:2px 9px;border-radius:7px;background:#e9edff;color:#3a46a8;white-space:nowrap}
+.alasan{min-width:180px;white-space:normal!important}
+</style>
+</head>
+<body>
+
+    <!-- Navigasi Atas -->
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">
+            <img src="" alt="Logo Sekolah" style="display: none;">
+            <span></span>
+        </a>
+        <div class="clock"><i class="far fa-clock"></i><span id="liveDateTime"></span></div>
+    </nav>
+
+    <!-- Area Konten -->
+    <main class="main-content">
+        <div class="container">
+            <header>
+                <h1><i class="fas fa-user-clock"></i> Dispensasi Siswa</h1>
+                <p>Petugas piket hari ini dan pencatatan dispensasi siswa</p>
+            </header>
+
+            <!-- Info Piket Hari Ini -->
+            <div class="content">
+                <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Petugas Piket Hari Ini</h2><span id="todayBadge" class="tbadge"></span></div>
+                <div class="sec">
+                    <div id="piketList" class="guru-grid">
+                        <p>Memuat data...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Isi Dispensasi -->
+            <div class="content">
+                <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Data Dispensasi Siswa</h2></div>
+                <div class="sec">
+                    <div class="toolbar">
+                        <div class="grp">
+                            <label class="search"><i class="fas fa-search"></i><input type="text" id="searchDispensasi" placeholder="Cari Dispensasi..."></label>
+                            <input type="date" id="filterTanggal" class="sel" title="Filter Tanggal">
+                            <select id="filterKelas" class="sel" title="Filter Kelas">
+                                <option value="">Filter Kelas</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="tablebox"><div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Kode</th>
+                                    <th>Nama Siswa</th>
+                                    <th>Kelas</th>
+                                    <th>Tanggal</th>
+                                    <th>Pukul</th>
+                                    <th>Mapel</th>
+                                    <th>Guru Mapel</th>
+                                    <th>NIP</th>
+                                    <th>Alasan</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dispensasiTableBody">
+                                <tr><td colspan="11" class="empty">Belum ada data dispensasi.</td></tr>
+                            </tbody>
+                        </table>
+                    </div></div>
+                </div>
+            </div>
+
+            <!-- Kaki Halaman -->
+            <p class="foot">&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik) 2026<br>CopyRight Kenji Studio Developer.</p>
+        </div>
+    </main>
+
+    <!-- Dock -->
+    <div class="button-group">
+        <a href="adminguru.html" id="dashboardBtn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+        <button type="button" id="btnAddDispensasi"><i class="fas fa-plus"></i> Tambah Dispensasi</button>
+        <button type="button" id="btnExportPdf"><i class="fas fa-file-pdf"></i> Export Pdf</button>
+    </div>
+
+    <!-- Modal Input Dispen -->
+    <div id="dispensasiModal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="dispensasiTitle">
+        <div class="modal">
+            <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2 id="dispensasiTitle">Input Dispensasi Siswa</h2><button type="button" class="x" id="closeModalBtn" aria-label="Tutup">&times;</button></div>
+            <form id="dispensasiForm">
+                <div class="fg">
+                    <div class="form-group">
+                        <label for="kodeDispen">Kode Dispen</label>
+                        <input type="text" id="kodeDispen" name="kodeDispen" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="namaSiswaInput">Nama Siswa</label>
+                        <div class="searchable-dropdown">
+                            <input type="text" id="namaSiswaInput" placeholder="Ketik nama siswa..." autocomplete="off" required>
+                            <input type="hidden" id="namaSiswaHidden" name="namaSiswa">
+                            <div id="siswaDropdown" class="dropdown-options"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nisnSiswa">NISN</label>
+                            <input type="text" id="nisnSiswa" name="nisn" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="kelasSiswa">Kelas</label>
+                            <input type="text" id="kelasSiswa" name="kelas" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="walikelasInput">Walikelas</label>
+                        <div class="searchable-dropdown">
+                            <input type="text" id="walikelasInput" placeholder="Ketik nama walikelas..." autocomplete="off" required>
+                            <input type="hidden" id="walikelasHidden" name="walikelas">
+                            <div id="walikelasDropdown" class="dropdown-options"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="nipWalikelas">NIP Walikelas</label>
+                        <input type="text" id="nipWalikelas" name="nipWalikelas" readonly placeholder="Otomatis terisi">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tglDispen">Tanggal Dispen</label>
+                            <input type="date" id="tglDispen" name="tglDispen" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pukulDispen">Pukul</label>
+                            <input type="text" id="pukulDispen" name="pukulDispen" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="mapelSelect">Mata Pelajaran</label>
+                        <select id="mapelSelect" name="mapel" required>
+                            <option value="">Pilih Mata Pelajaran</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="guruSelect">Guru Mata Pelajaran</label>
+                        <select id="guruSelect" name="guru" required>
+                            <option value="">Pilih Guru</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nipGuru">NIP</label>
+                        <input type="text" id="nipGuru" name="nip" readonly placeholder="Otomatis terisi">
+                    </div>
+                    <div class="form-group">
+                        <label for="guruPiketSelect">Guru Piket</label>
+                        <select id="guruPiketSelect" name="guruPiket" required>
+                            <option value="">Pilih Guru Piket</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nipGuruPiket">NIP Guru Piket</label>
+                        <input type="text" id="nipGuruPiket" name="nipGuruPiket" readonly placeholder="Otomatis terisi">
+                    </div>
+                    <div class="form-group">
+                        <label for="alasanDispen">Alasan</label>
+                        <textarea id="alasanDispen" name="alasan" rows="3" required placeholder="Alasan dispensasi..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="namaWali">Nama Orang Tua/Wali</label>
+                        <input type="text" id="namaWali" name="namaWali" required placeholder="Masukkan nama orang tua/wali...">
+                    </div>
+                </div>
+                <div class="acts">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Batal</button>
+                    <button type="submit" class="btn btn-primary">Konfirmasi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- Koneksi SIMPEDIK ---
+        const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        const absensiClient = supabaseClient;
+
+        let schoolData = {};
+        const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+        // --- Ambil Identitas Sekolah ---
+        async function loadSchoolIdentity() {
+            try {
+                const { data, error } = await supabaseClient.from('identitassekolah').select('nama_sekolah, logo, kop_sekolah').limit(1).single();
+                if (data) {
+                    schoolData = data;
+                    if (data.nama_sekolah) document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                    if (data.logo) document.querySelector('.navbar-brand img').src = data.logo;
+                    document.querySelector('.navbar-brand img').style.display = 'block';
+                }
+            } catch (err) { console.error("Error loading identity:", err); }
+        }
+        document.addEventListener('DOMContentLoaded', loadSchoolIdentity);
+
+        // --- Jam Jalan ---
+        function updateLiveTime() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            document.getElementById('liveDateTime').textContent = `${now.toLocaleDateString('id-ID', dateOptions)} | ${now.toLocaleTimeString('id-ID', timeOptions).replace(/\./g, ':')} WIB`;
+        }
+        setInterval(updateLiveTime, 1000);
+        updateLiveTime();
+
+        // --- Muat Piket & Cek Akses ---
+        async function loadPiketHariIni() {
+            const now = new Date();
+            const hariIni = now.toLocaleDateString('id-ID', { weekday: 'long' }).toUpperCase();
+            document.getElementById('todayBadge').textContent = hariIni;
+            const container = document.getElementById('piketList');
+            const btnAdd = document.getElementById('btnAddDispensasi');
+            const guruPiketSelect = document.getElementById('guruPiketSelect');
+
+            // Ambil data guru yg login
+            const session = JSON.parse(sessionStorage.getItem('guru_session'));
+            const namaGuru = session ? session.nama : null;
+
+            try {
+                const { data, error } = await supabaseClient.from('gurupiket').select('piket1, piket2, piket3, piket4, piket5, piket6, piket7').eq('hari', hariIni);
+                if (error) throw error;
+
+                container.innerHTML = '';
+                guruPiketSelect.innerHTML = '<option value="">Pilih Guru Piket</option>';
+                let isPiket = false;
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--muted);">Tidak ada jadwal piket hari ini.</p>`;
+                    // Matiin tombol kalo ga ada jadwal
+                    if(btnAdd) {
+                        btnAdd.disabled = true;
+                        btnAdd.title = "Tidak ada jadwal piket hari ini";
+                    }
+                    return;
+                }
+
+                // Cek guru yg login piket apa bukan
+                if (namaGuru) {
+                    isPiket = data.some(p => 
+                        p.piket1 === namaGuru || 
+                        p.piket2 === namaGuru || 
+                        p.piket3 === namaGuru ||
+                        p.piket4 === namaGuru ||
+                        p.piket5 === namaGuru ||
+                        p.piket6 === namaGuru ||
+                        p.piket7 === namaGuru
+                    );
+                }
+
+                // Atur tombol sesuai hak akses
+                if(btnAdd) {
+                    if (isPiket) {
+                        btnAdd.disabled = false;
+                        btnAdd.title = "";
+                    } else {
+                        btnAdd.disabled = true;
+                        btnAdd.title = "Anda bukan petugas piket hari ini";
+                    }
+                }
+
+                // Ambil Foto Guru
+                const teacherNames = [];
+                data.forEach(p => { 
+                    if(p.piket1) teacherNames.push(p.piket1); 
+                    if(p.piket2) teacherNames.push(p.piket2); 
+                    if(p.piket3) teacherNames.push(p.piket3); 
+                    if(p.piket4) teacherNames.push(p.piket4); 
+                    if(p.piket5) teacherNames.push(p.piket5); 
+                    if(p.piket6) teacherNames.push(p.piket6); 
+                    if(p.piket7) teacherNames.push(p.piket7); 
+                });
+                
+                let photoMap = {};
+                let nipMap = {};
+                if (teacherNames.length > 0) {
+                    const { data: guruData } = await supabaseClient.from('dataguru').select('nama_guru, photo, nip').in('nama_guru', teacherNames);
+                    if (guruData) guruData.forEach(g => { 
+                        if (g.photo) photoMap[g.nama_guru] = g.photo; 
+                        if (g.nip) nipMap[g.nama_guru] = g.nip;
+                    });
+                }
+
+                // Isi Dropdown Guru Piket
+                teacherNames.forEach(nama => {
+                    const opt = document.createElement('option');
+                    opt.value = nama;
+                    opt.textContent = nama;
+                    opt.dataset.nip = nipMap[nama] || '';
+                    guruPiketSelect.appendChild(opt);
+                });
+
+                data.forEach(piket => {
+                    const createCard = (nama, label, color) => {
+                        if (!nama) return '';
+                        const photo = photoMap[nama]
+                            ? `<img src="${photoMap[nama]}" alt="${esc(nama)}" style="width:100%;height:100%;object-fit:cover;">`
+                            : `<i class="fas fa-user"></i>`;
+                        return `
+                            <div style="background:#fff; padding:14px; border-radius:12px; border:1px solid var(--line); border-left:4px solid ${color};">
+                                <div style="font-size:0.8rem; color:var(--muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px;">${label}</div>
+                                <div style="font-weight:600; color:var(--ink); display:flex; align-items:center; gap:10px;">
+                                    <div style="width:40px; height:40px; background:#eef0fb; border-radius:50%; display:flex; align-items:center; justify-content:center; color:${color}; box-shadow:0 1px 3px rgba(0,0,0,0.1); overflow:hidden; border:1px solid ${color}; flex-shrink:0;">${photo}</div>
+                                    <span>${esc(nama)}</span>
+                                </div>
+                            </div>`;
+                    };
+
+                    container.innerHTML += createCard(piket.piket1, 'Guru Piket 1', '#3b82f6');
+                    container.innerHTML += createCard(piket.piket2, 'Guru Piket 2', '#10b981');
+                    container.innerHTML += createCard(piket.piket3, 'Guru Piket 3', '#f59e0b');
+                    container.innerHTML += createCard(piket.piket4, 'Guru Piket 4', '#8b5cf6');
+                    container.innerHTML += createCard(piket.piket5, 'Guru Piket 5', '#ef4444');
+                    container.innerHTML += createCard(piket.piket6, 'Guru Piket 6', '#6366f1');
+                    container.innerHTML += createCard(piket.piket7, 'Guru Piket 7', '#ec4899');
+                });
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #ef4444;">Gagal memuat data.</p>`;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadPiketHariIni);
+
+        // --- Muat Opsi Kelas ---
+        async function loadKelasOptions() {
+            const select = document.getElementById('filterKelas');
+            try {
+                // Ambil data kelas dari mapping siswa
+                const { data, error } = await absensiClient
+                    .from('mappingsiswa')
+                    .select('kelas')
+                    .order('kelas');
+                
+                if (error) throw error;
+                
+                if (data) {
+                    // Saring kelas unik
+                    const uniqueKelas = [...new Set(data.map(item => item.kelas))];
+                    
+                    uniqueKelas.forEach(kelas => {
+                        const option = document.createElement('option');
+                        option.value = kelas;
+                        option.textContent = kelas;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (err) {
+                console.error('Error loading kelas:', err);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadKelasOptions);
+
+        // --- Logika Modal & Form ---
+        const modal = document.getElementById('dispensasiModal');
+        const btnAdd = document.getElementById('btnAddDispensasi');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const form = document.getElementById('dispensasiForm');
+        
+        // Dropdown Elements
+        const namaSiswaInput = document.getElementById('namaSiswaInput');
+        const namaSiswaHidden = document.getElementById('namaSiswaHidden');
+        const siswaDropdown = document.getElementById('siswaDropdown');
+        const mapelSelect = document.getElementById('mapelSelect');
+        const guruSelect = document.getElementById('guruSelect');
+        const walikelasInput = document.getElementById('walikelasInput');
+        const walikelasHidden = document.getElementById('walikelasHidden');
+        const walikelasDropdown = document.getElementById('walikelasDropdown');
+        const nipWalikelasInput = document.getElementById('nipWalikelas');
+        const guruPiketSelect = document.getElementById('guruPiketSelect');
+
+        let siswaCache = [];
+        let walikelasCache = [];
+
+        // Buka Modal
+        btnAdd.addEventListener('click', async () => {
+            if (btnAdd.disabled) return;
+            
+            form.reset();
+            generateKodeDispen();
+            
+            // Set tanggal/waktu default
+            const now = new Date();
+            document.getElementById('tglDispen').value = now.toISOString().split('T')[0];
+            
+            const currentTime = now.toTimeString().slice(0,5);
+            document.getElementById('pukulDispen').value = currentTime;
+
+            // Muat data kalo kosong
+            if (siswaCache.length === 0) await loadSiswaData();
+            await loadWalikelasData(); // selalu segar, mengikuti data di halaman walikelas
+            if (mapelSelect.options.length <= 1) await loadMapelData();
+            if (guruSelect.options.length <= 1) await loadGuruData();
+            
+            modal.classList.add('active');
+        });
+
+        // Tutup Modal
+        function closeModal() { modal.classList.remove('active'); }
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+
+        // Bikin Kode Dispen
+        function generateKodeDispen() {
+            const now = new Date();
+            const dateStr = now.toISOString().slice(0,10).replace(/-/g, '');
+            const random = Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('kodeDispen').value = `DIS-${dateStr}-${random}`;
+        }
+
+        // Muat Data Walikelas (sumber sama dengan walikelas.html: tabel 'walikelas' -> nip, nama_guru, kelas)
+        async function loadWalikelasData() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('walikelas')
+                    .select('nip::text, nama_guru, kelas')
+                    .order('nama_guru', { ascending: true });
+
+                if (error) throw error;
+                walikelasCache = (data || []).slice().sort((a, b) =>
+                    String(a.nama_guru || '').localeCompare(String(b.nama_guru || ''), 'id', { sensitivity: 'base' }));
+            } catch (err) { console.error('Error loading walikelas:', err); }
+        }
+
+        // Isi field walikelas (nama + NIP)
+        function setWalikelas(w) {
+            walikelasInput.value = w ? w.nama_guru : '';
+            walikelasHidden.value = w ? w.nama_guru : '';
+            nipWalikelasInput.value = w && w.nip ? w.nip : '';
+        }
+
+        // Muat Data Siswa dari Mapping
+        async function loadSiswaData() {
+            try {
+                const { data, error } = await absensiClient
+                    .from('mappingsiswa')
+                    .select('nama_siswa, nisn, kelas')
+                    .order('nama_siswa');
+                
+                if (error) throw error;
+                if (data) siswaCache = data;
+            } catch (err) {
+                console.error('Error loading siswa:', err);
+            }
+        }
+
+        // Muat Data Guru dari SIMPEDIK
+        async function loadGuruData() {
+            const { data } = await supabaseClient.from('dataguru').select('nama_guru, nip').order('nama_guru');
+            if (data) {
+                guruSelect.innerHTML = '<option value="">Pilih Guru</option>';
+                data.forEach(g => {
+                    if (g.nama_guru) {
+                        const opt = document.createElement('option');
+                        opt.value = g.nama_guru;
+                        opt.textContent = g.nama_guru;
+                        opt.dataset.nip = g.nip || ''; // Simpen NIP di data-*
+                        guruSelect.appendChild(opt);
+                    }
+                });
+            }
+        }
+
+        // Muat Data Mapel dari Absensi
+        async function loadMapelData() {
+            const { data } = await absensiClient.from('matapelajaran').select('nama_mapel').order('nama_mapel');
+            if (data) {
+                const uniqueMapel = [...new Set(data.map(item => item.nama_mapel))];
+                mapelSelect.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
+                uniqueMapel.forEach(mapel => {
+                    if (mapel) {
+                        const opt = document.createElement('option');
+                        opt.value = mapel;
+                        opt.textContent = mapel;
+                        mapelSelect.appendChild(opt);
+                    }
+                });
+            }
+        }
+
+        // Logika Cari Siswa
+        namaSiswaInput.addEventListener('input', function() {
+            const val = this.value.toLowerCase();
+            const filtered = siswaCache.filter(s => s.nama_siswa.toLowerCase().includes(val));
+            
+            siswaDropdown.innerHTML = '';
+            if (filtered.length === 0) {
+                siswaDropdown.innerHTML = '<div class="dropdown-option">Tidak ditemukan</div>';
+            } else {
+                filtered.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = 'dropdown-option';
+                    div.textContent = `${s.nama_siswa} (${s.kelas})`;
+                    div.onclick = () => {
+                        namaSiswaInput.value = s.nama_siswa;
+                        namaSiswaHidden.value = s.nama_siswa;
+                        document.getElementById('nisnSiswa').value = s.nisn || '';
+                        document.getElementById('kelasSiswa').value = s.kelas || '';
+                        siswaDropdown.style.display = 'none';
+                        // Walikelas otomatis terisi sesuai kelas siswa (data dari tabel walikelas)
+                        const wali = walikelasCache.find(w => String(w.kelas || '').trim() === String(s.kelas || '').trim());
+                        setWalikelas(wali || null);
+                    };
+                    siswaDropdown.appendChild(div);
+                });
+            }
+            siswaDropdown.style.display = 'block';
+        });
+
+        // Logika Cari Walikelas
+        function renderWalikelasDropdown() {
+            const val = walikelasInput.value.trim().toLowerCase();
+            const filtered = walikelasCache.filter(w =>
+                !val || [w.nama_guru, w.nip, w.kelas].some(v => v != null && String(v).toLowerCase().includes(val)));
+
+            walikelasDropdown.innerHTML = '';
+            if (filtered.length === 0) {
+                walikelasDropdown.innerHTML = '<div class="dropdown-option">Tidak ditemukan</div>';
+            } else {
+                filtered.forEach(w => {
+                    const div = document.createElement('div');
+                    div.className = 'dropdown-option';
+                    div.textContent = w.kelas ? `${w.nama_guru} (${w.kelas})` : w.nama_guru;
+                    div.onclick = () => {
+                        setWalikelas(w);
+                        walikelasDropdown.style.display = 'none';
+                    };
+                    walikelasDropdown.appendChild(div);
+                });
+            }
+            walikelasDropdown.style.display = 'block';
+        }
+        walikelasInput.addEventListener('input', function() {
+            // Ketik ulang = pilihan sebelumnya dibatalkan
+            walikelasHidden.value = '';
+            nipWalikelasInput.value = '';
+            renderWalikelasDropdown();
+        });
+        walikelasInput.addEventListener('focus', renderWalikelasDropdown);
+
+        // Tutup dropdown kalo klik di luar
+        document.addEventListener('click', (e) => {
+            if (!namaSiswaInput.contains(e.target) && !siswaDropdown.contains(e.target)) {
+                siswaDropdown.style.display = 'none';
+            }
+            if (!walikelasInput.contains(e.target) && !walikelasDropdown.contains(e.target)) {
+                walikelasDropdown.style.display = 'none';
+            }
+        });
+
+        // Isi NIP otomatis pas guru dipilih
+        guruSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            document.getElementById('nipGuru').value = selectedOption ? (selectedOption.dataset.nip || '') : '';
+        });
+
+        // Isi NIP guru piket otomatis
+        guruPiketSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            document.getElementById('nipGuruPiket').value = selectedOption ? (selectedOption.dataset.nip || '') : '';
+        });
+
+        // Proses Submit
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!walikelasHidden.value) {
+                alert('Pilih walikelas dari daftar yang tersedia.');
+                walikelasInput.focus();
+                return;
+            }
+
+            const mapel = mapelSelect.value;
+            const guru = guruSelect.value;
+            const nip = document.getElementById('nipGuru').value;
+            const guruPiket = guruPiketSelect.value;
+            const nipGuruPiket = document.getElementById('nipGuruPiket').value;
+
+            const formData = {
+                kode_dispen: document.getElementById('kodeDispen').value, // Tetap ada di formData
+                nama_siswa: namaSiswaHidden.value,
+                nisn: document.getElementById('nisnSiswa').value,
+                kelas: document.getElementById('kelasSiswa').value,
+                nip_walikelas: nipWalikelasInput.value, // Tambahkan NIP Walikelas
+                walikelas: walikelasHidden.value,
+                tanggal: document.getElementById('tglDispen').value,
+                pukul: document.getElementById('pukulDispen').value,
+                alasan: document.getElementById('alasanDispen').value,
+                nama_wali: document.getElementById('namaWali').value,
+                mapel: mapel,
+                guru_mapel: guru,
+                nip: nip,
+                guru_piket: guruPiket,
+                nip_gurupiket: nipGuruPiket
+            };
+
+            // Buat objek terpisah untuk data yang akan disimpan ke database
+            // Menghilangkan kolom yang tidak perlu disimpan ke DB
+            const formDataForDb = {
+                kode_dispen: formData.kode_dispen,
+                nama_siswa: formData.nama_siswa,
+                nisn: formData.nisn,
+                kelas: formData.kelas,
+                tanggal: formData.tanggal,
+                pukul: formData.pukul,
+                alasan: formData.alasan,
+                mapel: formData.mapel,
+                guru_mapel: formData.guru_mapel,
+                nip: formData.nip,
+                guru_piket: formData.guru_piket,
+                nip_gurupiket: formData.nip_gurupiket,
+                walikelas: formData.walikelas,
+                nip_walikelas: formData.nip_walikelas,
+                nama_wali: formData.nama_wali
+            };
+
+            try {
+                // Simpen ke DB Absensi
+                const { error } = await absensiClient.from('dispensasi').insert([formDataForDb]);
+                if (error) throw error;
+                
+                alert('Data Dispensasi Berhasil Disimpan');
+                closeModal();
+                loadDispensasiData();
+                
+                // Cetak Surat
+                cetakSuratDispensasi(formData);
+
+            } catch (err) {
+                alert('Gagal menyimpan: ' + err.message);
+            }
+        });
+
+        // --- Fungsi Cetak Surat ---
+        async function cetakSuratDispensasi(data) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const pageWidth = doc.internal.pageSize.getWidth();
+            let yPos = 20;
+
+            // Tambah KOP
+            if (schoolData.kop_sekolah) {
+                try {
+                    const response = await fetch(schoolData.kop_sekolah);
+                    const blob = await response.blob();
+                    const base64data = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.readAsDataURL(blob);
+                    });
+
+                    const imgProps = doc.getImageProperties(base64data);
+                    const pdfWidth = pageWidth - 20; 
+                    const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    
+                    doc.addImage(base64data, 'PNG', 10, 10, pdfWidth, imgHeight);
+                    yPos = 10 + imgHeight + 10;
+                } catch (err) {
+                    console.error("Gagal memuat KOP Sekolah:", err);
+                }
+            }
+
+            // Judul Surat
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text("SURAT IZIN MENINGGALKAN PELAJARAN", pageWidth / 2, yPos, { align: 'center' });
+            yPos += 6;
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Nomor: ${data.kode_dispen}`, pageWidth / 2, yPos, { align: 'center' });
+            yPos += 15;
+
+            // Isi Surat
+            doc.setFontSize(11);
+            const leftMargin = 20;
+            const labelWidth = 50;
+            const valueX = leftMargin + labelWidth;
+
+            doc.text("Diberikan izin kepada:", leftMargin, yPos);
+            yPos += 8;
+
+            const fields = [
+                { label: "Nama Siswa", value: data.nama_siswa },
+                { label: "NISN", value: data.nisn || '-' },
+                { label: "Kelas", value: data.kelas },
+                { label: "NIP Walikelas", value: data.nip_walikelas || '-' }, // Tampilkan NIP Walikelas
+                { label: "Walikelas", value: data.walikelas || '-' },
+                { label: "Hari/Tanggal", value: new Date(data.tanggal).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) },
+                { label: "Pukul", value: data.pukul + " WIB" },
+                { label: "Mata Pelajaran", value: data.mapel },
+                { label: "Orang Tua/Wali", value: data.nama_wali || '-' },
+                { label: "Guru Mapel", value: data.guru_mapel },
+                { label: "Alasan", value: data.alasan }
+            ];
+
+            fields.forEach(field => {
+                doc.text(field.label, leftMargin, yPos);
+                doc.text(":", leftMargin + 45, yPos);
+                
+                // Handle teks alasan yg panjang
+                if (field.label === "Alasan") {
+                    const splitText = doc.splitTextToSize(field.value, pageWidth - valueX - 20);
+                    doc.text(splitText, valueX, yPos);
+                    yPos += (splitText.length * 6);
+                } else {
+                    doc.text(field.value, valueX, yPos);
+                    yPos += 8;
+                }
+            });
+
+            yPos += 10;
+            doc.text("Demikian surat izin ini diberikan untuk dapat dipergunakan sebagaimana mestinya.", leftMargin, yPos);
+            
+            // Tanda Tangan (3 penandatangan: Orang Tua/Wali, Guru Mata Pelajaran, Guru Piket)
+            yPos += 15;
+            const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            const colWidth = pageWidth / 3;
+            const blank = "..........................";
+
+            const signers = [
+                { title: "Orang Tua/Wali,", name: data.nama_wali || blank, nip: null },
+                { title: "Guru Mata Pelajaran,", name: data.guru_mapel || blank, nip: data.nip || blank },
+                { title: "Guru Piket,", name: data.guru_piket || blank, nip: data.nip_gurupiket || blank }
+            ];
+
+            // Tanggal di atas kolom paling kanan
+            doc.text(`Mentok, ${dateStr}`, colWidth * 2.5, yPos, { align: 'center' });
+
+            signers.forEach((s, i) => {
+                const xPos = colWidth * i + colWidth / 2;
+                doc.text(s.title, xPos, yPos + 5, { align: 'center' });
+                doc.setFont(undefined, 'bold');
+                const nameLines = doc.splitTextToSize(s.name, colWidth - 8);
+                doc.text(nameLines, xPos, yPos + 25, { align: 'center' });
+                doc.setFont(undefined, 'normal');
+                if (s.nip) doc.text(`NIP. ${s.nip}`, xPos, yPos + 25 + nameLines.length * 5 + 1, { align: 'center' });
+            });
+
+            // Catatan di bagian bawah surat (huruf kecil, kata WAJIB dicetak tebal)
+            const noteSize = 8;
+            const lineH = 4;
+            const noteMaxW = pageWidth - leftMargin * 2;
+            let noteY = yPos + 45;
+            if (noteY + lineH * 2 > doc.internal.pageSize.getHeight() - 10) {
+                doc.addPage();
+                noteY = 20;
+            }
+            doc.setFontSize(noteSize);
+            const noteParts = [
+                { text: "Catatan: Setelah surat dispensasi ini ditandatangani oleh Orang Tua/Wali maka ", bold: false },
+                { text: "WAJIB", bold: true },
+                { text: " dikembalikan ke sekolah.", bold: false }
+            ];
+            let noteX = leftMargin;
+            noteParts.forEach(part => {
+                doc.setFont(undefined, part.bold ? 'bold' : 'normal');
+                part.text.split(/(\s+)/).forEach(tok => {
+                    if (tok === '') return;
+                    const w = doc.getTextWidth(tok);
+                    if (noteX + w > leftMargin + noteMaxW && tok.trim() !== '') {
+                        noteX = leftMargin;
+                        noteY += lineH;
+                    }
+                    if (!(noteX === leftMargin && tok.trim() === '')) {
+                        doc.text(tok, noteX, noteY);
+                        noteX += w;
+                    }
+                });
+            });
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(11);
+
+            // Generate nama file berdasarkan nama siswa
+            const namaSiswaSanitized = data.nama_siswa.replace(/[^a-zA-Z0-9]/g, '_');
+            const fileName = `Surat_Dispensasi_${namaSiswaSanitized}.pdf`;
+
+            // Buka file PDF di tab baru dengan nama file
+            const pdfBlob = doc.output('blob');
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+            const newWindow = window.open(pdfUrl, '_blank');
+            
+            // Set nama file untuk download
+            if (newWindow) {
+                newWindow.document.title = fileName;
+                // Simpan juga dengan nama file yang benar
+                doc.save(fileName);
+            } else {
+                // Fallback jika popup diblokir
+                doc.save(fileName);
+            }
+        }
+
+        // --- Hapus Dispensasi ---
+        window.deleteDispensasi = async function(kode) {
+            if(confirm('Apakah Anda yakin ingin menghapus data dispensasi ini?')) {
+                try {
+                    const { error } = await absensiClient
+                        .from('dispensasi')
+                        .delete()
+                        .eq('kode_dispen', kode);
+                    
+                    if (error) throw error;
+                    
+                    alert('Data berhasil dihapus');
+                    loadDispensasiData();
+                } catch (err) {
+                    alert('Gagal menghapus: ' + err.message);
+                }
+            }
+        };
+
+        // Muat Data Tabel
+        async function loadDispensasiData() {
+            const tbody = document.getElementById('dispensasiTableBody');
+            tbody.innerHTML = '<tr><td colspan="11" class="empty">Memuat data...</td></tr>';
+            
+            try {
+                // Ambil dari DB Absensi
+                const { data, error } = await absensiClient.from('dispensasi').select('*').order('tanggal', { ascending: false });
+                if (error) throw error;
+
+                tbody.innerHTML = '';
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="11" class="empty">Belum ada data dispensasi.</td></tr>';
+                    return;
+                }
+
+                data.forEach((item, index) => {
+                    const row = `<tr>
+                        <td class="n">${index + 1}</td>
+                        <td><span class="kode">${esc(item.kode_dispen)}</span></td>
+                        <td>${esc(item.nama_siswa)}</td>
+                        <td><span class="kls">${esc(item.kelas)}</span></td>
+                        <td>${esc(item.tanggal)}</td>
+                        <td>${esc(item.pukul)}</td>
+                        <td>${esc(item.mapel)}</td>
+                        <td>${esc(item.guru_mapel || '-')}</td>
+                        <td>${esc(item.nip || '-')}</td>
+                        <td class="alasan">${esc(item.alasan)}</td>
+                        <td class="act"><button type="button" class="ib del" onclick="deleteDispensasi('${esc(item.kode_dispen)}')" title="Hapus"><i class="fas fa-trash"></i></button></td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                });
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="11" class="empty err">Error: ${esc(err.message)}</td></tr>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadDispensasiData);
+
+        // --- Export PDF Logic ---
+        document.getElementById('btnExportPdf').addEventListener('click', async () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const pageWidth = doc.internal.pageSize.getWidth();
+            let yPos = 20;
+
+            // Add KOP
+            if (schoolData.kop_sekolah) {
+                try {
+                    const response = await fetch(schoolData.kop_sekolah);
+                    const blob = await response.blob();
+                    const base64data = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.readAsDataURL(blob);
+                    });
+
+                    const imgProps = doc.getImageProperties(base64data);
+                    const pdfWidth = pageWidth - 20; 
+                    const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    
+                    doc.addImage(base64data, 'PNG', 10, 10, pdfWidth, imgHeight);
+                    yPos = 10 + imgHeight + 10;
+                } catch (err) {
+                    console.error("Gagal memuat KOP Sekolah:", err);
+                }
+            }
+
+            doc.setFontSize(18);
+            doc.text("Laporan Dispensasi Siswa", pageWidth / 2, yPos, { align: 'center' });
+            yPos += 8;
+            
+            const schoolName = schoolData.nama_sekolah || document.querySelector('.navbar-brand span').textContent || 'SMK Negeri 1 Mentok';
+            doc.setFontSize(12);
+            doc.setTextColor(100);
+            doc.text(schoolName, pageWidth / 2, yPos, { align: 'center' });
+            yPos += 10;
+
+            doc.autoTable({
+                html: '.custom-table',
+                startY: yPos,
+                theme: 'grid',
+                columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], // Exclude Aksi
+                headStyles: { fillColor: [220, 38, 38] }
+            });
+
+            // --- Tanda Tangan Guru Piket ---
+            let finalY = doc.lastAutoTable.finalY + 20;
+            
+            // Cek jika halaman penuh
+            if (finalY + 80 > doc.internal.pageSize.getHeight()) {
+                doc.addPage();
+                finalY = 20;
+            }
+
+            // Ambil Data Guru Piket Hari Ini
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            const hariIni = now.toLocaleDateString('id-ID', { weekday: 'long' }).toUpperCase();
+            
+            let piketTeachers = [];
+
+            try {
+                const { data: piketData } = await supabaseClient
+                    .from('gurupiket')
+                    .select('piket1, piket2, piket3, piket4, piket5, piket6, piket7')
+                    .eq('hari', hariIni)
+                    .single();
+                
+                if (piketData) {
+                    const names = [piketData.piket1, piketData.piket2, piketData.piket3, piketData.piket4, piketData.piket5, piketData.piket6, piketData.piket7].filter(n => n && n.trim() !== '');
+                    
+                    if (names.length > 0) {
+                        // Ambil NIP Guru
+                        const { data: guruData } = await supabaseClient
+                            .from('dataguru')
+                            .select('nama_guru, nip')
+                            .in('nama_guru', names);
+                        
+                        const nipMap = {};
+                        if (guruData) {
+                            guruData.forEach(g => nipMap[g.nama_guru] = g.nip);
+                        }
+
+                        piketTeachers = names.map(name => ({
+                            name: name,
+                            nip: nipMap[name] || ".........................."
+                        }));
+                    }
+                }
+            } catch (err) {
+                console.error("Gagal mengambil data guru piket untuk PDF:", err);
+            }
+
+            // Default jika tidak ada data
+            if (piketTeachers.length === 0) {
+                piketTeachers.push({ name: "..........................", nip: ".........................." });
+            }
+
+            doc.setFontSize(10);
+            doc.setTextColor(0);
+            
+            const count = piketTeachers.length;
+
+            if (count === 1) {
+                const xPos = pageWidth - 60;
+                doc.text(`Mentok, ${dateStr}`, xPos, finalY, { align: 'center' });
+                doc.text("Guru Piket,", xPos, finalY + 5, { align: 'center' });
+                
+                doc.setFont(undefined, 'bold');
+                doc.text(piketTeachers[0].name, xPos, finalY + 25, { align: 'center' });
+                
+                doc.setFont(undefined, 'normal');
+                doc.text(`NIP. ${piketTeachers[0].nip}`, xPos, finalY + 30, { align: 'center' });
+            } else if (count === 2) {
+                // Kiri
+                const xLeft = 50;
+                doc.text("Guru Piket 1,", xLeft, finalY + 5, { align: 'center' });
+                doc.setFont(undefined, 'bold');
+                doc.text(piketTeachers[0].name, xLeft, finalY + 25, { align: 'center' });
+                doc.setFont(undefined, 'normal');
+                doc.text(`NIP. ${piketTeachers[0].nip}`, xLeft, finalY + 30, { align: 'center' });
+
+                // Kanan
+                const xRight = pageWidth - 50;
+                doc.text(`Mentok, ${dateStr}`, xRight, finalY, { align: 'center' });
+                doc.text("Guru Piket 2,", xRight, finalY + 5, { align: 'center' });
+                doc.setFont(undefined, 'bold');
+                doc.text(piketTeachers[1].name, xRight, finalY + 25, { align: 'center' });
+                doc.setFont(undefined, 'normal');
+                doc.text(`NIP. ${piketTeachers[1].nip}`, xRight, finalY + 30, { align: 'center' });
+            } else if (count === 3) {
+                // 3 Guru (tampilkan 3 kolom dalam 1 baris)
+                const colWidth = pageWidth / 3;
+                
+                // Tanggal di atas guru paling kanan
+                doc.text(`Mentok, ${dateStr}`, (colWidth * 2.5), finalY, { align: 'center' });
+
+                piketTeachers.forEach((teacher, index) => {
+                    const xPos = (colWidth * index) + (colWidth / 2);
+                    doc.text(`Guru Piket ${index + 1},`, xPos, finalY + 5, { align: 'center' });
+                    doc.setFont(undefined, 'bold');
+                    doc.text(teacher.name, xPos, finalY + 25, { align: 'center' });
+                    doc.setFont(undefined, 'normal');
+                    doc.text(`NIP. ${teacher.nip}`, xPos, finalY + 30, { align: 'center' });
+                });
+            } else {
+                // Lebih dari 3 guru
+                const colWidth = pageWidth / 3;
+                
+                // Tanggal
+                doc.text(`Mentok, ${dateStr}`, (colWidth * 2.5), finalY, { align: 'center' });
+
+                // Ambil guru 7 jika ada
+                const firstGroup = piketTeachers.slice(0, 3);
+                const secondGroup = piketTeachers.slice(3, 6);
+                const teacher7 = piketTeachers[6];
+
+                // Baris 1
+                firstGroup.forEach((teacher, index) => {
+                    const xPos = (colWidth * index) + (colWidth / 2);
+                    doc.text(`Guru Piket ${index + 1},`, xPos, finalY + 5, { align: 'center' });
+                    doc.setFont(undefined, 'bold');
+                    doc.text(teacher.name, xPos, finalY + 25, { align: 'center' });
+                    doc.setFont(undefined, 'normal');
+                    doc.text(`NIP. ${teacher.nip}`, xPos, finalY + 30, { align: 'center' });
+                });
+
+                // Baris 2
+                const secondRowY = finalY + 45;
+                secondGroup.forEach((teacher, index) => {
+                    const xPos = (colWidth * index) + (colWidth / 2);
+                    doc.text(`Guru Piket ${index + 4},`, xPos, secondRowY, { align: 'center' });
+                    doc.setFont(undefined, 'bold');
+                    doc.text(teacher.name, xPos, secondRowY + 25, { align: 'center' });
+                    doc.setFont(undefined, 'normal');
+                    doc.text(`NIP. ${teacher.nip}`, xPos, secondRowY + 30, { align: 'center' });
+                });
+
+                // Baris 3 (Guru Piket 7)
+                if (teacher7) {
+                    const thirdRowY = secondRowY + 45;
+                    doc.text(`Guru Piket 7,`, colWidth * 0.5, thirdRowY + 5, { align: 'center' });
+                    doc.setFont(undefined, 'bold');
+                    doc.text(teacher7.name, colWidth * 0.5, thirdRowY + 25, { align: 'center' });
+                    doc.setFont(undefined, 'normal');
+                    doc.text(`NIP. ${teacher7.nip}`, colWidth * 0.5, thirdRowY + 30, { align: 'center' });
+                }
+            }
+
+            doc.save('Laporan_Dispensasi_Siswa.pdf');
+        });
+
+        // --- Logika Cari & Filter ---
+        function filterTable() {
+            const searchTerm = document.getElementById('searchDispensasi').value.toLowerCase();
+            const selectedKelas = document.getElementById('filterKelas').value;
+            const selectedDate = document.getElementById('filterTanggal').value;
+            const rows = document.querySelectorAll('#dispensasiTableBody tr');
+            
+            rows.forEach(row => {
+                const cells = row.getElementsByTagName('td');
+                if (cells.length > 1) { // Cek baris kosong/loading
+                    // Index kolom: 0=No, 1=Kode, 2=Nama, 3=Kelas, 4=Tanggal
+                    const nama = cells[2].textContent.toLowerCase();
+                    const kelas = cells[3].textContent;
+                    const tanggal = cells[4].textContent.trim();
+                    
+                    const matchesSearch = nama.includes(searchTerm) || kelas.toLowerCase().includes(searchTerm);
+                    const matchesKelas = selectedKelas === '' || kelas === selectedKelas;
+                    const matchesDate = selectedDate === '' || tanggal === selectedDate;
+                    
+                    row.style.display = (matchesSearch && matchesKelas && matchesDate) ? '' : 'none';
+                }
+            });
+        }
+
+        document.getElementById('searchDispensasi').addEventListener('input', filterTable);
+        document.getElementById('filterKelas').addEventListener('change', filterTable);
+        document.getElementById('filterTanggal').addEventListener('change', filterTable);
+    </script>
+</body>
+</html>

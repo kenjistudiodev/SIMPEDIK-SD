@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Cetak Quota MBG - SIMPEDIK</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary-color:#667eea;--secondary-color:#764ba2;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.menubar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-date{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;opacity:.9;white-space:nowrap}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:22px 12px}
+.head{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.head h1{font-size:clamp(28px,4.5vw,38px);letter-spacing:-.02em;line-height:1.1}
+.head p{opacity:.88;font-size:14px;margin-top:4px}
+.win{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663;text-align:center}
+.tb a{position:absolute;right:12px;font-size:12px;font-weight:600;color:#4c5fd5;text-decoration:none}.tb a:hover{text-decoration:underline}
+.wb{padding:16px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.stat .wb{display:flex;align-items:center;gap:14px}
+.stat .ic{flex:none;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.35)}
+.stat small{display:block;color:var(--muted);font-size:13px}.stat b{font-size:30px;line-height:1.1;color:var(--deep)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.grid2>.win{margin-bottom:16px}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:420px;scrollbar-width:thin}
+.table-responsive::-webkit-scrollbar{height:8px;width:8px}.table-responsive::-webkit-scrollbar-thumb{background:rgba(0,0,0,.28);border-radius:9px}
+.custom-table{width:100%;border-collapse:collapse;font-size:14px;min-width:480px}
+.custom-table th{position:sticky;top:0;background:#efecf7;text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line)}
+.custom-table td{padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.05)}.custom-table tr:last-child td{border:0}.custom-table tbody tr:hover{background:rgba(102,126,234,.07)}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;color:#fff}.bg-danger{background:#e74c3c}.bg-warning{background:#f1c40f;color:#333}.bg-success{background:#2ecc71}
+.main-footer{text-align:center;color:rgba(255,255,255,.85);font-size:12px;padding:8px 0 4px}
+/* Dock */
+.dock{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:6px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.6);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.d{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:74px;padding:6px 8px;border-radius:16px;font-size:11.5px;font-weight:600;color:var(--ink);transition:transform .2s}
+.d:hover{transform:translateY(-6px) scale(1.08)}.d:active{transform:scale(.95)}
+.d .ic,.item .ic{position:relative;overflow:hidden;display:grid;place-items:center;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.d .ic{width:48px;height:48px;border-radius:13px;font-size:21px}
+.d .ic::after,.item .ic::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+.d .ic i,.item .ic i{position:relative;z-index:1}
+/* Slide-up sheet */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(10,8,30,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.sheet{position:fixed;left:50%;bottom:0;z-index:50;width:min(660px,100%);max-height:86vh;overflow:auto;transform:translate(-50%,105%);transition:transform .38s cubic-bezier(.2,.9,.25,1);padding:10px 16px calc(22px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(36,28,86,.62);backdrop-filter:saturate(200%) blur(28px);-webkit-backdrop-filter:saturate(200%) blur(28px);color:#fff;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 -18px 50px rgba(0,0,0,.4)}
+.open .scrim{opacity:1;visibility:visible}.open .sheet{transform:translate(-50%,0)}
+.grab{width:40px;height:5px;border-radius:9px;background:rgba(255,255,255,.5);margin:0 auto 12px}
+.sh{position:relative;display:flex;align-items:center;justify-content:center;min-height:36px;margin-bottom:12px}.sh h2{font-size:19px}
+.x{position:absolute;right:0;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.25);font-size:20px;line-height:1}.x:hover{background:rgba(255,255,255,.4)}
+.list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 6px}
+.item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 4px;border-radius:18px;text-align:center;font-size:13px;font-weight:700;line-height:1.25;color:#fff;text-decoration:none;transition:transform .2s,background .2s}
+.item:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}.item:active{transform:scale(.96)}
+.item .ic{width:60px;height:60px;border-radius:16px;font-size:26px}
+.confirm{text-align:center;padding:4px 8px 6px}.confirm p{opacity:.9;margin-bottom:16px}.confirm .acts{display:flex;gap:10px;justify-content:center}
+/* Modal form -> slide-up */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,8,30,.45);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.modal.active{opacity:1;visibility:visible}
+.modal-content{width:min(560px,100%);max-height:90vh;overflow:auto;padding:12px 20px calc(20px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(250,248,255,.97);box-shadow:0 -18px 50px rgba(0,0,0,.4);transform:translateY(105%);transition:transform .38s cubic-bezier(.2,.9,.25,1)}
+.modal.active .modal-content{transform:none}
+.modal-content::before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:rgba(0,0,0,.18);margin:0 auto 12px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-header h3{font-size:18px;color:var(--deep)}
+.close-modal{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--track);font-size:20px;cursor:pointer;color:var(--muted)}.close-modal:hover{background:#ff5f57;color:#fff}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:0 0 4px 2px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;outline:none}
+.form-group textarea{min-height:110px;resize:vertical}.form-group input[readonly]{background:#f0eef6;color:var(--muted)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.char-counter{display:block;text-align:right;font-size:12px;color:var(--muted)}
+.modal-footer{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 18px;border-radius:10px;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(160deg,#7b8cf5,#5568d8);box-shadow:0 1px 2px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:hover{filter:brightness(1.06)}.btn.alt,.btn-secondary{background:rgba(120,120,128,.2);color:var(--ink);box-shadow:none}.btn.red{background:linear-gradient(160deg,#f2706b,#d63d3a)}
+.btn:disabled,.form-group textarea:disabled,.form-group select:disabled{opacity:.55;cursor:not-allowed}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.list{grid-template-columns:repeat(3,minmax(0,1fr))}.item .ic{width:54px;height:54px}.bar-date i{display:none}.stats{gap:10px}.stat b{font-size:24px}.d{min-width:64px}.dock{gap:2px;padding:6px}.navbar-brand span{max-width:42vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* ===== Komponen khusus halaman Data Kasus Siswa (tema sama dengan nilaiakademisadmin) ===== */
+.btn,.d{text-decoration:none}
+.btn-primary{background:linear-gradient(160deg,#7b8cf5,#5568d8)}
+.btn-danger{background:linear-gradient(160deg,#f2706b,#d63d3a)}
+.text-success{color:#10b981}.text-danger{color:#ef4444}.text-warning{color:#f59e0b}
+/* Ringkasan kelas */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:16px}
+.summary-card{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);padding:14px 16px;border-radius:14px;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 12px 30px rgba(0,0,0,.25);border-left:4px solid var(--primary-color);transition:transform .2s}
+.summary-card:hover{transform:translateY(-3px)}
+.summary-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.summary-title{font-size:16px;font-weight:700;color:var(--deep)}
+.summary-icon{font-size:20px;color:var(--primary-color);opacity:.7}
+.summary-stats{display:flex;justify-content:space-around}
+.stat-item{text-align:center}
+.stat-value{font-size:26px;line-height:1.1;font-weight:700}
+.stat-label{font-size:13px;color:var(--muted)}
+.toolbar{display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.search-input{height:38px;width:250px;max-width:100%;padding:0 12px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;color:var(--ink);outline:none}
+.search-input:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.table-responsive{max-height:520px}
+.custom-table{min-width:1000px;white-space:nowrap}
+.pt{display:inline-block;min-width:34px;text-align:center;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;color:#4c5fd5;background:rgba(102,126,234,.16)}
+.filter-select{height:38px;min-width:170px;max-width:100%;padding:0 12px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;color:var(--ink);outline:none;cursor:pointer}
+.filter-select:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.info-text{color:var(--muted);font-size:14px;text-align:center;padding:20px}
+@media (max-width:768px){.toolbar{justify-content:stretch}.search-input,.filter-select{width:100%}}
+@media (max-width:520px){.bar-date{font-size:11px;white-space:normal;text-align:right;line-height:1.25}}
+
+/* ===== Komponen khusus halaman Cetak Quota MBG ===== */
+.toolbar{justify-content:flex-start}
+.date-input,.flatpickr-input.form-control,input.form-control{height:38px;width:260px;max-width:100%;padding:0 12px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff!important;font:inherit;color:var(--ink);outline:none}
+input.form-control:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.tabs-header{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;margin-bottom:12px;border-bottom:1px solid var(--line);scrollbar-width:thin}
+.tabs-header::-webkit-scrollbar{height:6px}.tabs-header::-webkit-scrollbar-thumb{background:rgba(0,0,0,.25);border-radius:9px}
+.tab-btn{flex:none;height:34px;padding:0 16px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap;color:var(--muted);background:rgba(120,120,128,.14);transition:background .2s,color .2s}
+.tab-btn:hover{background:rgba(102,126,234,.18);color:var(--deep)}
+.tab-btn.active{color:#fff;background:linear-gradient(160deg,#7b8cf5,#5568d8);box-shadow:0 2px 6px rgba(85,104,216,.4),inset 0 1px 0 rgba(255,255,255,.3)}
+.tab-pane{display:none;animation:fadeIn .3s ease-out}.tab-pane.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.pane-actions{display:flex;justify-content:flex-end;margin-bottom:12px}
+.custom-table{min-width:560px}
+.custom-table td.center,.custom-table th.center{text-align:center}
+.empty-cell{text-align:center;padding:20px!important;color:var(--muted)}
+.empty-cell.err{color:#ef4444}
+.flatpickr-calendar{font-family:var(--font)}
+.warn-list{display:flex;flex-wrap:wrap;gap:6px;max-height:30vh;overflow:auto}
+.warn-list span{padding:3px 11px;border-radius:999px;font-size:12.5px;font-weight:700;color:#92400e;background:#fef3c7}
+#warnModal{z-index:70}
+.pick-hint{font-size:13px;color:var(--muted);margin-bottom:12px}
+.pick-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;max-height:46vh;overflow:auto;padding:2px}
+.pick-list .btn{width:100%;background:rgba(102,126,234,.12);color:var(--deep);box-shadow:none;border:1px solid rgba(102,126,234,.25)}
+.pick-list .btn:hover{background:linear-gradient(160deg,#7b8cf5,#5568d8);color:#fff}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="menubar">
+    <a href="dasboradmin.html" class="navbar-brand"><img src="" alt="Logo Sekolah" style="display:none;"><span></span></a>
+    <div class="bar-date"><i class="far fa-clock"></i><span id="liveDateTime"></span></div>
+</header>
+
+<main class="wrap">
+    <div class="head"><h1>Cetak Quota MBG</h1><p>Halaman untuk mencetak quota Makan Bergizi Gratis.</p></div>
+
+    <section class="win">
+        <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Daftar Quota MBG</h2></div>
+        <div class="wb">
+            <div class="toolbar">
+                <input type="text" id="mbgDateFilter" class="form-control" placeholder="Pilih Tanggal">
+                <button class="btn" id="btnShowData" type="button"><i class="fas fa-search"></i> Tampilkan</button>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tabs-header" id="tabsHeader">
+                    <div class="info-text" style="padding:8px">Memuat data kelas...</div>
+                </div>
+                <div class="tabs-content" id="tabsContent"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <p>&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik).2026</p>
+        <p>CopyRight Kenji Studio Developer.</p>
+    </footer>
+</main>
+
+<nav class="dock" aria-label="Menu utama">
+    <a class="d" href="dasboradmin.html"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-home"></i></span>Beranda</a>
+    <button class="d" type="button" id="btnPrint"><span class="ic" style="background:linear-gradient(160deg,#f2706b,#c92f2c)"><i class="fas fa-print"></i></span>Cetak</button>
+</nav>
+
+<!-- Modal pilih kelas untuk cetak -->
+<div class="modal" id="printModal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-labelledby="printModalTitle">
+        <div class="modal-header">
+            <h3 id="printModalTitle">Cetak Quota MBG</h3>
+            <span class="close-modal" id="closePrintModal" role="button" aria-label="Tutup">&times;</span>
+        </div>
+        <p class="pick-hint" id="printModalHint"></p>
+        <div class="pick-list" id="printKelasList"></div>
+        <div class="modal-footer">
+            <button type="button" class="btn alt" id="cancelPrint">Batal</button>
+            <button type="button" class="btn btn-danger" id="btnPrintAll"><i class="fas fa-print"></i> Cetak Semua Kelas</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: walikelas belum absen -->
+<div class="modal" id="warnModal" aria-hidden="true">
+    <div class="modal-content" role="alertdialog" aria-labelledby="warnTitle">
+        <div class="modal-header">
+            <h3 id="warnTitle"><i class="fas fa-exclamation-triangle" style="color:#f59e0b"></i> Walikelas Belum Melakukan Absensi Harian</h3>
+            <span class="close-modal" id="closeWarnModal" role="button" aria-label="Tutup">&times;</span>
+        </div>
+        <p class="pick-hint" id="warnText"></p>
+        <div class="warn-list" id="warnList"></div>
+        <div class="modal-footer">
+            <button type="button" class="btn" id="okWarn">Mengerti</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+    const attendanceClient = supabaseClient;
+
+    let schoolData = {};
+    let activeKelasName = '';
+    let kelasList = [];
+
+    const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const tbodyIdOf = name => `tbody-${String(name).replace(/\s+/g, '-')}`;
+
+    // --- Jam ---
+    function updateLiveTime() {
+        const now = new Date();
+        const d = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const t = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+        document.getElementById('liveDateTime').textContent =
+            `${now.toLocaleDateString('id-ID', d)} | ${now.toLocaleTimeString('id-ID', t).replace(/\./g, ':')} WIB`;
+    }
+    setInterval(updateLiveTime, 1000); updateLiveTime();
+
+    // --- Identitas sekolah ---
+    async function loadSchoolIdentity() {
+        try {
+            const { data } = await supabaseClient.from('identitassekolah')
+                .select('nama_sekolah, logo, kop_sekolah').limit(1).single();
+            if (data) {
+                schoolData = data;
+                if (data.nama_sekolah) document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                if (data.logo) {
+                    const img = document.querySelector('.navbar-brand img');
+                    img.src = data.logo; img.style.display = 'block';
+                }
+            }
+        } catch (err) { console.error('Error loading school identity:', err); }
+    }
+
+    // --- Kalender ---
+    flatpickr("#mbgDateFilter", {
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "l, j F Y",
+        defaultDate: "today",
+        locale: "id",
+        onChange: () => { if (activeKelasName) fetchAttendanceData(activeKelasName); }
+    });
+
+    // --- Tab kelas ---
+    async function loadKelasTabs() {
+        const tabsHeader = document.getElementById('tabsHeader');
+        const tabsContent = document.getElementById('tabsContent');
+        try {
+            const { data: rows, error } = await supabaseClient.from('rombel').select('id, nama_kelas, jumlah_siswa').order('id', { ascending: true });
+            if (error) throw error;
+            // Urutan sama seperti halaman rombel.html
+            const data = (rows || []).slice().sort((a, b) => String(a.nama_kelas).localeCompare(String(b.nama_kelas), 'id', { numeric: true }));
+
+            tabsHeader.innerHTML = '';
+            tabsContent.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                tabsHeader.innerHTML = '<div class="info-text" style="padding:8px">Tidak ada data kelas.</div>';
+                return;
+            }
+
+            data.forEach((kelas, index) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `tab-btn ${index === 0 ? 'active' : ''}`;
+                btn.textContent = kelas.nama_kelas;
+                btn.addEventListener('click', () => switchTab(index, kelas.nama_kelas));
+                tabsHeader.appendChild(btn);
+
+                const pane = document.createElement('div');
+                pane.className = `tab-pane ${index === 0 ? 'active' : ''}`;
+                pane.id = `pane-${index}`;
+                pane.innerHTML = `
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>NISN</th>
+                                    <th>Nama Siswa</th>
+                                    <th class="center">Status</th>
+                                    <th>Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="${esc(tbodyIdOf(kelas.nama_kelas))}">
+                                <tr><td colspan="5" class="empty-cell">Klik Tampilkan untuk memuat data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>`;
+                tabsContent.appendChild(pane);
+            });
+
+            kelasList = data.map(k => k.nama_kelas);
+            activeKelasName = data[0].nama_kelas;
+            fetchAttendanceData(activeKelasName);
+        } catch (err) {
+            console.error('Error loading kelas:', err);
+            tabsHeader.innerHTML = `<div class="info-text" style="color:#ef4444">Gagal memuat kelas: ${esc(err.message)}</div>`;
+        }
+    }
+
+    function switchTab(index, className) {
+        activeKelasName = className;
+        document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === index));
+        document.querySelectorAll('.tab-pane').forEach((p, i) => p.classList.toggle('active', i === index));
+        fetchAttendanceData(className);
+    }
+
+    function statusBadge(s) {
+        if (s === 'Hadir') return '<span class="badge bg-success">Hadir</span>';
+        if (s === 'Sakit') return '<span class="badge" style="background:#3b82f6">Sakit</span>';
+        if (s === 'Ijin' || s === 'Izin') return '<span class="badge bg-warning">Ijin</span>';
+        if (s === 'Alpa' || s === 'Alpha') return '<span class="badge bg-danger">Alpa</span>';
+        return `<span class="badge" style="background:#9ca3af">${esc(s)}</span>`;
+    }
+
+    async function fetchAttendanceData(className) {
+        if (!className) return;
+        const tbody = document.getElementById(tbodyIdOf(className));
+        const selectedDate = document.getElementById('mbgDateFilter').value;
+        if (!tbody) return;
+
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-cell">Memuat data...</td></tr>';
+        try {
+            const { data, error } = await attendanceClient
+                .from('absensiswa')
+                .select('nama_siswa, nisn, status_kehadiran')
+                .eq('kelas', className)
+                .eq('tanggal', selectedDate)
+                .order('nama_siswa', { ascending: true });
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-cell err"><i class="fas fa-exclamation-triangle"></i> Walikelas belum melakukan absensi harian pada tanggal ini.</td></tr>';
+                return;
+            }
+            const hadir = data.filter(d => d.status_kehadiran === 'Hadir');
+            if (hadir.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-cell">Tidak ada siswa yang hadir pada tanggal ini.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = hadir.map((item, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${esc(item.nisn) || '-'}</td>
+                    <td>${esc(item.nama_siswa)}</td>
+                    <td class="center">${statusBadge(item.status_kehadiran)}</td>
+                    <td>-</td>
+                </tr>`).join('');
+        } catch (err) {
+            console.error('Error fetching attendance:', err);
+            tbody.innerHTML = `<tr><td colspan="5" class="empty-cell err">Gagal memuat data: ${esc(err.message)}</td></tr>`;
+        }
+    }
+
+    document.getElementById('btnShowData').addEventListener('click', () => {
+        if (activeKelasName) fetchAttendanceData(activeKelasName);
+    });
+
+    // --- Modal pilihan kelas ---
+    const printModal = document.getElementById('printModal');
+    function openPrintModal() {
+        const list = document.getElementById('printKelasList');
+        const date = document.getElementById('mbgDateFilter').value;
+        document.getElementById('printModalHint').textContent = `Pilih kelas yang akan dicetak (tanggal ${fmtTanggal(date)}).`;
+        list.innerHTML = kelasList.length
+            ? kelasList.map(k => `<button type="button" class="btn" data-kelas="${esc(k)}">${esc(k)}</button>`).join('')
+            : '<div class="info-text" style="grid-column:1/-1">Tidak ada data kelas.</div>';
+        document.getElementById('btnPrintAll').disabled = !kelasList.length;
+        printModal.classList.add('active');
+        printModal.setAttribute('aria-hidden', 'false');
+    }
+    function closePrintModal() {
+        printModal.classList.remove('active');
+        printModal.setAttribute('aria-hidden', 'true');
+    }
+    document.getElementById('btnPrint').addEventListener('click', openPrintModal);
+    document.getElementById('closePrintModal').addEventListener('click', closePrintModal);
+    document.getElementById('cancelPrint').addEventListener('click', closePrintModal);
+    printModal.addEventListener('click', e => { if (e.target === printModal) closePrintModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closePrintModal(); });
+    document.getElementById('printKelasList').addEventListener('click', e => {
+        const b = e.target.closest('button[data-kelas]');
+        if (b) cetakPDF([b.dataset.kelas]);
+    });
+    document.getElementById('btnPrintAll').addEventListener('click', () => cetakPDF(kelasList));
+
+    const fmtTanggal = t => {
+        if (!t) return '-';
+        const [y, m, d] = t.split('-').map(Number);
+        return new Date(y, m - 1, d).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    };
+
+    // --- Modal: walikelas belum absen ---
+    const warnModal = document.getElementById('warnModal');
+    function showBelumAbsen(kelas, dateStr, note) {
+        document.getElementById('warnText').textContent = (kelas.length > 1
+            ? `Kelas berikut belum memiliki data absensi harian pada ${dateStr}:`
+            : `Kelas berikut belum memiliki data absensi harian pada ${dateStr}:`) + (note ? ' ' + note : '');
+        document.getElementById('warnList').innerHTML = kelas.map(k => `<span>${esc(k)}</span>`).join('');
+        warnModal.classList.add('active');
+        warnModal.setAttribute('aria-hidden', 'false');
+    }
+    function closeWarnModal() { warnModal.classList.remove('active'); warnModal.setAttribute('aria-hidden', 'true'); }
+    document.getElementById('closeWarnModal').addEventListener('click', closeWarnModal);
+    document.getElementById('okWarn').addEventListener('click', closeWarnModal);
+    warnModal.addEventListener('click', e => { if (e.target === warnModal) closeWarnModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWarnModal(); });
+
+    // --- Cetak PDF (satu atau banyak kelas, satu halaman/lebih per kelas) ---
+    async function cetakPDF(kelasNames) {
+        const selectedDate = document.getElementById('mbgDateFilter').value;
+        if (!selectedDate) { alert('Pilih tanggal terlebih dahulu.'); return; }
+        const isAll = kelasNames.length > 1;
+        const buttons = printModal.querySelectorAll('button');
+        buttons.forEach(b => b.disabled = true);
+
+        try {
+            // Ambil data tiap kelas langsung dari database
+            const sections = [];
+            const belumAbsen = [];   // kelas tanpa data absensi sama sekali
+            const tanpaHadir = [];   // kelas sudah absen tapi tidak ada yang hadir
+            for (const kelas of kelasNames) {
+                const { data, error } = await attendanceClient
+                    .from('absensiswa')
+                    .select('nama_siswa, nisn, status_kehadiran')
+                    .eq('kelas', kelas)
+                    .eq('tanggal', selectedDate)
+                    .order('nama_siswa', { ascending: true });
+                if (error) throw error;
+                if (!data || data.length === 0) { belumAbsen.push(kelas); continue; }
+                const hadir = data.filter(d => d.status_kehadiran === 'Hadir');
+                if (hadir.length) sections.push({ kelas, data: hadir }); else tanpaHadir.push(kelas);
+            }
+            if (sections.length === 0) {
+                closePrintModal();
+                if (belumAbsen.length) showBelumAbsen(belumAbsen, fmtTanggal(selectedDate));
+                else alert('Tidak ada siswa yang hadir' + (isAll ? ' di semua kelas' : '') + ' pada tanggal ini.');
+                return;
+            }
+
+            // KOP sekolah (sekali saja)
+            let kop = null;
+            if (schoolData.kop_sekolah) {
+                try {
+                    const blob = await (await fetch(schoolData.kop_sekolah)).blob();
+                    kop = await new Promise(res => { const fr = new FileReader(); fr.onloadend = () => res(fr.result); fr.readAsDataURL(blob); });
+                } catch (err) { console.error('Gagal memuat KOP Sekolah:', err); }
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const dateStr = fmtTanggal(selectedDate);
+
+            sections.forEach((sec, idx) => {
+                if (idx > 0) doc.addPage();
+                let yPos = 20;
+                if (kop) {
+                    try {
+                        const p = doc.getImageProperties(kop);
+                        const w = pageWidth - 20, h = (p.height * w) / p.width;
+                        doc.addImage(kop, 'PNG', 10, 10, w, h);
+                        yPos = 10 + h + 10;
+                    } catch (err) { console.error('KOP gagal dipasang:', err); }
+                }
+                doc.setFontSize(16);
+                doc.setTextColor(0);
+                doc.text(`Daftar Quota MBG - Kelas ${sec.kelas}`, pageWidth / 2, yPos, { align: 'center' });
+                yPos += 7;
+                doc.setFontSize(11);
+                doc.text(`Tanggal: ${dateStr}`, pageWidth / 2, yPos, { align: 'center' });
+                yPos += 10;
+
+                doc.autoTable({
+                    head: [['No', 'NISN', 'Nama Siswa', 'Status', 'Keterangan']],
+                    body: sec.data.map((it, i) => [i + 1, it.nisn || '-', it.nama_siswa || '-', it.status_kehadiran || '-', '-']),
+                    startY: yPos,
+                    theme: 'grid',
+                    headStyles: { fillColor: [85, 104, 216] }
+                });
+            });
+
+            const name = isAll ? 'Semua_Kelas' : sections[0].kelas.replace(/\s+/g, '_');
+            doc.save(`Quota_MBG_${name}_${selectedDate}.pdf`);
+            closePrintModal();
+            if (belumAbsen.length) showBelumAbsen(belumAbsen, dateStr, 'Kelas ini tidak ikut tercetak di PDF.');
+        } catch (err) {
+            console.error('Error cetak PDF:', err);
+            alert('Gagal mencetak: ' + err.message);
+        } finally {
+            buttons.forEach(b => b.disabled = false);
+            document.getElementById('btnPrintAll').disabled = !kelasList.length;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadSchoolIdentity();
+        loadKelasTabs();
+    });
+</script>
+</body>
+</html>

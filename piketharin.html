@@ -1,0 +1,1909 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Piket Harian - SIMPEDIK</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary:#667eea;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16);--text-muted:#66627f;--border-color:rgba(0,0,0,.15)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
+body{color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,url('bg1.png') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.navbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.container{width:100%;max-width:860px;margin:0 auto;padding:22px 12px}
+.container>header{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.container>header h1{font-size:clamp(26px,4.5vw,36px);letter-spacing:-.02em;line-height:1.1}
+.container>header h1 i{margin-right:8px;font-size:.8em}
+.container>header p{opacity:.88;font-size:14px;margin-top:4px}
+.content{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663}
+.hint{font-size:12px;color:var(--muted);margin:3px 0 0 2px}
+.message{display:none;margin:14px 16px 0;padding:10px 14px;border-radius:10px;font-size:14px;font-weight:600}
+.message.success{background:#e7f7ee;color:#1b6b46}.message.error{background:#fdeaea;color:#a12622}
+/* Dock */
+.button-group{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:4px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.62);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.button-group button,.button-group a{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:70px;padding:6px 6px;border-radius:16px;border:0;background:none;font-size:11.5px;font-weight:600;color:var(--ink);text-decoration:none;cursor:pointer;transition:transform .2s}
+.button-group button:hover:not(:disabled),.button-group a:hover{transform:translateY(-6px) scale(1.08)}.button-group button:active,.button-group a:active{transform:scale(.95)}
+.button-group button:disabled{opacity:.5;cursor:not-allowed}
+.button-group button>i,.button-group a>i{position:relative;overflow:hidden;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;font-size:21px;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.button-group button>i::after,.button-group a>i::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+@media (max-width:520px){.button-group{gap:0;padding:6px}.button-group button,.button-group a{min-width:58px;font-size:10.5px;padding:4px}.button-group button>i,.button-group a>i{width:44px;height:44px;font-size:19px}.navbar-brand span{max-width:60vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+#dashboardBtn>i{background:linear-gradient(160deg,#8fa4ff,#4c5fd5)}#refreshBtn>i{background:linear-gradient(160deg,#6cb8ff,#2a74d6)}
+#addRombelBtn>i{background:linear-gradient(160deg,#59d6a0,#1b8a5c)}#exportPdfBtn>i{background:linear-gradient(160deg,#f2706b,#c92f2c)}
+.message{display:none;margin:14px 16px 0;padding:10px 14px;border-radius:10px;font-size:14px;font-weight:600}
+.message.success{background:#e7f7ee;color:#1b6b46}.message.error{background:#fdeaea;color:#a12622}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:16px 16px 0}
+.stat{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:30px;line-height:1.1;color:var(--deep)}
+.stat small{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:2px}
+.stat i{flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font-size:18px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1.5px 0 rgba(255,255,255,.4)}
+.sec{padding:16px}
+.sec>h2{font-size:13px;font-weight:600;color:var(--muted);margin:0 0 7px 6px}
+.tablebox{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:340px}
+th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:11px 14px;background:#f7f5fc;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid rgba(0,0,0,.05)}
+tr:last-child td{border:0}
+tbody tr:hover{background:rgba(102,126,234,.06)}
+td.n{width:52px;color:var(--muted)}td.act{text-align:right;white-space:nowrap;width:96px}
+.kls{display:inline-block;min-width:36px;text-align:center;font-weight:700;padding:2px 11px;border-radius:99px;background:#e9edff;color:#3a46a8}
+.ib{width:32px;height:32px;border-radius:9px;border:0;background:rgba(0,0,0,.06);color:#4c5fd5;cursor:pointer;font-size:14px}
+.ib.del{color:#c92f2c}.ib:hover{background:rgba(102,126,234,.2)}.ib.del:hover{background:rgba(229,72,77,.18)}
+.empty{padding:26px 14px;text-align:center;color:var(--muted);font-size:14px}
+.empty.err{color:#a12622}
+.foot{text-align:center;color:rgba(255,255,255,.75);font-size:12px;margin-top:16px;text-shadow:0 1px 6px rgba(0,0,0,.4)}
+/* Modal */
+.overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:12px;background:rgba(20,15,50,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:60}
+.overlay.on{display:flex}
+.modal{width:100%;max-width:420px;border-radius:14px;overflow:hidden;background:rgba(250,248,255,.97);box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 30px 80px rgba(0,0,0,.45);animation:pop .2s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes pop{from{opacity:0;transform:scale(.95) translateY(8px)}}
+.tb .x{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.08);font-size:17px;line-height:1;color:#4a4663;cursor:pointer}
+.tb .x:hover{background:rgba(0,0,0,.16)}
+.modal form{padding:16px}
+.fg{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:12px}
+.fg label{display:block;font-size:12px;font-weight:600;line-height:16px;color:var(--muted);margin:0 0 4px 2px}
+.fg label.req::after{content:" *";color:#e5484d}
+.fg input{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none}
+.fg input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.hint{font-size:12px;color:var(--muted);margin:3px 0 0 2px}
+.merr{display:none;margin-top:12px;padding:9px 12px;border-radius:10px;font-size:13px;font-weight:600;background:#fdeaea;color:#a12622}
+.acts{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+.btn{height:38px;padding:0 18px;border:0;border-radius:10px;font-size:14px;font-weight:600;color:#fff;cursor:pointer;background:linear-gradient(#7b8ff0,#4c5fd5);box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn:hover{filter:brightness(1.06)}.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn.alt{background:rgba(0,0,0,.08);color:var(--ink);box-shadow:none}
+@media (max-width:520px){.stats{grid-template-columns:minmax(0,1fr)}.sec,.modal form{padding:12px}.stats{padding:12px 12px 0}}
+
+/* ===== Tambahan khusus halaman Piket Harian ===== */
+.container{max-width:1180px}
+.navbar .clock{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;opacity:.92;white-space:nowrap}
+.content{margin-bottom:16px}
+.tb .tbadge{position:absolute;right:12px;font-size:11.5px;font-weight:700;color:#fff;padding:2px 10px;border-radius:99px;background:linear-gradient(160deg,#f2706b,#c92f2c);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.guru-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.guru-grid>p{grid-column:1/-1;text-align:center;color:var(--muted)}
+.toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.toolbar .grp{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.toolbar .grp.end{margin-left:auto}
+.search{position:relative}
+.search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px}
+.search input{height:36px;width:230px;padding:0 12px 0 32px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none}
+.sel{height:36px;padding:0 10px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none;cursor:pointer}
+.search input:focus,.sel:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.custom-table{min-width:640px}
+.custom-table th,.custom-table td{white-space:nowrap}
+#jurnalPagination{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:14px;font-size:13px;color:var(--muted)}
+/* tombol (gaya rombel.html, dipakai juga oleh tombol hasil render JS) */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:auto;padding:8px 16px;text-decoration:none;font-family:inherit}
+.btn-danger{background:linear-gradient(#f2706b,#d63d3a)}
+.btn-warning{background:linear-gradient(#ffc861,#e08a0c)}
+.btn-secondary{background:rgba(0,0,0,.08);color:var(--ink);box-shadow:none}
+.btn-secondary:disabled{opacity:.45}
+/* dock */
+#dashboardBtn>i{background:linear-gradient(160deg,#8fa4ff,#4c5fd5)}
+#settingPiketSiswaBtn>i{background:linear-gradient(160deg,#ffc861,#d9820f)}
+#inputJurnalBtn>i{background:linear-gradient(160deg,#59d6a0,#1b8a5c)}
+#viewAllPiketBtn>i{background:linear-gradient(160deg,#b58cf5,#7a45d6)}
+/* modal notifikasi mapping ganda */
+.dup-modal{max-width:430px;text-align:center}
+.dup-hero{padding:26px 22px 8px;background:linear-gradient(180deg,#fff4e0 0%,rgba(250,248,255,0) 100%)}
+.dup-ico{position:relative;width:78px;height:78px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;background:linear-gradient(160deg,#ffc861,#e08a0c);box-shadow:0 10px 24px rgba(224,138,12,.4),inset 0 1px 0 rgba(255,255,255,.4)}
+.dup-ico::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:2px solid rgba(224,138,12,.35);animation:dupPulse 1.8s ease-out infinite}
+@keyframes dupPulse{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.3);opacity:0}}
+.dup-title{font-size:18px;font-weight:800;color:var(--ink);margin:0 0 6px}
+.dup-text{padding:0 22px;font-size:14.5px;line-height:1.6;color:var(--ink)}
+.dup-name{display:inline-block;margin:2px 0;padding:2px 12px;border-radius:99px;font-weight:800;color:#8a4b00;background:#ffe9c2;border:1px solid #f6cf8b}
+.dup-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:14px 22px 0}
+.dup-chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:5px 12px;border-radius:99px;background:#e9edff;color:#3a46a8}
+.dup-chip i{font-size:11px;opacity:.8}
+.dup-tip{margin:16px 22px 0;padding:10px 12px;border-radius:10px;font-size:12.5px;line-height:1.5;text-align:left;color:var(--muted);background:#fff;border:1px dashed rgba(0,0,0,.18)}
+.dup-foot{padding:18px 22px 22px}
+.dup-foot .btn{min-width:150px;height:40px}
+/* notifikasi harus selalu di atas modal jurnal */
+#duplicateModal,#mappingDuplicateModal{z-index:70}
+/* status jurnal tersimpan */
+.jr-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;background:#dff7ec;color:#13734c;white-space:nowrap}
+tr.jr-saved td{background:rgba(89,214,160,.08)}
+.jr-summary{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;font-size:12.5px;font-weight:700}
+.jr-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;background:#e9edff;color:#3a46a8}
+.jr-pill.ok{background:#dff7ec;color:#13734c}.jr-pill.new{background:#fff0d6;color:#8a4b00}
+/* pilihan export */
+.exp-lead{margin:0 0 12px;font-size:13.5px;font-weight:600;color:var(--muted)}
+.exp-card{display:flex;align-items:center;gap:14px;width:100%;margin-bottom:10px;padding:12px 14px;text-align:left;font-family:inherit;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .15s}
+.exp-card:hover:not(:disabled){transform:translateY(-2px);border-color:var(--primary);box-shadow:0 8px 20px rgba(76,95,213,.18)}
+.exp-card:disabled{opacity:.6;cursor:progress}
+.exp-ico{flex:none;width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:20px;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.22),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.exp-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.exp-txt strong{font-size:14.5px}
+.exp-txt small{font-size:12px;line-height:1.4;color:var(--muted)}
+.exp-go{flex:none;color:var(--muted);font-size:13px}
+.exp-card.loading .exp-go i{animation:expSpin .8s linear infinite}
+.exp-card.loading .exp-go i::before{content:"\f110"}
+@keyframes expSpin{to{transform:rotate(360deg)}}
+/* modal */
+.overlay.active{display:flex}
+.modal{max-width:460px;max-height:92vh;display:flex;flex-direction:column}
+.modal form{overflow:auto}
+.mbody{padding:16px;overflow:auto;flex:1}
+.mfoot{display:flex;justify-content:flex-end;gap:10px;padding:12px 16px;border-top:1px solid var(--line)}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+.fg .form-group{margin:0}
+.form-group label{display:block;font-size:12px;font-weight:600;line-height:16px;color:var(--muted);margin:0 0 4px 2px}
+.form-group input,.form-group select{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none}
+.form-group input:focus,.form-group select:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.form-group input[readonly]{background:#f0eef6;color:var(--muted)}
+.searchable-dropdown{position:relative}
+.dropdown-options{position:absolute;top:100%;left:0;right:0;margin-top:4px;background:#fff;border:1px solid var(--line);border-radius:10px;max-height:200px;overflow-y:auto;z-index:10;display:none;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.dropdown-options.show{display:block}
+.dropdown-option{padding:9px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,.05);font-size:14px;color:var(--ink)}
+.dropdown-option:last-child{border-bottom:0}
+.dropdown-option:hover{background:rgba(102,126,234,.1);color:#3a46a8}
+.no-results{padding:10px;color:var(--muted);font-size:13px;text-align:center}
+.jurnal-tabs-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.jurnal-tab-btn{padding:6px 14px;border-radius:99px;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:13px;font-weight:600;cursor:pointer}
+.jurnal-tab-btn:hover{background:#f0eef8}
+.jurnal-tab-btn.active{background:linear-gradient(#7b8ff0,#4c5fd5);color:#fff;border-color:transparent}
+.jurnal-tab-pane{display:none}.jurnal-tab-pane.active{display:block}
+#jurnalDateDisplay{font-size:16px;font-weight:700;color:var(--deep);text-align:center;margin-bottom:14px}
+@media (max-width:520px){.navbar .clock{font-size:11px}.navbar-brand span{max-width:38vw}.search,.search input{width:100%}.toolbar .grp{width:100%}.toolbar .grp.end{margin-left:0}}
+</style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">
+            <img src="" alt="Logo Sekolah" style="display: none;">
+            <span></span>
+        </a>
+        <div class="clock"><i class="far fa-clock"></i><span id="liveDateTime"></span></div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <header>
+                <h1><i class="fas fa-clipboard-list"></i> Piket Harian</h1>
+                <p>Petugas piket hari ini, jadwal piket siswa, dan jurnal piket</p>
+            </header>
+
+            <!-- Petugas piket hari ini -->
+            <div class="content">
+                <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Petugas Piket Hari Ini</h2><span id="todayBadge" class="tbadge"></span></div>
+                <div class="sec">
+                    <div id="piketList" class="guru-grid">
+                        <p>Memuat data...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Petugas piket umum siswa -->
+            <div class="content">
+                <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Petugas Piket Umum Siswa</h2></div>
+                <div class="sec">
+                    <div class="tablebox"><div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr><th>No</th><th>ID Petugas</th><th>Nama Siswa</th><th>NISN</th><th>Kelas</th><th>Area Piket</th><th>Aksi</th></tr>
+                            </thead>
+                            <tbody id="piketSiswaTableBody">
+                                <tr><td colspan="7" class="empty">Belum ada data petugas piket siswa.</td></tr>
+                            </tbody>
+                        </table>
+                    </div></div>
+                </div>
+            </div>
+
+            <!-- Jurnal piket siswa -->
+            <div class="content">
+                <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Jurnal Piket Siswa</h2></div>
+                <div class="sec">
+                    <div class="toolbar">
+                        <div class="grp">
+                            <label class="search"><i class="fas fa-search"></i><input type="text" id="searchJurnalInput" placeholder="Cari Riwayat Piket..."></label>
+                            <select id="filterStatusPiket" class="sel">
+                                <option value="">Semua Status</option>
+                                <option value="Ya">Ya</option>
+                                <option value="Tidak">Tidak</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="tablebox"><div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr><th>Id</th><th>Id Petugas</th><th>Tanggal</th><th>Nama Siswa</th><th>NISN</th><th>Kelas</th><th>Area Piket</th><th>Status Piket</th><th>Aksi</th></tr>
+                            </thead>
+                            <tbody id="jurnalPiketTableBody">
+                                <tr><td colspan="9" class="empty">Belum ada data jurnal piket.</td></tr>
+                            </tbody>
+                        </table>
+                    </div></div>
+                    <div id="jurnalPagination"></div>
+                </div>
+            </div>
+
+            <p class="foot">&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik) 2026<br>CopyRight Kenji Studio Developer.</p>
+        </div>
+    </main>
+
+    <!-- Dock -->
+    <div class="button-group">
+        <a href="adminguru.html" id="dashboardBtn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+        <button type="button" id="settingPiketSiswaBtn"><i class="fas fa-cogs"></i> Pengaturan Piket</button>
+        <button type="button" id="inputJurnalBtn"><i class="fas fa-plus"></i> Input Piket</button>
+        <button type="button" id="viewAllPiketBtn"><i class="fas fa-list"></i> Semua Jadwal</button>
+        <button type="button" id="exportPdfBtn"><i class="fas fa-file-pdf"></i> Export</button>
+    </div>
+
+    <!-- Modal Pengaturan Piket Siswa -->
+    <div id="piketSiswaModal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="piketSiswaTitle">
+        <div class="modal">
+            <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2 id="piketSiswaTitle">Pengaturan Piket Siswa</h2><button type="button" class="x" id="closePiketSiswaModal" aria-label="Tutup">&times;</button></div>
+            <form id="piketSiswaForm">
+                <input type="hidden" id="piketSiswaId">
+                <div class="fg">
+                    <div class="form-group">
+                        <label for="idPiketSiswa">ID Piket</label>
+                        <input type="text" id="idPiketSiswa" name="idPiketSiswa" placeholder="Contoh: PKS-001" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="namaSiswaInput">Nama Siswa</label>
+                        <div class="searchable-dropdown">
+                            <input type="text" id="namaSiswaInput" placeholder="Ketik nama siswa..." autocomplete="off" required>
+                            <input type="hidden" id="namaSiswaPiket" name="namaSiswaPiket">
+                            <div id="siswaDropdownList" class="dropdown-options"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="nisnPiket">NISN</label>
+                        <input type="text" id="nisnPiket" name="nisnPiket" readonly placeholder="Otomatis terisi">
+                    </div>
+                    <div class="form-group">
+                        <label for="hariPiketSiswa">Hari Piket</label>
+                        <select id="hariPiketSiswa" name="hariPiketSiswa" required>
+                            <option value="">Pilih Hari</option>
+                            <option value="SENIN">SENIN</option>
+                            <option value="SELASA">SELASA</option>
+                            <option value="RABU">RABU</option>
+                            <option value="KAMIS">KAMIS</option>
+                            <option value="JUMAT">JUMAT</option>
+                            <option value="SABTU">SABTU</option>
+                            <option value="MINGGU">MINGGU</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="kelasPiket">Kelas</label>
+                        <select id="kelasPiket" name="kelasPiket" required>
+                            <option value="">Pilih Kelas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="areaPiket">Area Piket</label>
+                        <select id="areaPiket" name="areaPiket" required>
+                            <option value="">Pilih Area</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="acts">
+                    <button type="button" class="btn btn-secondary" id="cancelPiketSiswaBtn">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Semua Jadwal -->
+    <div id="allPiketModal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="allPiketTitle">
+        <div class="modal" style="max-width: 1000px;">
+            <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2 id="allPiketTitle">Jadwal Piket Siswa (Senin - Jumat)</h2><button type="button" class="x" id="closeAllPiketModal" aria-label="Tutup">&times;</button></div>
+            <div class="mbody"><div id="allPiketContainer"></div></div>
+            <div class="mfoot">
+                <button class="btn btn-danger" id="exportAllPiketPdfBtn" type="button"><i class="fas fa-file-pdf"></i> Export PDF</button>
+                <button class="btn btn-secondary" id="closeAllPiketModalBtn" type="button">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Informasi (data ganda) -->
+    <div id="duplicateModal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="duplicateTitle">
+        <div class="modal" style="max-width: 480px; text-align: center;">
+            <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2 id="duplicateTitle">Informasi Input Data</h2></div>
+            <div class="mbody">
+                <div style="margin-bottom: 14px;"><i class="fas fa-info-circle" style="font-size: 3.2rem; color: #4c5fd5;"></i></div>
+                <div id="duplicateMessage" style="color: var(--ink); line-height: 1.5; text-align: left; background: #fff; border: 1px solid var(--line); padding: 14px; border-radius: 12px; max-height: 200px; overflow-y: auto;"></div>
+            </div>
+            <div class="mfoot" style="justify-content:center;">
+                <button onclick="document.getElementById('duplicateModal').classList.remove('active')" class="btn btn-primary" type="button">Mengerti</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pilihan Export PDF -->
+    <div id="exportChoiceModal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="exportChoiceTitle">
+        <div class="modal" style="max-width: 440px;">
+            <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2 id="exportChoiceTitle">Export PDF</h2><button type="button" class="x" id="closeExportChoice" aria-label="Tutup">&times;</button></div>
+            <div class="mbody">
+                <p class="exp-lead">Pilih laporan yang ingin kamu export:</p>
+                <button type="button" class="exp-card" data-export="piket">
+                    <span class="exp-ico" style="background:linear-gradient(160deg,#ffc861,#d9820f);"><i class="fas fa-user-shield"></i></span>
+                    <span class="exp-txt">
+                        <strong>Petugas Piket Umum Siswa</strong>
+                        <small>Daftar seluruh petugas piket siswa beserta kelas dan area.</small>
+                    </span>
+                    <span class="exp-go"><i class="fas fa-chevron-right"></i></span>
+                </button>
+                <button type="button" class="exp-card" data-export="jurnal">
+                    <span class="exp-ico" style="background:linear-gradient(160deg,#59d6a0,#1b8a5c);"><i class="fas fa-book"></i></span>
+                    <span class="exp-txt">
+                        <strong>Jurnal Piket Siswa</strong>
+                        <small>Rekap dan riwayat jurnal piket, mengikuti pencarian &amp; filter status yang aktif.</small>
+                    </span>
+                    <span class="exp-go"><i class="fas fa-chevron-right"></i></span>
+                </button>
+            </div>
+            <div class="mfoot" style="justify-content:center;">
+                <button type="button" class="btn btn-secondary" id="cancelExportChoice">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Notifikasi: siswa sudah di-mapping (piket siswa) -->
+    <div id="mappingDuplicateModal" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="dupTitle" aria-describedby="dupText">
+        <div class="modal dup-modal">
+            <div class="dup-hero">
+                <div class="dup-ico"><i class="fas fa-user-check"></i></div>
+                <h3 class="dup-title" id="dupTitle">Data Sudah Ada</h3>
+            </div>
+            <div class="dup-text" id="dupText">
+                Data petugas piket siswa atas nama<br>
+                <span class="dup-name" id="dupNama">-</span><br>
+                sudah di mapping.
+            </div>
+            <div class="dup-chips" id="dupChips"></div>
+            <div class="dup-tip"><i class="fas fa-lightbulb" style="color:#e08a0c;"></i> Siswa yang sama tidak bisa dimapping dua kali pada hari yang sama. Pilih hari lain atau siswa lain, atau hapus data lama terlebih dahulu.</div>
+            <div class="dup-foot">
+                <button type="button" class="btn btn-primary" id="dupCloseBtn"><i class="fas fa-check"></i> Mengerti</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Input Jurnal Piket -->
+    <div id="jurnalModal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="jurnalTitle">
+        <div class="modal" style="max-width: 1100px;">
+            <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2 id="jurnalTitle">Input Jurnal Piket Siswa</h2><button type="button" class="x" id="closeJurnalModal" aria-label="Tutup">&times;</button></div>
+            <div class="mbody">
+                <div id="jurnalDateDisplay"></div>
+                <div id="jurnalTabsContent" class="jurnal-tabs-content"></div>
+            </div>
+            <div class="mfoot">
+                <button type="button" class="btn btn-secondary" id="cancelJurnalBtn">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+        
+        
+        let supabaseClient;
+        let absensiClient;
+        let schoolData = {};
+
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+            absensiClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            async function loadSchoolIdentity() {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('identitassekolah')
+                        .select('nama_sekolah, logo, kop_sekolah')
+                        .limit(1)
+                        .single();
+                    
+                    if (data) {
+                        schoolData = data;
+                        if (data.nama_sekolah) {
+                            document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                        }
+                        if (data.logo) {
+                            const img = document.querySelector('.navbar-brand img');
+                            img.src = data.logo;
+                            img.style.display = 'block';
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error loading school identity:", err);
+                }
+            }
+            document.addEventListener('DOMContentLoaded', loadSchoolIdentity);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = JSON.parse(sessionStorage.getItem('guru_session'));
+            
+            if (session) {
+            }
+        });
+
+        function updateLiveTime() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            document.getElementById('liveDateTime').textContent = `${now.toLocaleDateString('id-ID', dateOptions)} | ${now.toLocaleTimeString('id-ID', timeOptions).replace(/\./g, ':')} WIB`;
+        }
+        setInterval(updateLiveTime, 1000);
+        updateLiveTime();
+
+        async function loadPiketHariIni() {
+            const now = new Date();
+            const hariIni = now.toLocaleDateString('id-ID', { weekday: 'long' }).toUpperCase();
+            
+            const badge = document.getElementById('todayBadge');
+            if(badge) badge.textContent = hariIni;
+
+            const session = JSON.parse(sessionStorage.getItem('guru_session'));
+            const namaGuru = session ? session.nama : null;
+
+            if (!namaGuru) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const container = document.getElementById('piketList');
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('gurupiket')
+                    .select('piket1, piket2, piket3, piket4, piket5, piket6, piket7')
+                    .eq('hari', hariIni);
+
+                if (error) throw error;
+
+                container.innerHTML = '';
+                currentPiketTeachers = [];
+
+                let isScheduled = false;
+                if (data && data.length > 0) {
+                    isScheduled = data.some(piket => 
+                        piket.piket1 === namaGuru || 
+                        piket.piket2 === namaGuru || 
+                        piket.piket3 === namaGuru ||
+                        piket.piket4 === namaGuru ||
+                        piket.piket5 === namaGuru ||
+                        piket.piket6 === namaGuru ||
+                        piket.piket7 === namaGuru
+                    );
+                }
+
+                if (!data || data.length === 0 || !isScheduled) {
+                    container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--muted);">
+                        <div style="background: #fdeaea; color: #a12622; padding: 20px; border-radius: 12px; border: 1px solid rgba(165,38,34,.25); display: inline-block; margin-top: 20px;">
+                            <i class="fas fa-exclamation-circle" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                            <h3 style="margin: 0 0 5px 0;">Akses Dibatasi</h3>
+                            <p style="margin: 0;">Maaf, Jadwal Piket anda bukan hari ini.</p>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <a href="adminguru.html" class="btn btn-secondary">Kembali ke Dashboard</a>
+                        </div>
+                    </div>`;
+
+                    const inputJurnalBtn = document.getElementById('inputJurnalBtn');
+                    if (inputJurnalBtn) {
+                        inputJurnalBtn.disabled = true;
+                        inputJurnalBtn.style.opacity = '0.5';
+                        inputJurnalBtn.style.cursor = 'not-allowed';
+                        inputJurnalBtn.title = 'Akses dibatasi karena bukan jadwal piket Anda.';
+                    }
+                    return;
+                }
+
+                const teacherNames = [];
+                data.forEach(p => {
+                    if (p.piket1) teacherNames.push(p.piket1);
+                    if (p.piket2) teacherNames.push(p.piket2);
+                    if (p.piket3) teacherNames.push(p.piket3);
+                    if (p.piket4) teacherNames.push(p.piket4);
+                    if (p.piket5) teacherNames.push(p.piket5);
+                    if (p.piket6) teacherNames.push(p.piket6);
+                    if (p.piket7) teacherNames.push(p.piket7);
+                });
+
+                let photoMap = {};
+                let nipMap = {};
+                if (teacherNames.length > 0) {
+                    const { data: guruData } = await supabaseClient
+                        .from('dataguru')
+                        .select('nama_guru, photo, nip')
+                        .in('nama_guru', teacherNames);
+                    
+                    if (guruData) {
+                        guruData.forEach(g => {
+                            if (g.photo) photoMap[g.nama_guru] = g.photo;
+                            if (g.nip) nipMap[g.nama_guru] = g.nip;
+                        });
+                    }
+                }
+
+                data.forEach((piket) => {
+                    if (piket.piket1) currentPiketTeachers.push({ name: piket.piket1, nip: nipMap[piket.piket1] });
+                    if (piket.piket2) currentPiketTeachers.push({ name: piket.piket2, nip: nipMap[piket.piket2] });
+                    if (piket.piket3) currentPiketTeachers.push({ name: piket.piket3, nip: nipMap[piket.piket3] });
+                    if (piket.piket4) currentPiketTeachers.push({ name: piket.piket4, nip: nipMap[piket.piket4] });
+                    if (piket.piket5) currentPiketTeachers.push({ name: piket.piket5, nip: nipMap[piket.piket5] });
+                    if (piket.piket6) currentPiketTeachers.push({ name: piket.piket6, nip: nipMap[piket.piket6] });
+                    if (piket.piket7) currentPiketTeachers.push({ name: piket.piket7, nip: nipMap[piket.piket7] });
+
+                    const createGuruCard = (nama, label, iconClass, colorClass) => {
+                        if (!nama) return '';
+                        const photoUrl = photoMap[nama];
+                        const avatarContent = photoUrl 
+                            ? `<img src="${photoUrl}" alt="${nama}" style="width: 100%; height: 100%; object-fit: cover;">` 
+                            : `<i class="${iconClass}"></i>`;
+
+                        return `
+                            <div style="background: #fff; padding: 14px; border-radius: 12px; border: 1px solid var(--line); border-left: 4px solid ${colorClass};">
+                                <div style="font-size: 0.8rem; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">${label}</div>
+                                <div style="font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 10px;">
+                                    <div style="width: 40px; height: 40px; background: #eef0fb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: ${colorClass}; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid ${colorClass}; flex-shrink: 0;">
+                                        ${avatarContent}
+                                    </div>
+                                    <span>${nama}</span>
+                                </div>
+                            </div>
+                        `;
+                    };
+
+                    container.innerHTML += createGuruCard(piket.piket1, 'Guru Piket 1', 'fas fa-user-tie', '#3b82f6');
+                    container.innerHTML += createGuruCard(piket.piket2, 'Guru Piket 2', 'fas fa-user', '#10b981');
+                    container.innerHTML += createGuruCard(piket.piket3, 'Guru Piket 3', 'fas fa-user', '#f59e0b');
+                    container.innerHTML += createGuruCard(piket.piket4, 'Guru Piket 4', 'fas fa-user', '#8b5cf6');
+                    container.innerHTML += createGuruCard(piket.piket5, 'Guru Piket 5', 'fas fa-user', '#ef4444');
+                    container.innerHTML += createGuruCard(piket.piket6, 'Guru Piket 6', 'fas fa-user', '#6366f1');
+                    container.innerHTML += createGuruCard(piket.piket7, 'Guru Piket 7', 'fas fa-user', '#ec4899');
+                });
+
+            } catch (err) {
+                console.error('Error loading piket:', err);
+                container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #ef4444;">Gagal memuat data: ${err.message}</p>`;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadPiketHariIni);
+
+        const piketSiswaModal = document.getElementById('piketSiswaModal');
+        const settingPiketSiswaBtn = document.getElementById('settingPiketSiswaBtn');
+        const closePiketSiswaModal = document.getElementById('closePiketSiswaModal');
+        const cancelPiketSiswaBtn = document.getElementById('cancelPiketSiswaBtn');
+        const piketSiswaForm = document.getElementById('piketSiswaForm');
+        const namaSiswaInput = document.getElementById('namaSiswaInput');
+        const namaSiswaHidden = document.getElementById('namaSiswaPiket');
+        const siswaDropdownList = document.getElementById('siswaDropdownList');
+        const nisnInput = document.getElementById('nisnPiket');
+        const kelasSelect = document.getElementById('kelasPiket');
+        const hariPiketSelect = document.getElementById('hariPiketSiswa');
+
+        let siswaDataCache = [];
+
+        if (settingPiketSiswaBtn) {
+            settingPiketSiswaBtn.addEventListener('click', async () => {
+                piketSiswaForm.reset();
+                if(namaSiswaInput) namaSiswaInput.value = '';
+                if(namaSiswaHidden) namaSiswaHidden.value = '';
+                if(siswaDropdownList) siswaDropdownList.innerHTML = '';
+                
+                if (hariPiketSelect) {
+                    const now = new Date();
+                    const hari = now.toLocaleDateString('id-ID', { weekday: 'long' }).toUpperCase();
+                    if (['SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU', 'MINGGU'].includes(hari)) {
+                        hariPiketSelect.value = hari;
+                    } else {
+                        hariPiketSelect.value = "";
+                    }
+                }
+                
+                await loadSiswaOptions();
+                await loadKelasOptions();
+                await loadAreaPiketOptions();
+                piketSiswaModal.classList.add('active');
+            });
+        }
+
+        function closePiketModalFunc() {
+            piketSiswaModal.classList.remove('active');
+        }
+
+        if (closePiketSiswaModal) closePiketSiswaModal.addEventListener('click', closePiketModalFunc);
+        if (cancelPiketSiswaBtn) cancelPiketSiswaBtn.addEventListener('click', closePiketModalFunc);
+        
+        async function loadSiswaOptions() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('datasiswa')
+                    .select('nama_siswa, nisn')
+                    .order('nama_siswa');
+                
+                if (error) throw error;
+                
+                siswaDataCache = data;
+            } catch (err) {
+                console.error('Error loading siswa:', err);
+            }
+        }
+
+        async function loadKelasOptions() {
+            kelasSelect.innerHTML = '<option value="">Memuat...</option>';
+            try {
+                const { data, error } = await supabaseClient
+                    .from('rombel')
+                    .select('nama_kelas')
+                    .order('nama_kelas');
+                
+                if (error) throw error;
+                
+                kelasSelect.innerHTML = '<option value="">Pilih Kelas</option>';
+                
+                data.forEach(rombel => {
+                    const option = document.createElement('option');
+                    option.value = rombel.nama_kelas;
+                    option.textContent = rombel.nama_kelas;
+                    kelasSelect.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Error loading kelas:', err);
+                kelasSelect.innerHTML = '<option value="">Gagal memuat data</option>';
+            }
+        }
+
+        async function loadAreaPiketOptions() {
+            const select = document.getElementById('areaPiket');
+            if (!select) return;
+            select.innerHTML = '<option value="">Memuat area...</option>';
+            try {
+                const { data, error } = await absensiClient
+                    .from('areapiketumum')
+                    .select('area_piket')
+                    .order('area_piket', { ascending: true });
+                
+                if (error) throw error;
+                
+                select.innerHTML = '<option value="">Pilih Area</option>';
+                if (data) {
+                    data.forEach(area => {
+                        const option = document.createElement('option');
+                        option.value = area.area_piket;
+                        option.textContent = area.area_piket;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (err) {
+                console.error('Error loading area piket:', err);
+                select.innerHTML = '<option value="">Gagal memuat area</option>';
+            }
+        }
+
+        if (namaSiswaInput) {
+            namaSiswaInput.addEventListener('input', function() {
+                const filter = this.value.toLowerCase();
+                const filteredSiswa = siswaDataCache.filter(s => s.nama_siswa.toLowerCase().includes(filter));
+                renderDropdownOptions(filteredSiswa);
+                siswaDropdownList.classList.add('show');
+            });
+
+            namaSiswaInput.addEventListener('focus', function() {
+                const filter = this.value.toLowerCase();
+                const filteredSiswa = filter ? siswaDataCache.filter(s => s.nama_siswa.toLowerCase().includes(filter)) : siswaDataCache;
+                renderDropdownOptions(filteredSiswa);
+                siswaDropdownList.classList.add('show');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!namaSiswaInput.contains(e.target) && !siswaDropdownList.contains(e.target)) {
+                    siswaDropdownList.classList.remove('show');
+                }
+            });
+        }
+
+        function renderDropdownOptions(data) {
+            siswaDropdownList.innerHTML = '';
+            if (data.length === 0) {
+                siswaDropdownList.innerHTML = '<div class="no-results">Nama tidak ditemukan</div>';
+                return;
+            }
+
+            data.forEach(siswa => {
+                const div = document.createElement('div');
+                div.className = 'dropdown-option';
+                div.textContent = siswa.nama_siswa;
+                div.addEventListener('click', () => selectSiswa(siswa));
+                siswaDropdownList.appendChild(div);
+            });
+        }
+
+        function selectSiswa(siswa) {
+            namaSiswaInput.value = siswa.nama_siswa;
+            namaSiswaHidden.value = siswa.nama_siswa; 
+            nisnInput.value = siswa.nisn; 
+            siswaDropdownList.classList.remove('show');
+
+            generateIdPiket();
+        }
+
+        function generateIdPiket() {
+            const nama = namaSiswaHidden.value;
+            const nisn = nisnInput.value;
+            const hari = hariPiketSelect ? hariPiketSelect.value : '';
+            const idPiketInput = document.getElementById('idPiketSiswa');
+
+            if (idPiketInput && nama && nisn && hari) {
+                idPiketInput.value = `ID_${hari}-${nama}/${nisn}`;
+            }
+        }
+
+        if (hariPiketSelect) {
+            hariPiketSelect.addEventListener('change', generateIdPiket);
+        }
+
+        async function loadPiketSiswaData() {
+            const tableBody = document.getElementById('piketSiswaTableBody');
+            tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center; color: var(--muted);">Memuat data...</td></tr>';
+
+            try {
+                const now = new Date();
+                const hariIni = now.toLocaleDateString('id-ID', { weekday: 'long' }).toUpperCase();
+
+                const { data, error } = await supabaseClient
+                    .from('datapiketsiswa')
+                    .select('*')
+                    .ilike('id_piket', `%${hariIni}%`)
+                    .order('id_piket', { ascending: true });
+
+                if (error) throw error;
+
+                tableBody.innerHTML = '';
+
+                if (!data || data.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--muted); padding: 20px;">Belum ada data petugas piket siswa untuk hari ${hariIni}.</td></tr>`;
+                    return;
+                }
+
+                data.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.id_piket}</td>
+                        <td>${item.nama_siswa}</td>
+                        <td>${item.nisn || '-'}</td>
+                        <td>${item.kelas}</td>
+                        <td>${item.area}</td>
+                        <td>
+                            <button onclick="deletePiketSiswa('${item.id_piket}')" class="btn btn-danger" style="padding: 5px 10px; font-size: 0.8rem;"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (err) {
+                console.error('Error loading piket siswa:', err);
+                tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #a12622;">Gagal memuat data: ${err.message}</td></tr>`;
+            }
+        }
+
+        window.deletePiketSiswa = async function(id) {
+            if(confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                try {
+                    const { error } = await supabaseClient
+                        .from('datapiketsiswa')
+                        .delete()
+                        .eq('id_piket', id);
+                    
+                    if (error) throw error;
+                    alert('Data berhasil dihapus');
+                    loadPiketSiswaData();
+                } catch (err) {
+                    alert('Gagal menghapus: ' + err.message);
+                }
+            }
+        };
+
+        // --- Notifikasi siswa sudah di-mapping (data ganda) ---
+        function showMappingDuplicate({ nama, hari, kelas, area }) {
+            const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+            document.getElementById('dupNama').textContent = nama || '-';
+            const chips = [];
+            if (hari)  chips.push(`<span class="dup-chip"><i class="fas fa-calendar-day"></i>${esc(hari)}</span>`);
+            if (kelas) chips.push(`<span class="dup-chip"><i class="fas fa-users"></i>${esc(kelas)}</span>`);
+            if (area)  chips.push(`<span class="dup-chip"><i class="fas fa-map-marker-alt"></i>${esc(area)}</span>`);
+            document.getElementById('dupChips').innerHTML = chips.join('');
+            document.getElementById('mappingDuplicateModal').classList.add('active');
+            document.getElementById('dupCloseBtn').focus();
+        }
+        const dupCloseBtn = document.getElementById('dupCloseBtn');
+        if (dupCloseBtn) dupCloseBtn.addEventListener('click', () => {
+            document.getElementById('mappingDuplicateModal').classList.remove('active');
+        });
+
+        if (piketSiswaForm) {
+            piketSiswaForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const submitBtn = piketSiswaForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Menyimpan...';
+                submitBtn.disabled = true;
+
+                try {
+                    const formData = {
+                        id_piket: document.getElementById('idPiketSiswa').value,
+                        nama_siswa: document.getElementById('namaSiswaPiket').value, 
+                        nisn: document.getElementById('nisnPiket').value,
+                        kelas: document.getElementById('kelasPiket').value,
+                        area: document.getElementById('areaPiket').value
+                    };
+
+                    const { error } = await supabaseClient
+                        .from('datapiketsiswa')
+                        .insert([formData]);
+
+                    if (error) throw error;
+
+                    alert('Data Petugas Piket Siswa berhasil disimpan!');
+                    closePiketModalFunc();
+                    loadPiketSiswaData();
+
+                } catch (err) {
+                    console.error(err);
+                    const isDuplicate = err && (err.code === '23505' || /duplicate key|unique constraint/i.test(err.message || ''));
+                    if (isDuplicate) {
+                        showMappingDuplicate({
+                            nama: document.getElementById('namaSiswaPiket').value,
+                            hari: document.getElementById('hariPiketSiswa').value,
+                            kelas: document.getElementById('kelasPiket').value,
+                            area: document.getElementById('areaPiket').value
+                        });
+                    } else {
+                        alert('Gagal menyimpan data: ' + err.message);
+                    }
+                } finally {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadPiketSiswaData);
+
+        // Export PDF: Petugas Piket Umum Siswa (dipanggil dari tombol Export di dock)
+        async function exportPiketSiswaPdf() {
+            {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('datapiketsiswa')
+                        .select('*')
+                        .order('id_piket', { ascending: true });
+
+                    if (error) throw error;
+
+                    if (!data || data.length === 0) {
+                        alert('Tidak ada data untuk diexport');
+                        return;
+                    }
+
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    let yPos = 20;
+
+                    if (schoolData.kop_sekolah) {
+                        try {
+                            const response = await fetch(schoolData.kop_sekolah);
+                            const blob = await response.blob();
+                            const base64data = await new Promise((resolve) => {
+                                const reader = new FileReader();
+                                reader.onloadend = () => resolve(reader.result);
+                                reader.readAsDataURL(blob);
+                            });
+
+                            const imgProps = doc.getImageProperties(base64data);
+                            const pdfWidth = pageWidth - 20; 
+                            const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                            
+                            doc.addImage(base64data, 'PNG', 10, 10, pdfWidth, imgHeight);
+                            yPos = 10 + imgHeight + 10;
+                        } catch (err) {
+                            console.error("Gagal memuat KOP Sekolah:", err);
+                        }
+                    }
+
+                    doc.setFontSize(18);
+                    doc.text("Laporan Petugas Piket Siswa", pageWidth / 2, yPos, { align: 'center' });
+                    yPos += 8;
+                    
+                    const schoolName = schoolData.nama_sekolah || document.querySelector('.navbar-brand span').textContent || 'SMK Negeri 1 Simpang Teritip';
+                    doc.setFontSize(12);
+                    doc.setTextColor(100);
+                    doc.text(schoolName, pageWidth / 2, yPos, { align: 'center' });
+                    yPos += 10;
+
+                    const tableData = data.map((item, index) => [
+                        index + 1, item.id_piket, item.nama_siswa, item.nisn || '-', item.kelas, item.area
+                    ]);
+
+                    doc.autoTable({
+                        head: [['No', 'ID Petugas', 'Nama Siswa', 'NISN', 'Kelas', 'Area Piket']],
+                        body: tableData,
+                        startY: yPos,
+                        theme: 'grid',
+                        headStyles: { fillColor: [30, 64, 175] } 
+                    });
+
+                    doc.save('Data_Petugas_Piket_Siswa.pdf');
+                } catch (err) {
+                    console.error('Export error:', err);
+                    alert('Gagal export PDF: ' + err.message);
+                }
+            }
+        }
+
+        const viewAllPiketBtn = document.getElementById('viewAllPiketBtn');
+        const allPiketModal = document.getElementById('allPiketModal');
+        const closeAllPiketModal = document.getElementById('closeAllPiketModal');
+        const allPiketContainer = document.getElementById('allPiketContainer');
+
+        if (viewAllPiketBtn) {
+            viewAllPiketBtn.addEventListener('click', async () => {
+                allPiketModal.classList.add('active');
+                allPiketContainer.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>';
+
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('datapiketsiswa')
+                        .select('*')
+                        .order('kelas', { ascending: true });
+
+                    if (error) throw error;
+
+                    if (!data || data.length === 0) {
+                        allPiketContainer.innerHTML = '<p style="text-align:center; padding:20px;">Belum ada data jadwal piket.</p>';
+                        return;
+                    }
+
+                    const days = ['SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT'];
+                    let htmlContent = '';
+
+                    days.forEach(day => {
+                        const dayData = data.filter(item => item.id_piket && item.id_piket.toUpperCase().includes(`ID_${day}`));
+                        
+                        if (dayData.length > 0) {
+                            htmlContent += `
+                                <div style="margin-bottom: 30px; background: #f9fafb; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;">
+                                    <div style="background: #3b82f6; color: white; padding: 10px 15px; font-weight: bold; font-size: 1.1rem;">
+                                        <i class="fas fa-calendar-day"></i> ${day}
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="custom-table" style="margin-top: 0;">
+                                            <thead style="background: #eff6ff; color: #1e3a8a;">
+                                                <tr>
+                                                    <th style="width: 50px;">No</th>
+                                                    <th>Nama Siswa</th>
+                                                    <th>NISN</th>
+                                                    <th>Kelas</th>
+                                                    <th>Area Piket</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                            `;
+                            
+                            dayData.forEach((item, index) => {
+                                htmlContent += `
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td>${item.nama_siswa}</td>
+                                        <td>${item.nisn || '-'}</td>
+                                        <td>${item.kelas}</td>
+                                        <td>${item.area}</td>
+                                    </tr>
+                                `;
+                            });
+
+                            htmlContent += `
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                    
+                    if (htmlContent === '') {
+                         allPiketContainer.innerHTML = '<p style="text-align:center; padding:20px;">Tidak ada data jadwal yang sesuai format hari.</p>';
+                    } else {
+                        allPiketContainer.innerHTML = htmlContent;
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    allPiketContainer.innerHTML = `<p style="text-align:center; color:red; padding:20px;">Gagal memuat: ${err.message}</p>`;
+                }
+            });
+        }
+
+        if (closeAllPiketModal) {
+            closeAllPiketModal.addEventListener('click', () => {
+                allPiketModal.classList.remove('active');
+            });
+        }
+
+        const closeAllPiketModalBtn = document.getElementById('closeAllPiketModalBtn');
+        if (closeAllPiketModalBtn) {
+            closeAllPiketModalBtn.addEventListener('click', () => {
+                allPiketModal.classList.remove('active');
+            });
+        }
+
+        const exportAllPiketPdfBtn = document.getElementById('exportAllPiketPdfBtn');
+        if (exportAllPiketPdfBtn) {
+            exportAllPiketPdfBtn.addEventListener('click', async () => {
+                const originalText = exportAllPiketPdfBtn.innerHTML;
+                exportAllPiketPdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+                exportAllPiketPdfBtn.disabled = true;
+
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('datapiketsiswa')
+                        .select('*')
+                        .order('kelas', { ascending: true });
+
+                    if (error) throw error;
+
+                    if (!data || data.length === 0) {
+                        alert('Tidak ada data jadwal untuk diexport.');
+                        return;
+                    }
+
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    let yPos = 20;
+
+                    if (schoolData.kop_sekolah) {
+                        try {
+                            const response = await fetch(schoolData.kop_sekolah);
+                            const blob = await response.blob();
+                            const base64data = await new Promise((resolve) => {
+                                const reader = new FileReader();
+                                reader.onloadend = () => resolve(reader.result);
+                                reader.readAsDataURL(blob);
+                            });
+
+                            const imgProps = doc.getImageProperties(base64data);
+                            const pdfWidth = pageWidth - 20; 
+                            const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                            
+                            doc.addImage(base64data, 'PNG', 10, 10, pdfWidth, imgHeight);
+                            yPos = 10 + imgHeight + 10;
+                        } catch (err) {
+                            console.error("Gagal memuat KOP Sekolah:", err);
+                        }
+                    }
+                    
+                    doc.setFontSize(18);
+                    doc.text("Jadwal Piket Siswa (Senin - Jumat)", pageWidth / 2, yPos, { align: 'center' });
+                    yPos += 8;
+                    
+                    const schoolName = schoolData.nama_sekolah || document.querySelector('.navbar-brand span').textContent || 'SMK Negeri 1 Simpang Teritip';
+                    doc.setFontSize(12);
+                    doc.setTextColor(100);
+                    doc.text(schoolName, pageWidth / 2, yPos, { align: 'center' });
+                    yPos += 10;
+
+                    let finalY = yPos;
+                    const days = ['SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT'];
+
+                    for (const day of days) {
+                        const dayData = data.filter(item => item.id_piket && item.id_piket.toUpperCase().includes(`ID_${day}`));
+                        
+                        if (dayData.length > 0) {
+                            if (finalY > 250) {
+                                doc.addPage();
+                                finalY = 20;
+                            }
+
+                            doc.setFontSize(14);
+                            doc.setTextColor(0);
+                            doc.text(`Hari: ${day}`, 14, finalY);
+                            finalY += 5;
+
+                            const tableData = dayData.map((item, index) => [
+                                index + 1, item.nama_siswa, item.nisn || '-', item.kelas, item.area
+                            ]);
+
+                            doc.autoTable({
+                                head: [['No', 'Nama Siswa', 'NISN', 'Kelas', 'Area Piket']],
+                                body: tableData,
+                                startY: finalY,
+                                theme: 'grid',
+                                headStyles: { fillColor: [59, 130, 246] }, // Blue
+                                margin: { top: 20 },
+                                pageBreak: 'auto' 
+                            });
+
+                            finalY = doc.lastAutoTable.finalY + 15;
+                        }
+                    }
+
+                    doc.save('Jadwal_Piket_Lengkap.pdf');
+
+                } catch (err) {
+                    console.error(err);
+                    alert('Gagal export PDF: ' + err.message);
+                } finally {
+                    exportAllPiketPdfBtn.innerHTML = originalText;
+                    exportAllPiketPdfBtn.disabled = false;
+                }
+            });
+        }
+
+        const searchJurnalInput = document.getElementById('searchJurnalInput');
+        const filterStatusPiket = document.getElementById('filterStatusPiket');
+
+        if (searchJurnalInput) {
+            searchJurnalInput.addEventListener('input', function() {
+                renderJurnalTable(1);
+            });
+        }
+
+        if (filterStatusPiket) {
+            filterStatusPiket.addEventListener('change', function() {
+                renderJurnalTable(1);
+            });
+        }
+
+        const inputJurnalBtn = document.getElementById('inputJurnalBtn');
+        const jurnalModal = document.getElementById('jurnalModal');
+        const closeJurnalModal = document.getElementById('closeJurnalModal');
+        const cancelJurnalBtn = document.getElementById('cancelJurnalBtn');
+        const jurnalDateDisplay = document.getElementById('jurnalDateDisplay');
+        const jurnalTabsContent = document.getElementById('jurnalTabsContent');
+        function escJurnal(t) {
+            return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+
+        // Tanggal lokal (YYYY-MM-DD), konsisten dengan nama hari yang dipakai untuk filter piket
+        function getTanggalLokal(d = new Date()) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${dd}`;
+        }
+
+        // Render isi modal: semua petugas hari ini + status jurnal yang sudah tersimpan
+        async function renderJurnalInputModal() {
+            const now = new Date();
+            const weekday = new Intl.DateTimeFormat('id-ID', { weekday: 'long' }).format(now);
+            const day = new Intl.DateTimeFormat('id-ID', { day: '2-digit' }).format(now);
+            const month = new Intl.DateTimeFormat('id-ID', { month: 'long' }).format(now);
+            const year = new Intl.DateTimeFormat('id-ID', { year: 'numeric' }).format(now);
+            const tanggal = getTanggalLokal(now);
+            const hariIni = weekday.toUpperCase();
+
+            jurnalDateDisplay.textContent = `${weekday}, ${day} - ${month} - ${year}`;
+            jurnalTabsContent.innerHTML = '<div style="text-align:center; padding:20px;">Memuat data...</div>';
+
+            try {
+                const [petugasRes, jurnalRes] = await Promise.all([
+                    supabaseClient
+                        .from('datapiketsiswa')
+                        .select('*')
+                        .ilike('id_piket', `%${hariIni}%`)
+                        .order('kelas')
+                        .order('id_piket'),
+                    supabaseClient
+                        .from('jurnalpiket')
+                        .select('id_piket, id_petugas, status')
+                        .eq('tanggal', tanggal)
+                ]);
+
+                if (petugasRes.error) throw petugasRes.error;
+                if (jurnalRes.error) throw jurnalRes.error;
+
+                const data = petugasRes.data || [];
+                const savedMap = new Map((jurnalRes.data || []).map(j => [j.id_petugas, j]));
+
+                if (data.length === 0) {
+                    jurnalTabsContent.innerHTML = `<div style="text-align:center; padding:20px;">Tidak ada data petugas piket untuk hari ${weekday}.</div>`;
+                    return;
+                }
+
+                const jumlahTersimpan = data.filter(d => savedMap.has(d.id_piket)).length;
+                const jumlahBaru = data.length - jumlahTersimpan;
+                const dateCode = tanggal.replace(/-/g, '');
+
+                jurnalTabsContent.innerHTML = `
+                    <div class="jr-summary">
+                        <span class="jr-pill"><i class="fas fa-users"></i> ${data.length} petugas hari ini</span>
+                        <span class="jr-pill ok"><i class="fas fa-check-circle"></i> ${jumlahTersimpan} sudah tersimpan</span>
+                        <span class="jr-pill new"><i class="fas fa-hourglass-half"></i> ${jumlahBaru} belum disimpan</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>ID Piket</th>
+                                    <th>ID Petugas</th>
+                                    <th>Nama Siswa</th>
+                                    <th>NISN</th>
+                                    <th>Kelas</th>
+                                    <th>Area</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="jurnalInputTableBody" data-tanggal="${tanggal}"></tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning" id="btnUpdateJurnal" ${jumlahTersimpan === 0 ? 'disabled' : ''}>
+                            <i class="fas fa-sync-alt"></i> Update Status
+                        </button>
+                        <button type="button" class="btn btn-primary" id="btnSimpanJurnalSemua" ${jumlahBaru === 0 ? 'disabled' : ''}>
+                            <i class="fas fa-save"></i> Simpan
+                        </button>
+                    </div>
+                `;
+
+                const tbody = document.getElementById('jurnalInputTableBody');
+
+                data.forEach((item, index) => {
+                    const saved = savedMap.get(item.id_piket);
+                    const status = saved ? saved.status : 'Ya';
+                    const random3 = Math.floor(100 + Math.random() * 900);
+                    const journalId = saved ? saved.id_piket : `JRN-${dateCode}-${item.nisn || index}.${random3}`;
+
+                    const row = document.createElement('tr');
+                    if (saved) {
+                        row.className = 'jr-saved';
+                        row.dataset.saved = '1';
+                        row.dataset.origStatus = saved.status;
+                    }
+
+                    row.innerHTML = `
+                        <td><input type="text" name="id_piket[]" value="${escJurnal(journalId)}" readonly style="width:100%; border:none; background:transparent; font-size:0.9rem;"></td>
+                        <td><input type="text" name="id_petugas[]" value="${escJurnal(item.id_piket)}" readonly style="width:100%; border:none; background:transparent; font-size:0.9rem;"></td>
+                        <td>${escJurnal(item.nama_siswa)} <input type="hidden" name="nama_siswa[]" value="${escJurnal(item.nama_siswa)}"></td>
+                        <td>${escJurnal(item.nisn || '-')} <input type="hidden" name="nisn[]" value="${escJurnal(item.nisn || '')}"></td>
+                        <td>${escJurnal(item.kelas)} <input type="hidden" name="kelas[]" value="${escJurnal(item.kelas)}"></td>
+                        <td>${escJurnal(item.area)} <input type="hidden" name="area[]" value="${escJurnal(item.area)}"></td>
+                        <td>
+                            <div style="display:flex; gap:15px;">
+                                <label style="font-weight:normal; cursor:pointer; display:flex; align-items:center; gap:5px;"><input type="radio" name="status_${index}" value="Ya" ${status === 'Ya' ? 'checked' : ''}> Ya</label>
+                                <label style="font-weight:normal; cursor:pointer; display:flex; align-items:center; gap:5px;"><input type="radio" name="status_${index}" value="Tidak" ${status === 'Tidak' ? 'checked' : ''}> Tidak</label>
+                            </div>
+                        </td>
+                        <td>
+                            ${saved
+                                ? '<span class="jr-badge"><i class="fas fa-check-circle"></i> Tersimpan</span>'
+                                : '<button type="button" class="btn btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="this.closest(\'tr\').remove()"><i class="fas fa-trash"></i></button>'}
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                const btnSimpan = document.getElementById('btnSimpanJurnalSemua');
+                const btnUpdate = document.getElementById('btnUpdateJurnal');
+                btnSimpan.addEventListener('click', () => simpanJurnalBaru(btnSimpan));
+                btnUpdate.addEventListener('click', () => updateStatusJurnal(btnUpdate));
+
+            } catch (err) {
+                console.error(err);
+                jurnalTabsContent.innerHTML = `<div style="text-align:center; color:red; padding:20px;">Error: ${escJurnal(err.message)}</div>`;
+            }
+        }
+
+        if (inputJurnalBtn) {
+            inputJurnalBtn.addEventListener('click', () => {
+                jurnalModal.classList.add('active');
+                renderJurnalInputModal();
+            });
+        }
+
+        function closeJurnalModalFunc() {
+            jurnalModal.classList.remove('active');
+        }
+        if (closeJurnalModal) closeJurnalModal.addEventListener('click', closeJurnalModalFunc);
+        if (cancelJurnalBtn) cancelJurnalBtn.addEventListener('click', closeJurnalModalFunc);
+
+        function tampilkanInfoDuplikat(duplicates, jumlahBerhasil) {
+            const duplicateModal = document.getElementById('duplicateModal');
+            const duplicateMessage = document.getElementById('duplicateMessage');
+
+            let msg = `<strong>Petugas Piket berikut sudah diinput untuk hari ini:</strong><br><ul style="margin: 10px 0 0 20px; padding: 0;">`;
+            duplicates.forEach(name => { msg += `<li>${escJurnal(name)}</li>`; });
+            msg += `</ul><br>`;
+
+            if (jumlahBerhasil > 0) {
+                msg += `<span style="color: #10b981; font-weight: bold;">Data lainnya (${jumlahBerhasil} siswa) berhasil disimpan.</span>`;
+            } else {
+                msg += `<span style="color: #ef4444; font-weight: bold;">Tidak ada data baru yang disimpan.</span>`;
+            }
+            duplicateMessage.innerHTML = msg;
+            duplicateModal.classList.add('active');
+        }
+
+        // SIMPAN: hanya menyimpan petugas yang BELUM punya jurnal pada tanggal hari ini
+        async function simpanJurnalBaru(btn) {
+            const tbody = document.getElementById('jurnalInputTableBody');
+            if (!tbody) return;
+
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Menyimpan...';
+            btn.disabled = true;
+            let selesai = false;
+
+            try {
+                const tanggal = tbody.dataset.tanggal || getTanggalLokal();
+                const rows = tbody.querySelectorAll('tr:not([data-saved="1"])');
+                const inserts = [];
+
+                rows.forEach((row) => {
+                    const nisn = row.querySelector('input[name="nisn[]"]').value;
+                    inserts.push({
+                        id_piket: row.querySelector('input[name="id_piket[]"]').value,
+                        tanggal: tanggal,
+                        id_petugas: row.querySelector('input[name="id_petugas[]"]').value,
+                        nama_siswa: row.querySelector('input[name="nama_siswa[]"]').value,
+                        nisn: nisn || null,
+                        kelas: row.querySelector('input[name="kelas[]"]').value,
+                        area: row.querySelector('input[name="area[]"]').value,
+                        status: row.querySelector('input[type="radio"]:checked')?.value || 'Tidak'
+                    });
+                });
+
+                if (inserts.length === 0) {
+                    throw new Error('Tidak ada data baru untuk disimpan.');
+                }
+
+                // Cek ulang ke database (jaga-jaga sudah diinput pengguna lain)
+                const { data: existingData, error: checkError } = await supabaseClient
+                    .from('jurnalpiket')
+                    .select('id_petugas')
+                    .eq('tanggal', tanggal);
+                if (checkError) throw checkError;
+
+                const existingIds = new Set((existingData || []).map(item => item.id_petugas));
+                const duplicates = [];
+                const finalInserts = [];
+
+                inserts.forEach(item => {
+                    if (existingIds.has(item.id_petugas)) duplicates.push(item.nama_siswa);
+                    else finalInserts.push(item);
+                });
+
+                if (finalInserts.length > 0) {
+                    const { error: insertError } = await supabaseClient
+                        .from('jurnalpiket')
+                        .insert(finalInserts);
+
+                    // Constraint unik (tanggal, id_petugas) sebagai pengaman terakhir
+                    if (insertError) {
+                        if (insertError.code === '23505') {
+                            selesai = true;
+                            await renderJurnalInputModal();
+                            loadJurnalData();
+                            tampilkanInfoDuplikat(finalInserts.map(i => i.nama_siswa), 0);
+                            return;
+                        }
+                        throw insertError;
+                    }
+                }
+
+                selesai = true;
+                await renderJurnalInputModal();
+                loadJurnalData();
+
+                if (duplicates.length > 0) {
+                    tampilkanInfoDuplikat(duplicates, finalInserts.length);
+                } else {
+                    alert(`Data Jurnal Piket berhasil disimpan (${finalInserts.length} petugas)!`);
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert('Gagal menyimpan: ' + err.message);
+            } finally {
+                if (!selesai) {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
+        }
+
+        // UPDATE: mengubah STATUS jurnal yang sudah tersimpan pada tanggal hari ini
+        async function updateStatusJurnal(btn) {
+            const tbody = document.getElementById('jurnalInputTableBody');
+            if (!tbody) return;
+
+            const tanggal = tbody.dataset.tanggal || getTanggalLokal();
+            const changed = [];
+
+            tbody.querySelectorAll('tr[data-saved="1"]').forEach(row => {
+                const statusBaru = row.querySelector('input[type="radio"]:checked')?.value;
+                if (statusBaru && statusBaru !== row.dataset.origStatus) {
+                    changed.push({
+                        id_piket: row.querySelector('input[name="id_piket[]"]').value,
+                        status: statusBaru
+                    });
+                }
+            });
+
+            if (changed.length === 0) {
+                alert('Tidak ada perubahan status yang perlu diupdate.');
+                return;
+            }
+
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Mengupdate...';
+            btn.disabled = true;
+            let selesai = false;
+
+            try {
+                const results = await Promise.all(changed.map(c =>
+                    supabaseClient
+                        .from('jurnalpiket')
+                        .update({ status: c.status })
+                        .eq('id_piket', c.id_piket)
+                        .eq('tanggal', tanggal)
+                ));
+
+                const gagal = results.find(r => r.error);
+                if (gagal) throw gagal.error;
+
+                selesai = true;
+                await renderJurnalInputModal();
+                loadJurnalData();
+                alert(`Status ${changed.length} petugas berhasil diupdate!`);
+
+            } catch (err) {
+                console.error(err);
+                alert('Gagal mengupdate status: ' + err.message);
+            } finally {
+                if (!selesai) {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
+        }
+
+        let jurnalDataList = [];
+        let currentJurnalPage = 1;
+        const jurnalPerPage = 10;
+        let currentPiketTeachers = [];
+
+        async function loadJurnalData() {
+            const tableBody = document.getElementById('jurnalPiketTableBody');
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:var(--muted);">Memuat data...</td></tr>';
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('jurnalpiket')
+                    .select('*')
+                    .order('tanggal', { ascending: false });
+
+                if (error) throw error;
+
+                jurnalDataList = data || [];
+                renderJurnalTable(1);
+
+            } catch (err) {
+                console.error(err);
+                tableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#a12622;">Gagal memuat: ${err.message}</td></tr>`;
+            }
+        }
+
+        function renderJurnalTable(page = 1) {
+            currentJurnalPage = page;
+            const tableBody = document.getElementById('jurnalPiketTableBody');
+            const searchFilter = document.getElementById('searchJurnalInput') ? document.getElementById('searchJurnalInput').value.toLowerCase() : '';
+            const statusFilter = document.getElementById('filterStatusPiket') ? document.getElementById('filterStatusPiket').value : '';
+
+            const now = new Date();
+            const hariIni = now.toLocaleDateString('id-ID', { weekday: 'long' }).toUpperCase();
+
+            const filteredData = jurnalDataList.filter(item => {
+                let itemDay = '';
+                if (item.tanggal) {
+                    itemDay = new Date(item.tanggal).toLocaleDateString('id-ID', { weekday: 'long' });
+                }
+
+                const text = (
+                    (item.nama_siswa || '') + ' ' + 
+                    (item.kelas || '') + ' ' + 
+                    (item.area || '') + ' ' + 
+                    (item.nisn || '') + ' ' +
+                    (item.id_petugas || '') + ' ' +
+                    itemDay
+                ).toLowerCase();
+
+                const matchesSearch = searchFilter ? text.includes(searchFilter) : ((item.id_petugas && item.id_petugas.toUpperCase().includes(hariIni)) || (itemDay && itemDay.toUpperCase() === hariIni));
+                const matchesStatus = statusFilter ? item.status === statusFilter : true;
+
+                return matchesSearch && matchesStatus;
+            });
+
+            const totalPages = Math.ceil(filteredData.length / jurnalPerPage);
+            const start = (page - 1) * jurnalPerPage;
+            const end = start + jurnalPerPage;
+            const paginatedData = filteredData.slice(start, end);
+
+            tableBody.innerHTML = '';
+
+            if (paginatedData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:var(--muted); padding:20px;">Data tidak ditemukan.</td></tr>';
+            } else {
+                paginatedData.forEach(item => {
+                    
+                    let formattedDate = item.tanggal;
+                    if (item.tanggal) {
+                        const dateObj = new Date(item.tanggal);
+                        formattedDate = dateObj.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                    }
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.id_piket}</td>
+                        <td>${item.id_petugas || '-'}</td>
+                        <td>${formattedDate}</td>
+                        <td>${item.nama_siswa}</td>
+                        <td>${item.nisn || '-'}</td>
+                        <td>${item.kelas}</td>
+                        <td>${item.area}</td>
+                        <td>${item.status}</td>
+                        <td>
+                            <button class="btn btn-danger" style="padding:5px 10px; font-size:0.8rem;" onclick="deleteJurnal('${item.id_piket}')"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            renderPaginationControls(totalPages, page);
+        }
+
+        function renderPaginationControls(totalPages, currentPage) {
+            const container = document.getElementById('jurnalPagination');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (totalPages <= 1) return;
+
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'btn btn-secondary';
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => renderJurnalTable(currentPage - 1);
+            container.appendChild(prevBtn);
+
+            const info = document.createElement('span');
+            info.style.fontWeight = '600';
+            info.textContent = `Halaman ${currentPage} dari ${totalPages}`;
+            container.appendChild(info);
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'btn btn-secondary';
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => renderJurnalTable(currentPage + 1);
+            container.appendChild(nextBtn);
+        }
+
+        window.deleteJurnal = async function(id) {
+            if(confirm('Hapus data jurnal ini?')) {
+                try {
+                    const { error } = await supabaseClient.from('jurnalpiket').delete().eq('id_piket', id);
+                    if(error) throw error;
+                    loadJurnalData();
+                } catch(err) {
+                    alert('Gagal hapus: ' + err.message);
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadJurnalData);
+
+        // Export PDF: Jurnal Piket Siswa (dipanggil dari tombol Export di dock)
+        async function exportJurnalPdf() {
+            {
+                try {
+                    let data = [...jurnalDataList];
+
+                    const searchInput = document.getElementById('searchJurnalInput');
+                    const searchFilter = searchInput ? searchInput.value.trim().toLowerCase() : '';
+                    const statusInput = document.getElementById('filterStatusPiket');
+                    const statusFilter = statusInput ? statusInput.value : '';
+
+                    if (searchFilter || statusFilter) {
+                        data = data.filter(item => {
+                            let itemDay = '';
+                            if (item.tanggal) {
+                                itemDay = new Date(item.tanggal).toLocaleDateString('id-ID', { weekday: 'long' });
+                            }
+                            const text = (
+                                (item.nama_siswa || '') + ' ' + 
+                                (item.kelas || '') + ' ' + 
+                                (item.area || '') + ' ' + 
+                                (item.nisn || '') + ' ' +
+                                (item.id_petugas || '') + ' ' +
+                                itemDay
+                            ).toLowerCase();
+                            
+                            const matchesSearch = searchFilter ? text.includes(searchFilter) : true;
+                            const matchesStatus = statusFilter ? item.status === statusFilter : true;
+                            return matchesSearch && matchesStatus;
+                        });
+                    }
+
+                    data.sort((a, b) => (a.nama_siswa || '').localeCompare(b.nama_siswa || ''));
+
+                    if (!data || data.length === 0) {
+                        alert('Tidak ada data untuk diexport');
+                        return;
+                    }
+
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF('l', 'mm', 'a4');
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    let yPos = 20;
+
+                    if (schoolData.kop_sekolah) {
+                        try {
+                            const response = await fetch(schoolData.kop_sekolah);
+                            const blob = await response.blob();
+                            const base64data = await new Promise((resolve) => {
+                                const reader = new FileReader();
+                                reader.onloadend = () => resolve(reader.result);
+                                reader.readAsDataURL(blob);
+                            });
+
+                            const imgProps = doc.getImageProperties(base64data);
+                            const pdfWidth = pageWidth - 20; 
+                            const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                            
+                            doc.addImage(base64data, 'PNG', 10, 10, pdfWidth, imgHeight);
+                            yPos = 10 + imgHeight + 10;
+                        } catch (err) {
+                            console.error("Gagal memuat KOP Sekolah:", err);
+                        }
+                    }
+
+                    doc.setFontSize(18);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text("Laporan Jurnal Piket Siswa", pageWidth / 2, yPos, { align: 'center' });
+                    yPos += 8;
+                    
+                    const schoolName = schoolData.nama_sekolah || document.querySelector('.navbar-brand span').textContent || 'SMK Negeri 1 Mentok';
+                    doc.setFontSize(14);
+                    doc.setTextColor(100);
+                    doc.text(schoolName, pageWidth / 2, yPos, { align: 'center' });
+                    yPos += 8;
+                    
+                    const now = new Date();
+                    const monthName = now.toLocaleDateString('id-ID', { month: 'long' });
+                    doc.setFontSize(12);
+                    doc.setTextColor(0);
+                    doc.text(`Bulan : ${monthName}`, pageWidth / 2, yPos, { align: 'center' });
+                    yPos += 5;
+
+                    const today = new Date();
+                    const formattedDate = today.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                    doc.setFontSize(10);
+                    doc.text(`Simpang Teritip, ${formattedDate}`, pageWidth / 2, yPos, { align: 'center' });
+                    yPos += 5;
+
+                    const stats = {};
+                    data.forEach(item => {
+                        const key = item.nisn || item.nama_siswa;
+                        if (!stats[key]) {
+                            stats[key] = {
+                                id_petugas: item.id_petugas,
+                                nama_siswa: item.nama_siswa,
+                                nisn: item.nisn,
+                                kelas: item.kelas,
+                                jumlah_piket: 0,
+                                jumlah_tidak: 0
+                            };
+                        }
+                        if (item.status === 'Ya') stats[key].jumlah_piket++;
+                        else stats[key].jumlah_tidak++;
+                    });
+
+                    const tableData = Object.values(stats).map((s, index) => [
+                        index + 1, s.id_petugas || '-', s.nama_siswa, s.nisn || '-', s.kelas, s.jumlah_piket, s.jumlah_tidak
+                    ]);
+
+                    doc.autoTable({
+                        head: [['No', 'ID Petugas', 'Nama Petugas', 'NISN', 'Kelas', 'Jumlah Piket', 'Jumlah Tidak Piket']],
+                        body: tableData,
+                        startY: yPos,
+                        theme: 'grid',
+                        headStyles: { fillColor: [16, 185, 129], halign: 'center' },
+                        bodyStyles: { halign: 'center' },
+                        columnStyles: { 2: { halign: 'left' } },
+                        styles: { fontSize: 10 }
+                    });
+
+                    let finalY = doc.lastAutoTable.finalY + 15;
+                    
+                    if (finalY > doc.internal.pageSize.getHeight() - 30) {
+                        doc.addPage();
+                        finalY = 20;
+                    }
+
+                    doc.setFontSize(14);
+                    doc.setTextColor(0);
+                    doc.text("Rincian Riwayat Jurnal Piket", pageWidth / 2, finalY, { align: 'center' });
+
+                    const historyData = [...data].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+                    const detailTableData = historyData.map((item, index) => {
+                        let formattedDate = item.tanggal;
+                        if (item.tanggal) {
+                            const dateObj = new Date(item.tanggal);
+                            formattedDate = dateObj.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                        }
+                        return [
+                            index + 1, item.id_piket, item.id_petugas || '-', formattedDate, item.nama_siswa, item.nisn || '-', item.kelas, item.area, item.status
+                        ];
+                    });
+
+                    doc.autoTable({
+                        head: [['No', 'ID Piket', 'ID Petugas', 'Tanggal', 'Nama Siswa', 'NISN', 'Kelas', 'Area', 'Status']],
+                        body: detailTableData,
+                        startY: finalY + 10,
+                        theme: 'grid',
+                        headStyles: { fillColor: [30, 64, 175], halign: 'center' }, 
+                        bodyStyles: { halign: 'center' },
+                        columnStyles: { 4: { halign: 'left' } },
+                        styles: { fontSize: 9 }
+                    });
+
+                    finalY = doc.lastAutoTable.finalY + 20;
+                    
+                    // ===== Tanda tangan =====
+                    // Jumlah penanda tangan = jumlah guru piket yang bertugas pada hari ini
+                    const penandatangan = [];
+                    const sudahAda = new Set();
+                    currentPiketTeachers.forEach(g => {
+                        if (g && g.name && !sudahAda.has(g.name)) {
+                            sudahAda.add(g.name);
+                            penandatangan.push(g);
+                        }
+                    });
+
+                    if (penandatangan.length > 0) {
+                        const pageHeight = doc.internal.pageSize.getHeight();
+                        const perRow = 3;
+                        const colWidth = pageWidth / perRow;
+                        const lineH = 4.5;
+
+                        doc.setFontSize(10);
+                        doc.setTextColor(0);
+
+                        for (let start = 0; start < penandatangan.length; start += perRow) {
+                            const rowItems = penandatangan.slice(start, start + perRow);
+
+                            // Siapkan teks nama (bisa lebih dari 1 baris) dan hitung tinggi baris
+                            const nameLinesList = rowItems.map(g => doc.splitTextToSize(g.name, colWidth - 12));
+                            const maxLines = Math.max(...nameLinesList.map(l => l.length));
+                            const rowHeight = 25 + maxLines * lineH + 10;
+
+                            // Pindah halaman bila ruang tidak cukup
+                            if (finalY + rowHeight > pageHeight - 10) {
+                                doc.addPage();
+                                finalY = 20;
+                            }
+
+                            // Baris terakhir yang tidak penuh ditaruh di tengah halaman
+                            const offsetX = (pageWidth - colWidth * rowItems.length) / 2;
+
+                            rowItems.forEach((g, i) => {
+                                const cx = offsetX + colWidth * (i + 0.5);
+                                doc.text(`Guru Piket ${start + i + 1}`, cx, finalY, { align: 'center' });
+                                doc.text(nameLinesList[i], cx, finalY + 25, { align: 'center' });
+                                if (g.nip) {
+                                    doc.text(`NIP. ${g.nip}`, cx, finalY + 25 + nameLinesList[i].length * lineH, { align: 'center' });
+                                }
+                            });
+
+                            finalY += rowHeight;
+                        }
+                    }
+
+                    doc.save(`Laporan_Lengkap_Piket_Siswa_${monthName}.pdf`);
+                } catch (err) {
+                    console.error('Export error:', err);
+                    alert('Gagal export PDF: ' + err.message);
+                }
+            }
+        }
+    
+        // --- Tombol Export di dock: pilih jenis laporan PDF ---
+        const exportPdfBtn = document.getElementById('exportPdfBtn');
+        const exportChoiceModal = document.getElementById('exportChoiceModal');
+
+        function closeExportChoice() {
+            exportChoiceModal.classList.remove('active');
+        }
+
+        if (exportPdfBtn) {
+            exportPdfBtn.addEventListener('click', () => {
+                exportChoiceModal.querySelectorAll('.exp-card').forEach(c => {
+                    c.disabled = false;
+                    c.classList.remove('loading');
+                });
+                exportChoiceModal.classList.add('active');
+            });
+        }
+        document.getElementById('closeExportChoice').addEventListener('click', closeExportChoice);
+        document.getElementById('cancelExportChoice').addEventListener('click', closeExportChoice);
+
+        exportChoiceModal.querySelectorAll('.exp-card').forEach(card => {
+            card.addEventListener('click', async () => {
+                const jenis = card.dataset.export;
+                const cards = exportChoiceModal.querySelectorAll('.exp-card');
+                cards.forEach(c => c.disabled = true);
+                card.classList.add('loading');
+                try {
+                    if (jenis === 'piket') await exportPiketSiswaPdf();
+                    else if (jenis === 'jurnal') await exportJurnalPdf();
+                } finally {
+                    closeExportChoice();
+                }
+            });
+        });
+
+        // --- Tutup modal dengan Esc / klik area gelap (kecuali form input jurnal agar data tidak hilang) ---
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape') return;
+            const dup = document.getElementById('mappingDuplicateModal');
+            if (dup && dup.classList.contains('active')) { dup.classList.remove('active'); return; } // tutup notifikasi saja, form tetap terbuka
+            document.querySelectorAll('.overlay.active').forEach(o => { if (o.id !== 'jurnalModal') o.classList.remove('active'); });
+        });
+        document.querySelectorAll('.overlay').forEach(o => o.addEventListener('mousedown', (e) => {
+            if (e.target === o && o.id !== 'jurnalModal') o.classList.remove('active');
+        }));
+    </script>
+</body>
+</html>

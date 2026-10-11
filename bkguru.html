@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bimbingan Konseling - SIMPEDIK</title>
+    <!-- Icon Kece -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- jsPDF & AutoTable untuk Export PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --header-height: 60px;
+            --bg-light: #f4f6f9;
+            --navbar-bg: #dc2626; /* Warna Merah Navbar */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Navbar Merah (Sama Dengan Halaman Admin Guru) --- */
+        .navbar {
+            height: var(--header-height);
+            background-color: var(--navbar-bg);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 1002;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            width: auto;
+            background-color: white;
+            border-radius: 50%;
+            padding: 2px;
+        }
+
+        .navbar-brand span {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .btn-logout-nav {
+            margin-left: auto;
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .btn-logout-nav:hover {
+            background-color: white;
+            color: var(--navbar-bg);
+        }
+
+        /* --- Konten Utama --- */
+        .main-content {
+            max-width: 1200px;
+            margin: var(--header-height) auto 0;
+            padding: 2rem;
+            flex: 1;
+            overflow-y: auto;
+            width: 100%;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .main-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        /* Kaki Halaman */
+        .main-footer {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+            font-size: 0.85rem;
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+        }
+
+        /* --- Toolbar / Filter --- */
+        .bk-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+            margin-bottom: 15px;
+        }
+
+        .toolbar-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 180px;
+        }
+
+        .toolbar-group label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .actions-wrapper {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-left: auto;
+        }
+
+        .custom-select, .custom-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #334155;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .custom-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            cursor: pointer;
+            padding-right: 40px;
+        }
+
+        .custom-select:focus, .custom-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        }
+
+        /* --- Tombol --- */
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            color: white;
+            text-decoration: none;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn-primary { background: linear-gradient(to right, var(--primary-color), var(--secondary-color)); }
+        .btn-danger { background-color: #ef4444; }
+        .btn-success { background-color: #10b981; }
+        .btn-secondary { background-color: #e2e8f0; color: #475569; }
+        .btn-secondary:hover { background-color: #cbd5e1; }
+
+        /* --- Tabel --- */
+        .table-responsive { overflow-x: auto; margin-top: 10px; }
+        .custom-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        .custom-table th, .custom-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
+        .custom-table th { background-color: #f8f9fa; color: #555; font-weight: 600; }
+        .custom-table tr:hover { background-color: #f9f9f9; }
+        .custom-table td.wrap-text { white-space: normal; max-width: 260px; }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* --- Modal --- */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background-color: white; width: 90%; max-width: 550px; padding: 25px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); animation: slideDown 0.3s ease; max-height: 90vh; overflow-y: auto; }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .modal-header h3 { margin: 0; color: #333; font-size: 1.2rem; }
+        .close-modal { font-size: 1.5rem; cursor: pointer; color: #888; transition: color 0.2s; }
+        .close-modal:hover { color: #ef4444; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #666; font-size: 0.9rem; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.3s; font-family: inherit;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        .form-group input[readonly] { background-color: #f3f4f6; cursor: not-allowed; }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+
+        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
+
+        .info-text {
+            background-color: #eff6ff;
+            color: #1e40af;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-brand span { font-size: 1rem; }
+            .dashboard-card { padding: 15px; }
+            .bk-toolbar { flex-direction: column; align-items: stretch; }
+            .actions-wrapper { margin-left: 0; width: 100%; }
+            .actions-wrapper .btn { flex: 1; justify-content: center; }
+            .custom-table th, .custom-table td { padding: 8px 10px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigasi Atas (Sama Dengan Halaman Admin Guru) -->
+    <nav class="navbar">
+        <a href="adminguru.html" class="navbar-brand">
+            <img src="" alt="Logo Sekolah" style="display: none;">
+            <span></span>
+        </a>
+        <button class="btn-logout-nav" onclick="if(confirm('Apakah Anda yakin ingin keluar?')) window.location.href = 'index.html'" title="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
+    </nav>
+
+    <!-- Area Konten -->
+    <main class="main-content">
+        <div class="dashboard-card">
+            <h2><i class="fas fa-hands-helping" style="color: var(--navbar-bg); margin-right: 10px;"></i>Bimbingan Konseling (BK/BP)</h2>
+            <p style="color: #666; margin-top: 10px;">Halaman untuk mencatat dan mengelola data layanan bimbingan konseling siswa.</p>
+        </div>
+
+        <!-- Container Filter & Tabel Data BK -->
+        <div class="dashboard-card">
+            <div class="bk-toolbar">
+                <div class="toolbar-group">
+                    <label for="pilihKelas">Kelas</label>
+                    <select id="pilihKelas" class="custom-select">
+                        <option value="">-- Pilih Kelas --</option>
+                    </select>
+                </div>
+
+                <div class="search-wrapper">
+                    <label style="font-size: 0.85rem; color: #666; font-weight: 600; display: block; margin-bottom: 6px;">Cari Siswa</label>
+                    <input type="text" id="searchSiswaBk" class="custom-input" placeholder="Cari Nama Siswa...">
+                </div>
+
+                <div class="actions-wrapper">
+                    <button class="btn btn-primary" id="btnTambahBk"><i class="fas fa-plus"></i> Tambah Data</button>
+                    <button class="btn btn-danger" id="btnExportPdf"><i class="fas fa-file-pdf"></i> Export Pdf</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="custom-table" id="bkTable">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Siswa</th>
+                            <th>Kelas</th>
+                            <th>Tanggal</th>
+                            <th>Jenis Layanan</th>
+                            <th>Permasalahan</th>
+                            <th>Tindak Lanjut</th>
+                            <th>Guru BK</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="9" style="text-align: center; color: #888; padding: 20px;">Pilih kelas untuk menampilkan data, atau klik "Tambah Data" untuk mencatat layanan BK baru.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Kaki Halaman -->
+        <footer class="main-footer">
+            <p>&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik).2026</p>
+            <p>CopyRight Kenji Studio Developer.</p>
+        </footer>
+    </main>
+
+    <!-- Modal Tambah/Edit Data BK -->
+    <div id="bkModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="bkModalTitle">Tambah Data Bimbingan Konseling</h3>
+                <span class="close-modal" id="closeBkModal">&times;</span>
+            </div>
+            <form id="bkForm">
+                <input type="hidden" id="bkId">
+                <input type="hidden" id="isEditModeBk" value="false">
+
+                <div class="form-group">
+                    <label for="formKelas">Kelas</label>
+                    <select id="formKelas" required>
+                        <option value="">-- Pilih Kelas --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="formNamaSiswa">Nama Siswa</label>
+                    <select id="formNamaSiswa" required>
+                        <option value="">-- Pilih Kelas Terlebih Dahulu --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="formTanggal">Tanggal</label>
+                    <input type="date" id="formTanggal" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="formJenisLayanan">Jenis Layanan</label>
+                    <select id="formJenisLayanan" required>
+                        <option value="">-- Pilih Jenis Layanan --</option>
+                        <option value="Konseling Individu">Konseling Individu</option>
+                        <option value="Konseling Kelompok">Konseling Kelompok</option>
+                        <option value="Bimbingan Klasikal">Bimbingan Klasikal</option>
+                        <option value="Konsultasi Orang Tua">Konsultasi Orang Tua</option>
+                        <option value="Home Visit">Home Visit</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="formPermasalahan">Permasalahan / Keluhan</label>
+                    <textarea id="formPermasalahan" required placeholder="Uraikan permasalahan atau keluhan siswa..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="formTindakLanjut">Tindak Lanjut / Solusi</label>
+                    <textarea id="formTindakLanjut" placeholder="Uraikan tindak lanjut atau solusi yang diberikan..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="formGuruBk">Guru BK</label>
+                    <input type="text" id="formGuruBk" readonly>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelBkBtn">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="saveBkBtn">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Detail (Lihat Selengkapnya) -->
+    <div id="bkDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Detail Layanan Bimbingan Konseling</h3>
+                <span class="close-modal" id="closeBkDetailModal">&times;</span>
+            </div>
+            <div class="form-group">
+                <label>Nama Siswa</label>
+                <input type="text" id="detailNamaSiswa" readonly>
+            </div>
+            <div class="form-group">
+                <label>Kelas</label>
+                <input type="text" id="detailKelas" readonly>
+            </div>
+            <div class="form-group">
+                <label>Tanggal</label>
+                <input type="text" id="detailTanggal" readonly>
+            </div>
+            <div class="form-group">
+                <label>Jenis Layanan</label>
+                <input type="text" id="detailJenisLayanan" readonly>
+            </div>
+            <div class="form-group">
+                <label>Permasalahan / Keluhan</label>
+                <textarea id="detailPermasalahan" readonly></textarea>
+            </div>
+            <div class="form-group">
+                <label>Tindak Lanjut / Solusi</label>
+                <textarea id="detailTindakLanjut" readonly></textarea>
+            </div>
+            <div class="form-group">
+                <label>Guru BK</label>
+                <input type="text" id="detailGuruBk" readonly>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="closeDetailBtn">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Koneksi Supabase (Sama Dengan Halaman Lain) ---
+        const supabaseUrl = 'https://fsgqtoainqlkddjkdwrs.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzZ3F0b2FpbnFsa2Rkamtkd3JzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMjkxODQsImV4cCI6MjEwNDkwNTE4NH0.ovLbYvGggpFAUg08UxodR1qBO-AmkKrHIvM0SWqQ7Gs';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        let schoolData = {};
+        let currentGuruName = '';
+
+        // --- Identitas Sekolah untuk Navbar ---
+        async function loadSchoolIdentity() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('identitassekolah')
+                    .select('nama_sekolah, logo, kop_sekolah')
+                    .limit(1)
+                    .single();
+
+                if (data) {
+                    schoolData = data;
+                    if (data.nama_sekolah) {
+                        document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                    }
+                    if (data.logo) {
+                        const img = document.querySelector('.navbar-brand img');
+                        img.src = data.logo;
+                        img.style.display = 'block';
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading school identity:", err);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadSchoolIdentity);
+
+        // --- Ambil Nama Guru BK yang Login ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = JSON.parse(sessionStorage.getItem('guru_session'));
+            if (session && session.nama) {
+                currentGuruName = session.nama;
+                document.getElementById('formGuruBk').value = session.nama;
+            }
+        });
+
+        // --- Muat Dropdown Kelas (Filter & Form) ---
+        async function loadKelasOptions() {
+            const filterSelect = document.getElementById('pilihKelas');
+            const formSelect = document.getElementById('formKelas');
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('rombel')
+                    .select('nama_kelas')
+                    .order('nama_kelas');
+
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    data.forEach(rombel => {
+                        const opt1 = document.createElement('option');
+                        opt1.value = rombel.nama_kelas;
+                        opt1.textContent = rombel.nama_kelas;
+                        filterSelect.appendChild(opt1);
+
+                        const opt2 = document.createElement('option');
+                        opt2.value = rombel.nama_kelas;
+                        opt2.textContent = rombel.nama_kelas;
+                        formSelect.appendChild(opt2);
+                    });
+                }
+            } catch (err) {
+                console.error("Error loading kelas:", err);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadKelasOptions);
+
+        // --- Muat Dropdown Nama Siswa Berdasarkan Kelas (di Form) ---
+        document.getElementById('formKelas').addEventListener('change', async function() {
+            const kelas = this.value;
+            const siswaSelect = document.getElementById('formNamaSiswa');
+            siswaSelect.innerHTML = '<option value="">Memuat data siswa...</option>';
+
+            if (!kelas) {
+                siswaSelect.innerHTML = '<option value="">-- Pilih Kelas Terlebih Dahulu --</option>';
+                return;
+            }
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('mappingsiswa')
+                    .select('nama_siswa, nisn')
+                    .eq('kelas', kelas)
+                    .order('nama_siswa');
+
+                if (error) throw error;
+
+                siswaSelect.innerHTML = '<option value="">-- Pilih Siswa --</option>';
+                (data || []).forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.nama_siswa;
+                    opt.textContent = s.nama_siswa;
+                    siswaSelect.appendChild(opt);
+                });
+            } catch (err) {
+                console.error("Error loading siswa:", err);
+                siswaSelect.innerHTML = '<option value="">Gagal memuat data siswa</option>';
+            }
+        });
+
+        // --- Muat Data Bimbingan Konseling ---
+        let allBkData = [];
+
+        async function loadBkData() {
+            const tbody = document.querySelector('#bkTable tbody');
+            const kelas = document.getElementById('pilihKelas').value;
+
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 20px;">Memuat data...</td></tr>';
+
+            try {
+                let query = supabaseClient
+                    .from('bimbingankonseling')
+                    .select('*')
+                    .order('tanggal', { ascending: false });
+
+                if (kelas) {
+                    query = query.eq('kelas', kelas);
+                }
+
+                const { data, error } = await query;
+                if (error) throw error;
+
+                allBkData = data || [];
+                renderBkTable(allBkData);
+            } catch (err) {
+                console.error("Error loading data BK:", err);
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#ef4444; padding:20px;">Gagal memuat data: ${err.message}</td></tr>`;
+            }
+        }
+
+        function renderBkTable(data) {
+            const tbody = document.querySelector('#bkTable tbody');
+            tbody.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:#888; padding:20px;">Belum ada data bimbingan konseling.</td></tr>';
+                return;
+            }
+
+            const jenisColor = {
+                'Konseling Individu': '#3b82f6',
+                'Konseling Kelompok': '#8b5cf6',
+                'Bimbingan Klasikal': '#10b981',
+                'Konsultasi Orang Tua': '#f59e0b',
+                'Home Visit': '#ef4444',
+                'Lainnya': '#6b7280'
+            };
+
+            data.forEach((item, index) => {
+                const tanggalFormatted = item.tanggal ? new Date(item.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+                const warna = jenisColor[item.jenis_layanan] || '#6b7280';
+                const permasalahanSingkat = (item.permasalahan || '-').length > 40 ? item.permasalahan.substring(0, 40) + '...' : (item.permasalahan || '-');
+                const tindakLanjutSingkat = (item.tindak_lanjut || '-').length > 40 ? item.tindak_lanjut.substring(0, 40) + '...' : (item.tindak_lanjut || '-');
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${item.nama_siswa || '-'}</td>
+                    <td>${item.kelas || '-'}</td>
+                    <td>${tanggalFormatted}</td>
+                    <td><span class="badge" style="background-color: ${warna};">${item.jenis_layanan || '-'}</span></td>
+                    <td class="wrap-text">${permasalahanSingkat}</td>
+                    <td class="wrap-text">${tindakLanjutSingkat}</td>
+                    <td>${item.guru_bk || '-'}</td>
+                    <td>
+                        <button onclick="viewBkDetail('${item.id}')" style="background:none; border:none; color:#10b981; cursor:pointer;" title="Lihat Detail"><i class="fas fa-eye"></i></button>
+                        <button onclick="editBk('${item.id}')" style="background:none; border:none; color:#60a5fa; cursor:pointer; margin-left:8px;" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteBk('${item.id}')" style="background:none; border:none; color:#f87171; cursor:pointer; margin-left:8px;" title="Hapus"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        document.getElementById('pilihKelas').addEventListener('change', loadBkData);
+        document.addEventListener('DOMContentLoaded', loadBkData);
+
+        // --- Pencarian Nama Siswa ---
+        document.getElementById('searchSiswaBk').addEventListener('input', function() {
+            const keyword = this.value.toLowerCase();
+            const filtered = allBkData.filter(item => (item.nama_siswa || '').toLowerCase().includes(keyword));
+            renderBkTable(filtered);
+        });
+
+        // --- Modal Tambah/Edit ---
+        const bkModal = document.getElementById('bkModal');
+        const bkForm = document.getElementById('bkForm');
+
+        document.getElementById('btnTambahBk').addEventListener('click', () => {
+            bkForm.reset();
+            document.getElementById('bkId').value = '';
+            document.getElementById('isEditModeBk').value = 'false';
+            document.getElementById('formNamaSiswa').innerHTML = '<option value="">-- Pilih Kelas Terlebih Dahulu --</option>';
+            document.getElementById('formGuruBk').value = currentGuruName;
+            document.getElementById('formTanggal').value = new Date().toISOString().split('T')[0];
+            document.getElementById('bkModalTitle').textContent = 'Tambah Data Bimbingan Konseling';
+            bkModal.classList.add('active');
+        });
+
+        function closeBkModal() {
+            bkModal.classList.remove('active');
+        }
+        document.getElementById('closeBkModal').addEventListener('click', closeBkModal);
+        document.getElementById('cancelBkBtn').addEventListener('click', closeBkModal);
+        window.addEventListener('click', (e) => {
+            if (e.target === bkModal) closeBkModal();
+        });
+
+        // --- Edit Data BK ---
+        window.editBk = async function(id) {
+            const item = allBkData.find(d => String(d.id) === String(id));
+            if (!item) return;
+
+            document.getElementById('formKelas').value = item.kelas || '';
+            await document.getElementById('formKelas').dispatchEvent(new Event('change'));
+
+            // Tunggu opsi siswa termuat, lalu set value
+            setTimeout(() => {
+                document.getElementById('formNamaSiswa').value = item.nama_siswa || '';
+            }, 400);
+
+            document.getElementById('bkId').value = item.id;
+            document.getElementById('isEditModeBk').value = 'true';
+            document.getElementById('formTanggal').value = item.tanggal || '';
+            document.getElementById('formJenisLayanan').value = item.jenis_layanan || '';
+            document.getElementById('formPermasalahan').value = item.permasalahan || '';
+            document.getElementById('formTindakLanjut').value = item.tindak_lanjut || '';
+            document.getElementById('formGuruBk').value = item.guru_bk || currentGuruName;
+
+            document.getElementById('bkModalTitle').textContent = 'Edit Data Bimbingan Konseling';
+            bkModal.classList.add('active');
+        }
+
+        // --- Hapus Data BK ---
+        window.deleteBk = async function(id) {
+            if (!confirm('Apakah Anda yakin ingin menghapus data bimbingan konseling ini?')) return;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('bimbingankonseling')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                alert('Data berhasil dihapus.');
+                loadBkData();
+            } catch (err) {
+                console.error('Gagal menghapus:', err);
+                alert('Gagal menghapus data: ' + err.message);
+            }
+        }
+
+        // --- Lihat Detail ---
+        window.viewBkDetail = function(id) {
+            const item = allBkData.find(d => String(d.id) === String(id));
+            if (!item) return;
+
+            const tanggalFormatted = item.tanggal ? new Date(item.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
+
+            document.getElementById('detailNamaSiswa').value = item.nama_siswa || '-';
+            document.getElementById('detailKelas').value = item.kelas || '-';
+            document.getElementById('detailTanggal').value = tanggalFormatted;
+            document.getElementById('detailJenisLayanan').value = item.jenis_layanan || '-';
+            document.getElementById('detailPermasalahan').value = item.permasalahan || '-';
+            document.getElementById('detailTindakLanjut').value = item.tindak_lanjut || '-';
+            document.getElementById('detailGuruBk').value = item.guru_bk || '-';
+
+            document.getElementById('bkDetailModal').classList.add('active');
+        }
+
+        function closeBkDetailModal() {
+            document.getElementById('bkDetailModal').classList.remove('active');
+        }
+        document.getElementById('closeBkDetailModal').addEventListener('click', closeBkDetailModal);
+        document.getElementById('closeDetailBtn').addEventListener('click', closeBkDetailModal);
+        window.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('bkDetailModal')) closeBkDetailModal();
+        });
+
+        // --- Simpan Data (Tambah / Update) ---
+        bkForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const saveBtn = document.getElementById('saveBkBtn');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = 'Menyimpan...';
+            saveBtn.disabled = true;
+
+            try {
+                const isEdit = document.getElementById('isEditModeBk').value === 'true';
+                const bkId = document.getElementById('bkId').value;
+
+                const payload = {
+                    nama_siswa: document.getElementById('formNamaSiswa').value,
+                    kelas: document.getElementById('formKelas').value,
+                    tanggal: document.getElementById('formTanggal').value,
+                    jenis_layanan: document.getElementById('formJenisLayanan').value,
+                    permasalahan: document.getElementById('formPermasalahan').value,
+                    tindak_lanjut: document.getElementById('formTindakLanjut').value,
+                    guru_bk: document.getElementById('formGuruBk').value
+                };
+
+                let result;
+                if (isEdit && bkId) {
+                    result = await supabaseClient
+                        .from('bimbingankonseling')
+                        .update(payload)
+                        .eq('id', bkId);
+                } else {
+                    result = await supabaseClient
+                        .from('bimbingankonseling')
+                        .insert([payload]);
+                }
+
+                if (result.error) throw result.error;
+
+                alert('Data bimbingan konseling berhasil disimpan!');
+                closeBkModal();
+                loadBkData();
+            } catch (err) {
+                console.error(err);
+                alert('Terjadi kesalahan: ' + err.message);
+            } finally {
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+            }
+        });
+
+        // --- Export PDF ---
+        document.getElementById('btnExportPdf').addEventListener('click', async () => {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const pageWidth = doc.internal.pageSize.getWidth();
+            let yPos = 20;
+
+            if (schoolData.kop_sekolah) {
+                try {
+                    const response = await fetch(schoolData.kop_sekolah);
+                    const blob = await response.blob();
+                    const base64data = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.readAsDataURL(blob);
+                    });
+
+                    const imgProps = doc.getImageProperties(base64data);
+                    const pdfWidth = pageWidth - 20;
+                    const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                    doc.addImage(base64data, 'PNG', 10, 10, pdfWidth, imgHeight);
+                    yPos = 10 + imgHeight + 10;
+                } catch (err) {
+                    console.error("Gagal memuat KOP Sekolah:", err);
+                }
+            }
+
+            doc.setFontSize(16);
+            doc.text("Laporan Bimbingan Konseling (BK/BP)", pageWidth / 2, yPos, { align: 'center' });
+            yPos += 8;
+
+            const schoolName = schoolData.nama_sekolah || document.querySelector('.navbar-brand span').textContent || '';
+            doc.setFontSize(11);
+            doc.setTextColor(100);
+            doc.text(schoolName, pageWidth / 2, yPos, { align: 'center' });
+            doc.setTextColor(0);
+            yPos += 10;
+
+            const tableRows = allBkData.map((item, i) => {
+                const tanggalFormatted = item.tanggal ? new Date(item.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+                return [
+                    i + 1,
+                    item.nama_siswa || '-',
+                    item.kelas || '-',
+                    tanggalFormatted,
+                    item.jenis_layanan || '-',
+                    item.permasalahan || '-',
+                    item.tindak_lanjut || '-',
+                    item.guru_bk || '-'
+                ];
+            });
+
+            doc.autoTable({
+                head: [['No', 'Nama Siswa', 'Kelas', 'Tanggal', 'Jenis Layanan', 'Permasalahan', 'Tindak Lanjut', 'Guru BK']],
+                body: tableRows,
+                startY: yPos,
+                theme: 'grid',
+                styles: { fontSize: 8, cellPadding: 2 },
+                headStyles: { fillColor: [220, 38, 38] },
+                columnStyles: { 5: { cellWidth: 40 }, 6: { cellWidth: 40 } }
+            });
+
+            doc.save('Laporan_Bimbingan_Konseling.pdf');
+        });
+    </script>
+</body>
+</html>

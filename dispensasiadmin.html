@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Riwayat Dispensasi Siswa - Admin</title>
+    <!-- Icon Keren -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary:#667eea;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16);--text-muted:#66627f;--border-color:rgba(0,0,0,.15)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
+body{color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,url('bg1.png') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.navbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.container{width:100%;max-width:860px;margin:0 auto;padding:22px 12px}
+.container>header{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.container>header h1{font-size:clamp(26px,4.5vw,36px);letter-spacing:-.02em;line-height:1.1}
+.container>header h1 i{margin-right:8px;font-size:.8em}
+.container>header p{opacity:.88;font-size:14px;margin-top:4px}
+.content{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663}
+.hint{font-size:12px;color:var(--muted);margin:3px 0 0 2px}
+.message{display:none;margin:14px 16px 0;padding:10px 14px;border-radius:10px;font-size:14px;font-weight:600}
+.message.success{background:#e7f7ee;color:#1b6b46}.message.error{background:#fdeaea;color:#a12622}
+/* Dock */
+.button-group{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:4px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.62);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.button-group button,.button-group a{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:70px;padding:6px 6px;border-radius:16px;border:0;background:none;font-size:11.5px;font-weight:600;color:var(--ink);text-decoration:none;cursor:pointer;transition:transform .2s}
+.button-group button:hover:not(:disabled),.button-group a:hover{transform:translateY(-6px) scale(1.08)}.button-group button:active,.button-group a:active{transform:scale(.95)}
+.button-group button:disabled{opacity:.5;cursor:not-allowed}
+.button-group button>i,.button-group a>i{position:relative;overflow:hidden;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;font-size:21px;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.button-group button>i::after,.button-group a>i::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+@media (max-width:520px){.button-group{gap:0;padding:6px}.button-group button,.button-group a{min-width:58px;font-size:10.5px;padding:4px}.button-group button>i,.button-group a>i{width:44px;height:44px;font-size:19px}.navbar-brand span{max-width:60vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+#dashboardBtn>i{background:linear-gradient(160deg,#8fa4ff,#4c5fd5)}#refreshBtn>i{background:linear-gradient(160deg,#6cb8ff,#2a74d6)}
+#addRombelBtn>i{background:linear-gradient(160deg,#59d6a0,#1b8a5c)}#exportPdfBtn>i{background:linear-gradient(160deg,#f2706b,#c92f2c)}
+.message{display:none;margin:14px 16px 0;padding:10px 14px;border-radius:10px;font-size:14px;font-weight:600}
+.message.success{background:#e7f7ee;color:#1b6b46}.message.error{background:#fdeaea;color:#a12622}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:16px 16px 0}
+.stat{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:30px;line-height:1.1;color:var(--deep)}
+.stat small{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:2px}
+.stat i{flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font-size:18px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1.5px 0 rgba(255,255,255,.4)}
+.sec{padding:16px}
+.sec>h2{font-size:13px;font-weight:600;color:var(--muted);margin:0 0 7px 6px}
+.tablebox{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:340px}
+th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:11px 14px;background:#f7f5fc;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid rgba(0,0,0,.05)}
+tr:last-child td{border:0}
+tbody tr:hover{background:rgba(102,126,234,.06)}
+td.n{width:52px;color:var(--muted)}td.act{text-align:right;white-space:nowrap;width:96px}
+.kls{display:inline-block;min-width:36px;text-align:center;font-weight:700;padding:2px 11px;border-radius:99px;background:#e9edff;color:#3a46a8}
+.ib{width:32px;height:32px;border-radius:9px;border:0;background:rgba(0,0,0,.06);color:#4c5fd5;cursor:pointer;font-size:14px}
+.ib.del{color:#c92f2c}.ib:hover{background:rgba(102,126,234,.2)}.ib.del:hover{background:rgba(229,72,77,.18)}
+.empty{padding:26px 14px;text-align:center;color:var(--muted);font-size:14px}
+.empty.err{color:#a12622}
+.foot{text-align:center;color:rgba(255,255,255,.75);font-size:12px;margin-top:16px;text-shadow:0 1px 6px rgba(0,0,0,.4)}
+/* Modal */
+.overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:12px;background:rgba(20,15,50,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:60}
+.overlay.on{display:flex}
+.modal{width:100%;max-width:420px;border-radius:14px;overflow:hidden;background:rgba(250,248,255,.97);box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 30px 80px rgba(0,0,0,.45);animation:pop .2s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes pop{from{opacity:0;transform:scale(.95) translateY(8px)}}
+.tb .x{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.08);font-size:17px;line-height:1;color:#4a4663;cursor:pointer}
+.tb .x:hover{background:rgba(0,0,0,.16)}
+.modal form{padding:16px}
+.fg{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:12px}
+.fg label{display:block;font-size:12px;font-weight:600;line-height:16px;color:var(--muted);margin:0 0 4px 2px}
+.fg label.req::after{content:" *";color:#e5484d}
+.fg input{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none}
+.fg input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.hint{font-size:12px;color:var(--muted);margin:3px 0 0 2px}
+.merr{display:none;margin-top:12px;padding:9px 12px;border-radius:10px;font-size:13px;font-weight:600;background:#fdeaea;color:#a12622}
+.acts{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+.btn{height:38px;padding:0 18px;border:0;border-radius:10px;font-size:14px;font-weight:600;color:#fff;cursor:pointer;background:linear-gradient(#7b8ff0,#4c5fd5);box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn:hover{filter:brightness(1.06)}.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn.alt{background:rgba(0,0,0,.08);color:var(--ink);box-shadow:none}
+@media (max-width:520px){.stats{grid-template-columns:minmax(0,1fr)}.sec,.modal form{padding:12px}.stats{padding:12px 12px 0}}
+
+/* ===== Tambahan khusus halaman Piket Harian ===== */
+.container{max-width:1180px}
+.navbar .clock{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;opacity:.92;white-space:nowrap}
+.content{margin-bottom:16px}
+.tb .tbadge{position:absolute;right:12px;font-size:11.5px;font-weight:700;color:#fff;padding:2px 10px;border-radius:99px;background:linear-gradient(160deg,#f2706b,#c92f2c);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.guru-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.guru-grid>p{grid-column:1/-1;text-align:center;color:var(--muted)}
+.toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.toolbar .grp{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.toolbar .grp.end{margin-left:auto}
+.search{position:relative}
+.search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px}
+.search input{height:36px;width:230px;padding:0 12px 0 32px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none}
+.sel{height:36px;padding:0 10px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none;cursor:pointer}
+.search input:focus,.sel:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.custom-table{min-width:640px}
+.custom-table th,.custom-table td{white-space:nowrap}
+#jurnalPagination{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:14px;font-size:13px;color:var(--muted)}
+/* tombol (gaya rombel.html, dipakai juga oleh tombol hasil render JS) */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:auto;padding:8px 16px;text-decoration:none;font-family:inherit}
+.btn-danger{background:linear-gradient(#f2706b,#d63d3a)}
+.btn-warning{background:linear-gradient(#ffc861,#e08a0c)}
+.btn-secondary{background:rgba(0,0,0,.08);color:var(--ink);box-shadow:none}
+.btn-secondary:disabled{opacity:.45}
+/* dock */
+#dashboardBtn>i{background:linear-gradient(160deg,#8fa4ff,#4c5fd5)}
+#settingPiketSiswaBtn>i{background:linear-gradient(160deg,#ffc861,#d9820f)}
+#inputJurnalBtn>i{background:linear-gradient(160deg,#59d6a0,#1b8a5c)}
+#viewAllPiketBtn>i{background:linear-gradient(160deg,#b58cf5,#7a45d6)}
+/* modal */
+.overlay.active{display:flex}
+.modal{max-width:460px;max-height:92vh;display:flex;flex-direction:column}
+.modal form{overflow:auto}
+.mbody{padding:16px;overflow:auto;flex:1}
+.mfoot{display:flex;justify-content:flex-end;gap:10px;padding:12px 16px;border-top:1px solid var(--line)}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+.fg .form-group{margin:0}
+.form-group label{display:block;font-size:12px;font-weight:600;line-height:16px;color:var(--muted);margin:0 0 4px 2px}
+.form-group input,.form-group select{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none}
+.form-group input:focus,.form-group select:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.form-group input[readonly]{background:#f0eef6;color:var(--muted)}
+.searchable-dropdown{position:relative}
+.dropdown-options{position:absolute;top:100%;left:0;right:0;margin-top:4px;background:#fff;border:1px solid var(--line);border-radius:10px;max-height:200px;overflow-y:auto;z-index:10;display:none;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.dropdown-options.show{display:block}
+.dropdown-option{padding:9px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,.05);font-size:14px;color:var(--ink)}
+.dropdown-option:last-child{border-bottom:0}
+.dropdown-option:hover{background:rgba(102,126,234,.1);color:#3a46a8}
+.no-results{padding:10px;color:var(--muted);font-size:13px;text-align:center}
+@media (max-width:520px){.navbar .clock{font-size:11px}.navbar-brand span{max-width:38vw}.search,.search input{width:100%}.toolbar .grp{width:100%}.toolbar .grp.end{margin-left:0}}
+/* ===== Tambahan khusus halaman Dispensasi Siswa ===== */
+#btnAddDispensasi>i{background:linear-gradient(160deg,#59d6a0,#1b8a5c)}
+#btnExportPdf>i{background:linear-gradient(160deg,#f2706b,#c92f2c)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:520px){.form-row{grid-template-columns:1fr}}
+.form-group textarea{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-family:inherit;font-size:14px;color:var(--ink);outline:none;resize:vertical}
+.form-group textarea:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.kode{display:inline-block;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;font-weight:700;padding:2px 9px;border-radius:7px;background:#e9edff;color:#3a46a8;white-space:nowrap}
+.alasan{min-width:180px;white-space:normal!important}
+
+/* ===== Tambahan khusus halaman Riwayat Dispensasi (admin) ===== */
+.stat-red{background:linear-gradient(160deg,#f2706b,#c92f2c)}.stat-green{background:linear-gradient(160deg,#59d6a0,#1b8a5c)}
+.stats{padding:16px 16px 0}
+.pager{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:14px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.pager .info{width:100%;text-align:center}
+.custom-table{min-width:1500px}
+.nowrap-off{white-space:normal!important}
+</style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">
+            <img src="" alt="Logo Sekolah" style="display:none;">
+            <span></span>
+        </a>
+        <div class="clock"><i class="far fa-clock"></i><span id="liveDateTime"></span></div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <header>
+                <h1><i class="fas fa-user-clock"></i> Riwayat Dispensasi Siswa</h1>
+                <p>Pantau dan laporkan riwayat dispensasi siswa</p>
+            </header>
+
+            <div class="content">
+                <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Ringkasan</h2></div>
+                <section class="stats">
+                    <article class="stat"><div><b id="totalDispen">0</b><small>Total dispensasi (sesuai filter)</small></div><i class="stat-red fas fa-clipboard-list"></i></article>
+                    <article class="stat"><div><b id="todayDispen">0</b><small>Dispensasi hari ini</small></div><i class="stat-green fas fa-calendar-day"></i></article>
+                </section>
+                <div class="sec" style="padding-top:12px"></div>
+            </div>
+
+            <div class="content">
+                <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Data Riwayat Dispensasi</h2></div>
+                <div class="message" id="message"></div>
+                <div class="sec">
+                    <div class="toolbar">
+                        <div class="grp">
+                            <label class="search"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Cari nama, kode, guru, alasan..."></label>
+                            <input type="date" id="filterTanggal" class="sel" title="Filter Tanggal">
+                            <select id="filterKelas" class="sel" title="Filter Kelas"><option value="">Semua kelas</option></select>
+                        </div>
+                    </div>
+                    <div class="tablebox"><div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th><th>Kode</th><th>Nama Siswa</th><th>NISN</th><th>Kelas</th><th>Tanggal</th><th>Pukul</th>
+                                    <th>Mapel</th><th>Guru Mapel</th><th>NIP Guru Mapel</th><th>Guru Piket</th><th>NIP Guru Piket</th>
+                                    <th>Walikelas</th><th>Orang Tua/Wali</th><th>Alasan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dispensasiTableBody">
+                                <tr><td colspan="15" class="empty">Memuat data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div></div>
+                    <div class="pager">
+                        <span class="info" id="pagerInfo"></span>
+                        <button type="button" class="btn btn-secondary" id="prevBtn">&laquo; Sebelumnya</button>
+                        <span id="pagerNo">1 / 1</span>
+                        <button type="button" class="btn btn-secondary" id="nextBtn">Berikutnya &raquo;</button>
+                    </div>
+                </div>
+            </div>
+
+            <p class="foot">&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik) 2026<br>CopyRight Kenji Studio Developer.</p>
+        </div>
+    </main>
+
+    <div class="button-group">
+        <a href="dasboradmin.html" id="dashboardBtn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+        <button type="button" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+        <button type="button" id="exportPdfBtn"><i class="fas fa-file-pdf"></i> Export Pdf</button>
+    </div>
+
+    <script>
+        // --- Koneksi SIMPEDIK ---
+        const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Sumber data riwayat dispensasi
+        const TABLE = 'dispensasi';
+        const PAGE_SIZE = 25;
+
+        let schoolData = {};
+        let ROWS = [];
+        let VIEW = [];
+        let page = 1;
+
+        const $ = (id) => document.getElementById(id);
+        const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        const byKelas = (a, b) => String(a).localeCompare(String(b), 'id', { numeric: true });
+        // Ambil nilai dari beberapa kemungkinan nama kolom
+        const pick = (r, ...keys) => { for (const k of keys) { if (r[k] != null && r[k] !== '') return r[k]; } return ''; };
+
+        function showMessage(text, type) {
+            const m = $('message');
+            m.textContent = text;
+            m.className = 'message ' + type;
+            m.style.display = 'block';
+            clearTimeout(showMessage.t);
+            showMessage.t = setTimeout(() => { m.style.display = 'none'; }, 5000);
+        }
+
+        // --- Identitas Sekolah ---
+        async function loadSchoolIdentity() {
+            try {
+                const { data } = await supabaseClient.from('identitassekolah').select('nama_sekolah, logo, kop_sekolah').limit(1).single();
+                if (data) {
+                    schoolData = data;
+                    if (data.nama_sekolah) document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                    if (data.logo) {
+                        const img = document.querySelector('.navbar-brand img');
+                        img.src = data.logo;
+                        img.style.display = 'block';
+                    }
+                }
+            } catch (err) { console.error('Error loading identity:', err); }
+        }
+
+        // --- Jam Jalan ---
+        function updateLiveTime() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            $('liveDateTime').textContent = `${now.toLocaleDateString('id-ID', dateOptions)} | ${now.toLocaleTimeString('id-ID', timeOptions).replace(/\./g, ':')} WIB`;
+        }
+        setInterval(updateLiveTime, 1000);
+        updateLiveTime();
+
+        // --- Normalisasi baris dari tabel ---
+        function norm(r) {
+            return {
+                kode: pick(r, 'kode_dispen', 'kode', 'id'),
+                nama: pick(r, 'nama_siswa', 'siswa', 'nama'),
+                nisn: pick(r, 'nisn'),
+                kelas: pick(r, 'kelas'),
+                tanggal: String(pick(r, 'tanggal', 'tgl', 'created_at')).slice(0, 10),
+                pukul: pick(r, 'pukul', 'jam', 'waktu'),
+                mapel: pick(r, 'mapel', 'mata_pelajaran', 'nama_mapel'),
+                guruMapel: pick(r, 'guru_mapel', 'guru'),
+                nipMapel: pick(r, 'nip'),
+                guruPiket: pick(r, 'guru_piket', 'nama_guru', 'petugas_piket'),
+                nipPiket: pick(r, 'nip_gurupiket'),
+                walikelas: pick(r, 'walikelas'),
+                namaWali: pick(r, 'nama_wali'),
+                alasan: pick(r, 'alasan', 'keterangan')
+            };
+        }
+
+        function fmtTanggal(t) {
+            if (!t) return '-';
+            const d = new Date(t + 'T00:00:00');
+            return isNaN(d) ? t : d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        // --- Muat Data ---
+        async function loadData(isManual = false) {
+            if (!ROWS.length) $('dispensasiTableBody').innerHTML = '<tr><td colspan="15" class="empty">Memuat data...</td></tr>';
+            try {
+                // Ambil semua baris (Supabase membatasi 1000 baris per permintaan)
+                let data = [];
+                for (let from = 0; ; from += 1000) {
+                    const res = await supabaseClient.from(TABLE).select('*').range(from, from + 999);
+                    if (res.error) throw res.error;
+                    data = data.concat(res.data || []);
+                    if (!res.data || res.data.length < 1000) break;
+                }
+                ROWS = (data || []).map(norm).sort((a, b) =>
+                    String(b.tanggal).localeCompare(String(a.tanggal)) || String(b.pukul).localeCompare(String(a.pukul)));
+                buildKelasFilter();
+                applyFilter();
+                if (isManual) showMessage('Data berhasil diperbarui dari database.', 'success');
+            } catch (err) {
+                console.error('Error loading data:', err);
+                if (!ROWS.length) $('dispensasiTableBody').innerHTML = '<tr><td colspan="15" class="empty err">Gagal memuat data: ' + esc(err.message) + '</td></tr>';
+                if (isManual) showMessage('Gagal menarik data: ' + err.message, 'error');
+            }
+        }
+
+        function buildKelasFilter() {
+            const cur = $('filterKelas').value;
+            const list = [...new Set(ROWS.map(r => r.kelas).filter(Boolean))].sort(byKelas);
+            $('filterKelas').innerHTML = '<option value="">Semua kelas</option>' + list.map(k => '<option value="' + esc(k) + '">' + esc(k) + '</option>').join('');
+            $('filterKelas').value = list.includes(cur) ? cur : '';
+        }
+
+        function applyFilter() {
+            const q = $('searchInput').value.trim().toLowerCase();
+            const k = $('filterKelas').value;
+            const t = $('filterTanggal').value;
+            VIEW = ROWS.filter(r =>
+                (!k || r.kelas === k) &&
+                (!t || r.tanggal === t) &&
+                (!q || [r.kode, r.nama, r.nisn, r.kelas, r.mapel, r.guruMapel, r.guruPiket, r.walikelas, r.namaWali, r.alasan].some(v => v != null && String(v).toLowerCase().includes(q))));
+            page = 1;
+            render();
+        }
+
+        function render() {
+            const tbody = $('dispensasiTableBody');
+            const todayStr = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD (waktu lokal)
+            $('totalDispen').textContent = VIEW.length.toLocaleString('id-ID');
+            $('todayDispen').textContent = ROWS.filter(r => r.tanggal === todayStr).length.toLocaleString('id-ID');
+
+            const pages = Math.max(1, Math.ceil(VIEW.length / PAGE_SIZE));
+            if (page > pages) page = pages;
+            const start = (page - 1) * PAGE_SIZE;
+            const slice = VIEW.slice(start, start + PAGE_SIZE);
+
+            if (!VIEW.length) {
+                tbody.innerHTML = '<tr><td colspan="15" class="empty">' + (ROWS.length ? 'Data tidak ditemukan.' : 'Belum ada data riwayat dispensasi.') + '</td></tr>';
+            } else {
+                tbody.innerHTML = slice.map((r, i) =>
+                    '<tr><td class="n">' + (start + i + 1) + '</td>'
+                    + '<td><span class="kode">' + esc(r.kode || '-') + '</span></td>'
+                    + '<td>' + esc(r.nama || '-') + '</td>'
+                    + '<td>' + esc(r.nisn || '-') + '</td>'
+                    + '<td><span class="kls">' + esc(r.kelas || '-') + '</span></td>'
+                    + '<td>' + esc(fmtTanggal(r.tanggal)) + '</td>'
+                    + '<td>' + esc(r.pukul || '-') + '</td>'
+                    + '<td>' + esc(r.mapel || '-') + '</td>'
+                    + '<td>' + esc(r.guruMapel || '-') + '</td>'
+                    + '<td>' + esc(r.nipMapel || '-') + '</td>'
+                    + '<td>' + esc(r.guruPiket || '-') + '</td>'
+                    + '<td>' + esc(r.nipPiket || '-') + '</td>'
+                    + '<td>' + esc(r.walikelas || '-') + '</td>'
+                    + '<td>' + esc(r.namaWali || '-') + '</td>'
+                    + '<td class="alasan">' + esc(r.alasan || '-') + '</td></tr>'
+                ).join('');
+            }
+            $('pagerInfo').textContent = VIEW.length ? 'Menampilkan ' + (start + 1) + '-' + (start + slice.length) + ' dari ' + VIEW.length.toLocaleString('id-ID') + ' dispensasi' : '0 dispensasi';
+            $('pagerNo').textContent = page + ' / ' + pages;
+            $('prevBtn').disabled = page <= 1;
+            $('nextBtn').disabled = page >= pages;
+        }
+
+        $('searchInput').addEventListener('input', applyFilter);
+        $('filterKelas').addEventListener('change', applyFilter);
+        $('filterTanggal').addEventListener('change', applyFilter);
+        $('prevBtn').addEventListener('click', () => { page--; render(); });
+        $('nextBtn').addEventListener('click', () => { page++; render(); });
+        $('refreshBtn').addEventListener('click', () => loadData(true));
+
+        // --- Export PDF ---
+        $('exportPdfBtn').addEventListener('click', async () => {
+            if (!VIEW.length) return showMessage('Belum ada data dispensasi untuk diexport.', 'error');
+            const btn = $('exportPdfBtn');
+            btn.disabled = true;
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: 'landscape' });
+                const pageWidth = doc.internal.pageSize.getWidth();
+                let yPos = 20;
+
+                if (schoolData.kop_sekolah) {
+                    try {
+                        const response = await fetch(schoolData.kop_sekolah);
+                        const blob = await response.blob();
+                        const base64data = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.readAsDataURL(blob);
+                        });
+                        const imgProps = doc.getImageProperties(base64data);
+                        const pdfWidth = pageWidth - 20;
+                        const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                        doc.addImage(base64data, imgProps.fileType || 'PNG', 10, 10, pdfWidth, imgHeight);
+                        yPos = 10 + imgHeight + 10;
+                    } catch (err) { console.error('Gagal memuat KOP Sekolah:', err); }
+                }
+
+                doc.setFontSize(16);
+                doc.text('Laporan Riwayat Dispensasi Siswa', pageWidth / 2, yPos, { align: 'center' });
+                yPos += 7;
+                doc.setFontSize(11);
+                doc.setTextColor(100);
+                doc.text(schoolData.nama_sekolah || document.querySelector('.navbar-brand span').textContent || '', pageWidth / 2, yPos, { align: 'center' });
+                yPos += 8;
+
+                doc.autoTable({
+                    head: [['No', 'Kode', 'Nama Siswa', 'NISN', 'Kelas', 'Tanggal', 'Pukul', 'Mapel', 'Guru Mapel', 'NIP Guru Mapel', 'Guru Piket', 'NIP Guru Piket', 'Walikelas', 'Orang Tua/Wali', 'Alasan']],
+                    body: VIEW.map((r, i) => [String(i + 1), r.kode || '-', r.nama || '-', r.nisn || '-', r.kelas || '-', fmtTanggal(r.tanggal), r.pukul || '-', r.mapel || '-', r.guruMapel || '-', r.nipMapel || '-', r.guruPiket || '-', r.nipPiket || '-', r.walikelas || '-', r.namaWali || '-', r.alasan || '-']),
+                    startY: yPos,
+                    theme: 'grid',
+                    styles: { fontSize: 6, cellPadding: 1.5 },
+                    headStyles: { fillColor: [220, 38, 38] }
+                });
+                doc.save('Riwayat_Dispensasi_Siswa.pdf');
+            } catch (err) {
+                console.error(err);
+                showMessage('Gagal membuat PDF: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSchoolIdentity();
+            loadData();
+        });
+    </script>
+</body>
+</html>

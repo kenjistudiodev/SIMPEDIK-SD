@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Data Area Piket - SIMPEDIK</title>
+    <!-- Icon Keren -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase SDK -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Export PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary-color:#667eea;--secondary-color:#764ba2;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.menubar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-date{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;opacity:.9;white-space:nowrap}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:22px 12px}
+.head{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.head h1{font-size:clamp(28px,4.5vw,38px);letter-spacing:-.02em;line-height:1.1}
+.head p{opacity:.88;font-size:14px;margin-top:4px}
+.win{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663;text-align:center}
+.tb a{position:absolute;right:12px;font-size:12px;font-weight:600;color:#4c5fd5;text-decoration:none}.tb a:hover{text-decoration:underline}
+.wb{padding:16px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.stat .wb{display:flex;align-items:center;gap:14px}
+.stat .ic{flex:none;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.35)}
+.stat small{display:block;color:var(--muted);font-size:13px}.stat b{font-size:30px;line-height:1.1;color:var(--deep)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.grid2>.win{margin-bottom:16px}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:420px;scrollbar-width:thin}
+.table-responsive::-webkit-scrollbar{height:8px;width:8px}.table-responsive::-webkit-scrollbar-thumb{background:rgba(0,0,0,.28);border-radius:9px}
+.custom-table{width:100%;border-collapse:collapse;font-size:14px;min-width:480px}
+.custom-table th{position:sticky;top:0;background:#efecf7;text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line)}
+.custom-table td{padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.05)}.custom-table tr:last-child td{border:0}.custom-table tbody tr:hover{background:rgba(102,126,234,.07)}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;color:#fff}.bg-danger{background:#e74c3c}.bg-warning{background:#f1c40f;color:#333}.bg-success{background:#2ecc71}
+.main-footer{text-align:center;color:rgba(255,255,255,.85);font-size:12px;padding:8px 0 4px}
+/* Dock */
+.dock{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:6px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.6);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.d{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:74px;padding:6px 8px;border-radius:16px;font-size:11.5px;font-weight:600;color:var(--ink);transition:transform .2s}
+.d:hover{transform:translateY(-6px) scale(1.08)}.d:active{transform:scale(.95)}
+.d .ic,.item .ic{position:relative;overflow:hidden;display:grid;place-items:center;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.d .ic{width:48px;height:48px;border-radius:13px;font-size:21px}
+.d .ic::after,.item .ic::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+.d .ic i,.item .ic i{position:relative;z-index:1}
+/* Slide-up sheet */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(10,8,30,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.sheet{position:fixed;left:50%;bottom:0;z-index:50;width:min(660px,100%);max-height:86vh;overflow:auto;transform:translate(-50%,105%);transition:transform .38s cubic-bezier(.2,.9,.25,1);padding:10px 16px calc(22px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(36,28,86,.62);backdrop-filter:saturate(200%) blur(28px);-webkit-backdrop-filter:saturate(200%) blur(28px);color:#fff;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 -18px 50px rgba(0,0,0,.4)}
+.open .scrim{opacity:1;visibility:visible}.open .sheet{transform:translate(-50%,0)}
+.grab{width:40px;height:5px;border-radius:9px;background:rgba(255,255,255,.5);margin:0 auto 12px}
+.sh{position:relative;display:flex;align-items:center;justify-content:center;min-height:36px;margin-bottom:12px}.sh h2{font-size:19px}
+.x{position:absolute;right:0;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.25);font-size:20px;line-height:1}.x:hover{background:rgba(255,255,255,.4)}
+.list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 6px}
+.item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 4px;border-radius:18px;text-align:center;font-size:13px;font-weight:700;line-height:1.25;color:#fff;text-decoration:none;transition:transform .2s,background .2s}
+.item:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}.item:active{transform:scale(.96)}
+.item .ic{width:60px;height:60px;border-radius:16px;font-size:26px}
+.confirm{text-align:center;padding:4px 8px 6px}.confirm p{opacity:.9;margin-bottom:16px}.confirm .acts{display:flex;gap:10px;justify-content:center}
+/* Modal form -> slide-up */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,8,30,.45);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.modal.active{opacity:1;visibility:visible}
+.modal-content{width:min(560px,100%);max-height:90vh;overflow:auto;padding:12px 20px calc(20px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(250,248,255,.97);box-shadow:0 -18px 50px rgba(0,0,0,.4);transform:translateY(105%);transition:transform .38s cubic-bezier(.2,.9,.25,1)}
+.modal.active .modal-content{transform:none}
+.modal-content::before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:rgba(0,0,0,.18);margin:0 auto 12px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-header h3{font-size:18px;color:var(--deep)}
+.close-modal{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--track);font-size:20px;cursor:pointer;color:var(--muted)}.close-modal:hover{background:#ff5f57;color:#fff}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:0 0 4px 2px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;outline:none}
+.form-group textarea{min-height:110px;resize:vertical}.form-group input[readonly]{background:#f0eef6;color:var(--muted)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.char-counter{display:block;text-align:right;font-size:12px;color:var(--muted)}
+.modal-footer{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 18px;border-radius:10px;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(160deg,#7b8cf5,#5568d8);box-shadow:0 1px 2px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:hover{filter:brightness(1.06)}.btn.alt,.btn-secondary{background:rgba(120,120,128,.2);color:var(--ink);box-shadow:none}.btn.red{background:linear-gradient(160deg,#f2706b,#d63d3a)}
+.btn:disabled,.form-group textarea:disabled,.form-group select:disabled{opacity:.55;cursor:not-allowed}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.list{grid-template-columns:repeat(3,minmax(0,1fr))}.item .ic{width:54px;height:54px}.bar-date i{display:none}.stats{gap:10px}.stat b{font-size:24px}.d{min-width:64px}.dock{gap:2px;padding:6px}.navbar-brand span{max-width:42vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== Tambahan khusus halaman Data Mapel ===== */
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+a.d{text-decoration:none}
+.act{width:30px;height:30px;border-radius:8px;display:inline-grid;place-items:center;font-size:14px;transition:background .15s}
+.act.edit{color:#4c5fd5}.act.edit:hover{background:rgba(76,95,213,.12)}
+.act.del{color:#d63d3a}.act.del:hover{background:rgba(214,61,58,.12)}
+.table-responsive{max-height:none}
+.custom-table{min-width:360px}
+.custom-table td:last-child,.custom-table th:last-child{white-space:nowrap}
+</style>
+</head>
+<body>
+
+<!-- Menubar (gaya macOS) -->
+<header class="menubar">
+    <a href="dasboradmin.html" class="navbar-brand"><img src="" alt="Logo Sekolah" style="display:none;"><span></span></a>
+    <div class="bar-date"><i class="far fa-calendar-alt"></i><span id="navbarDate"></span></div>
+</header>
+
+<main class="wrap">
+    <div class="head"><h1>Data Area Piket</h1><p>Halaman untuk mengelola data area piket.</p></div>
+
+    <section class="win">
+        <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Daftar Area Piket</h2><a href="dasboradmin.html">Dashboard</a></div>
+        <div class="wb">
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr><th width="50">No</th><th>Area Piket</th><th width="110">Aksi</th></tr>
+                    </thead>
+                    <tbody id="areaTableBody">
+                        <tr><td colspan="3" style="text-align:center;">Belum ada data area piket.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <p>&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik) 2026</p>
+        <p>CopyRight Kenji Studio Developer.</p>
+    </footer>
+</main>
+
+<!-- Dock -->
+<nav class="dock" aria-label="Menu utama">
+    <a class="d" href="dasboradmin.html"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-home"></i></span>Dashboard</a>
+    <button class="d" type="button" id="btnAddArea"><span class="ic" style="background:linear-gradient(160deg,#59d6a0,#1b8a5c)"><i class="fas fa-plus"></i></span>Tambah</button>
+    <button class="d" type="button" id="exportPdfBtn"><span class="ic" style="background:linear-gradient(160deg,#f2706b,#c92f2c)"><i class="fas fa-file-pdf"></i></span>Export PDF</button>
+</nav>
+
+<!-- Modal Tambah / Edit Area (slide-up) -->
+<div id="areaModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Tambah Area Piket</h3>
+            <span class="close-modal" id="closeModal">&times;</span>
+        </div>
+        <form id="areaForm">
+            <div class="form-group">
+                <label for="areaId">ID Area</label>
+                <input type="number" id="areaId" name="areaId" placeholder="Otomatis" readonly>
+                <small class="char-counter" style="text-align:left;">Primary Key (ID urut otomatis)</small>
+            </div>
+            <div class="form-group">
+                <label for="namaArea">Nama Area</label>
+                <input type="text" id="namaArea" name="namaArea" placeholder="Contoh: Halaman Depan" required>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnCancel">Cancel</button>
+                <button type="submit" class="btn btn-primary">Tambahkan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+        // --- Koneksi Supabase ---
+        const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+        
+        let supabaseClient;
+        let absensiClient;
+        let schoolData = {};
+        
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+            absensiClient = supabaseClient;
+
+            async function loadSchoolIdentity() {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('identitassekolah')
+                        .select('nama_sekolah, logo, kop_sekolah')
+                        .limit(1)
+                        .single();
+                    
+                    if (data) {
+                        schoolData = data;
+                        if (data.nama_sekolah) {
+                            document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                        }
+                        if (data.logo) {
+                            const img = document.querySelector('.navbar-brand img');
+                            img.src = data.logo;
+                            img.style.display = 'block';
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error loading school identity:", err);
+                }
+            }
+            document.addEventListener('DOMContentLoaded', loadSchoolIdentity);
+        }
+
+        // --- Logic Area Piket ---
+        const modal = document.getElementById('areaModal');
+        const btnAdd = document.getElementById('btnAddArea');
+        const btnCancel = document.getElementById('btnCancel');
+        const closeModal = document.getElementById('closeModal');
+        const form = document.getElementById('areaForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        async function openModal() {
+            modal.classList.add('active');
+            
+            // Jika ID kosong (mode tambah), ambil ID tertinggi dari database + 1
+            const idInput = document.getElementById('areaId');
+            if (!idInput.value) {
+                try {
+                    const { data, error } = await absensiClient
+                        .from('areapiketumum')
+                        .select('id')
+                        .order('id', { ascending: false })
+                        .limit(1)
+                        .maybeSingle();
+                    
+                    let nextId = 1;
+                    if (data && data.id) {
+                        nextId = parseInt(data.id) + 1;
+                    }
+                    idInput.value = nextId;
+                } catch (err) {
+                    console.error("Gagal generate ID:", err);
+                }
+            }
+        }
+
+        function hideModal() {
+            modal.classList.remove('active');
+            form.reset();
+            document.getElementById('areaId').value = '';
+            modalTitle.textContent = 'Tambah Area Piket';
+            submitBtn.textContent = 'Tambahkan';
+        }
+
+        if(btnAdd) btnAdd.addEventListener('click', openModal);
+        if(btnCancel) btnCancel.addEventListener('click', hideModal);
+        if(closeModal) closeModal.addEventListener('click', hideModal);
+        
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) hideModal();
+        });
+
+        // Load Data
+        async function loadAreas() {
+            const tbody = document.getElementById('areaTableBody');
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Memuat data...</td></tr>';
+
+            try {
+                // Menggunakan tabel 'areapiketumum' di database absensi
+                const { data, error } = await absensiClient
+                    .from('areapiketumum')
+                    .select('*')
+                    .order('id', { ascending: true });
+
+                if (error) throw error;
+
+                tbody.innerHTML = '';
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Belum ada data area piket.</td></tr>';
+                    return;
+                }
+
+                data.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.area_piket}</td>
+                        <td>
+                            <button class="act edit" onclick="editArea(${item.id}, '${item.area_piket}')" title="Edit" aria-label="Edit"><i class="fas fa-edit"></i></button>
+                            <button class="act del" onclick="deleteArea(${item.id})" title="Hapus" aria-label="Hapus"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                console.error("Error loading areas:", err);
+                // Fallback untuk demo jika tabel tidak ada
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:#e74c3c;">Gagal memuat data: ${err.message}</td></tr>`;
+            }
+        }
+
+        // Initial Load
+        if (typeof supabase !== 'undefined') {
+            loadAreas();
+        }
+
+        // Handle Submit
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('areaId').value;
+            const nama = document.getElementById('namaArea').value;
+            const isEdit = submitBtn.textContent === 'Update';
+            
+            try {
+                let result;
+                if (isEdit) {
+                    result = await absensiClient.from('areapiketumum').update({ area_piket: nama }).eq('id', id);
+                } else {
+                    result = await absensiClient.from('areapiketumum').insert([{ id: parseInt(id), area_piket: nama }]);
+                }
+
+                if (result.error) throw result.error;
+
+                alert('Data berhasil disimpan!');
+                hideModal();
+                loadAreas();
+            } catch (err) {
+                alert('Gagal menyimpan: ' + err.message);
+            }
+        });
+
+        window.deleteArea = async (id) => {
+            if(confirm('Hapus area ini?')) {
+                const { error } = await absensiClient.from('areapiketumum').delete().eq('id', id);
+                if(!error) loadAreas();
+                else alert('Gagal hapus: ' + error.message);
+            }
+        };
+
+        window.editArea = (id, nama) => {
+            document.getElementById('areaId').value = id;
+            document.getElementById('namaArea').value = nama;
+            modalTitle.textContent = 'Edit Area Piket';
+            submitBtn.textContent = 'Update';
+            openModal();
+        };
+    
+        // --- Tanggal di menubar ---
+        (function () {
+            const el = document.getElementById('navbarDate');
+            el.textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        })();
+
+        // Esc menutup modal
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) hideModal();
+        });
+
+
+        // --- Export PDF (dengan KOP sekolah, sama seperti mappingsiswa.html) ---
+        document.getElementById('exportPdfBtn').addEventListener('click', () => exportAreaPdf());
+
+        async function exportAreaPdf() {
+            if (!absensiClient || !window.jspdf) {
+                alert('Library PDF / Supabase belum termuat. Silakan refresh halaman.');
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = doc.internal.pageSize.getWidth();
+            let yPos = 20;
+
+            // KOP sekolah (gambar dari kolom identitassekolah.kop_sekolah)
+            if (schoolData.kop_sekolah) {
+                try {
+                    const response = await fetch(schoolData.kop_sekolah);
+                    const blob = await response.blob();
+                    const base64data = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.readAsDataURL(blob);
+                    });
+
+                    const imgProps = doc.getImageProperties(base64data);
+                    const pdfWidth = pageWidth - 20;
+                    const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    const fmt = /^data:image\/jpe?g/i.test(base64data) ? 'JPEG' : 'PNG';
+
+                    doc.addImage(base64data, fmt, 10, 10, pdfWidth, imgHeight);
+                    yPos = 10 + imgHeight + 10;
+                } catch (err) {
+                    console.error("Gagal memuat KOP Sekolah:", err);
+                }
+            }
+
+            try {
+                const { data, error } = await absensiClient
+                    .from('areapiketumum')
+                    .select('*')
+                    .order('id', { ascending: true });
+
+                if (error) throw error;
+                if (!data || data.length === 0) {
+                    alert('Tidak ada data untuk diexport.');
+                    return;
+                }
+
+                doc.setFontSize(16);
+                doc.setTextColor(0);
+                doc.text('Daftar Area Piket', pageWidth / 2, yPos, { align: 'center' });
+                yPos += 7;
+
+                const schoolName = schoolData.nama_sekolah || document.querySelector('.navbar-brand span')?.textContent || '';
+                if (schoolName) {
+                    doc.setFontSize(12);
+                    doc.setTextColor(100);
+                    doc.text(schoolName, pageWidth / 2, yPos, { align: 'center' });
+                    yPos += 8;
+                } else {
+                    yPos += 3;
+                }
+
+                doc.autoTable({
+                    head: [['No', 'Area Piket']],
+                    body: data.map((item, index) => [index + 1, item.area_piket]),
+                    startY: yPos,
+                    theme: 'grid',
+                    styles: { fontSize: 10 },
+                    headStyles: { fillColor: [102, 126, 234] },
+                    columnStyles: { 0: { cellWidth: 15, halign: 'center' } }
+                });
+
+                doc.save('Daftar_Area_Piket.pdf');
+            } catch (err) {
+                console.error('Export error:', err);
+                alert('Gagal export PDF: ' + err.message);
+            }
+        }
+</script>
+</body>
+</html>

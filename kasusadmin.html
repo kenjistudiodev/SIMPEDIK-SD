@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Data Kasus Siswa - SIMPEDIK</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary-color:#667eea;--secondary-color:#764ba2;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.menubar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-date{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;opacity:.9;white-space:nowrap}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:22px 12px}
+.head{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.head h1{font-size:clamp(28px,4.5vw,38px);letter-spacing:-.02em;line-height:1.1}
+.head p{opacity:.88;font-size:14px;margin-top:4px}
+.win{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663;text-align:center}
+.tb a{position:absolute;right:12px;font-size:12px;font-weight:600;color:#4c5fd5;text-decoration:none}.tb a:hover{text-decoration:underline}
+.wb{padding:16px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.stat .wb{display:flex;align-items:center;gap:14px}
+.stat .ic{flex:none;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.35)}
+.stat small{display:block;color:var(--muted);font-size:13px}.stat b{font-size:30px;line-height:1.1;color:var(--deep)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.grid2>.win{margin-bottom:16px}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:420px;scrollbar-width:thin}
+.table-responsive::-webkit-scrollbar{height:8px;width:8px}.table-responsive::-webkit-scrollbar-thumb{background:rgba(0,0,0,.28);border-radius:9px}
+.custom-table{width:100%;border-collapse:collapse;font-size:14px;min-width:480px}
+.custom-table th{position:sticky;top:0;background:#efecf7;text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line)}
+.custom-table td{padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.05)}.custom-table tr:last-child td{border:0}.custom-table tbody tr:hover{background:rgba(102,126,234,.07)}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;color:#fff}.bg-danger{background:#e74c3c}.bg-warning{background:#f1c40f;color:#333}.bg-success{background:#2ecc71}
+.main-footer{text-align:center;color:rgba(255,255,255,.85);font-size:12px;padding:8px 0 4px}
+/* Dock */
+.dock{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:6px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.6);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.d{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:74px;padding:6px 8px;border-radius:16px;font-size:11.5px;font-weight:600;color:var(--ink);transition:transform .2s}
+.d:hover{transform:translateY(-6px) scale(1.08)}.d:active{transform:scale(.95)}
+.d .ic,.item .ic{position:relative;overflow:hidden;display:grid;place-items:center;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.d .ic{width:48px;height:48px;border-radius:13px;font-size:21px}
+.d .ic::after,.item .ic::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+.d .ic i,.item .ic i{position:relative;z-index:1}
+/* Slide-up sheet */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(10,8,30,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.sheet{position:fixed;left:50%;bottom:0;z-index:50;width:min(660px,100%);max-height:86vh;overflow:auto;transform:translate(-50%,105%);transition:transform .38s cubic-bezier(.2,.9,.25,1);padding:10px 16px calc(22px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(36,28,86,.62);backdrop-filter:saturate(200%) blur(28px);-webkit-backdrop-filter:saturate(200%) blur(28px);color:#fff;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 -18px 50px rgba(0,0,0,.4)}
+.open .scrim{opacity:1;visibility:visible}.open .sheet{transform:translate(-50%,0)}
+.grab{width:40px;height:5px;border-radius:9px;background:rgba(255,255,255,.5);margin:0 auto 12px}
+.sh{position:relative;display:flex;align-items:center;justify-content:center;min-height:36px;margin-bottom:12px}.sh h2{font-size:19px}
+.x{position:absolute;right:0;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.25);font-size:20px;line-height:1}.x:hover{background:rgba(255,255,255,.4)}
+.list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 6px}
+.item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 4px;border-radius:18px;text-align:center;font-size:13px;font-weight:700;line-height:1.25;color:#fff;text-decoration:none;transition:transform .2s,background .2s}
+.item:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}.item:active{transform:scale(.96)}
+.item .ic{width:60px;height:60px;border-radius:16px;font-size:26px}
+.confirm{text-align:center;padding:4px 8px 6px}.confirm p{opacity:.9;margin-bottom:16px}.confirm .acts{display:flex;gap:10px;justify-content:center}
+/* Modal form -> slide-up */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,8,30,.45);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.modal.active{opacity:1;visibility:visible}
+.modal-content{width:min(560px,100%);max-height:90vh;overflow:auto;padding:12px 20px calc(20px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(250,248,255,.97);box-shadow:0 -18px 50px rgba(0,0,0,.4);transform:translateY(105%);transition:transform .38s cubic-bezier(.2,.9,.25,1)}
+.modal.active .modal-content{transform:none}
+.modal-content::before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:rgba(0,0,0,.18);margin:0 auto 12px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-header h3{font-size:18px;color:var(--deep)}
+.close-modal{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--track);font-size:20px;cursor:pointer;color:var(--muted)}.close-modal:hover{background:#ff5f57;color:#fff}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:0 0 4px 2px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;outline:none}
+.form-group textarea{min-height:110px;resize:vertical}.form-group input[readonly]{background:#f0eef6;color:var(--muted)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.char-counter{display:block;text-align:right;font-size:12px;color:var(--muted)}
+.modal-footer{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 18px;border-radius:10px;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(160deg,#7b8cf5,#5568d8);box-shadow:0 1px 2px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:hover{filter:brightness(1.06)}.btn.alt,.btn-secondary{background:rgba(120,120,128,.2);color:var(--ink);box-shadow:none}.btn.red{background:linear-gradient(160deg,#f2706b,#d63d3a)}
+.btn:disabled,.form-group textarea:disabled,.form-group select:disabled{opacity:.55;cursor:not-allowed}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.list{grid-template-columns:repeat(3,minmax(0,1fr))}.item .ic{width:54px;height:54px}.bar-date i{display:none}.stats{gap:10px}.stat b{font-size:24px}.d{min-width:64px}.dock{gap:2px;padding:6px}.navbar-brand span{max-width:42vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* ===== Komponen khusus halaman Data Kasus Siswa (tema sama dengan nilaiakademisadmin) ===== */
+.btn,.d{text-decoration:none}
+.btn-primary{background:linear-gradient(160deg,#7b8cf5,#5568d8)}
+.btn-danger{background:linear-gradient(160deg,#f2706b,#d63d3a)}
+.text-success{color:#10b981}.text-danger{color:#ef4444}.text-warning{color:#f59e0b}
+/* Ringkasan kelas */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:16px}
+.summary-card{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);padding:14px 16px;border-radius:14px;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 12px 30px rgba(0,0,0,.25);border-left:4px solid var(--primary-color);transition:transform .2s}
+.summary-card:hover{transform:translateY(-3px)}
+.summary-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.summary-title{font-size:16px;font-weight:700;color:var(--deep)}
+.summary-icon{font-size:20px;color:var(--primary-color);opacity:.7}
+.summary-stats{display:flex;justify-content:space-around}
+.stat-item{text-align:center}
+.stat-value{font-size:26px;line-height:1.1;font-weight:700}
+.stat-label{font-size:13px;color:var(--muted)}
+.toolbar{display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.search-input{height:38px;width:250px;max-width:100%;padding:0 12px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;color:var(--ink);outline:none}
+.search-input:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.table-responsive{max-height:520px}
+.custom-table{min-width:1000px;white-space:nowrap}
+.pt{display:inline-block;min-width:34px;text-align:center;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;color:#4c5fd5;background:rgba(102,126,234,.16)}
+.filter-select{height:38px;min-width:170px;max-width:100%;padding:0 12px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;color:var(--ink);outline:none;cursor:pointer}
+.filter-select:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.info-text{color:var(--muted);font-size:14px;text-align:center;padding:20px}
+@media (max-width:768px){.toolbar{justify-content:stretch}.search-input,.filter-select{width:100%}}
+@media (max-width:520px){.bar-date{font-size:11px;white-space:normal;text-align:right;line-height:1.25}}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="menubar">
+    <a href="dasboradmin.html" class="navbar-brand"><img src="" alt="Logo Sekolah" style="display:none;"><span></span></a>
+    <div class="bar-date"><i class="far fa-clock"></i><span id="liveDateTime"></span></div>
+</header>
+
+<main class="wrap">
+    <div class="head"><h1>Data Kasus Siswa</h1><p>Halaman ini untuk melihat data kasus dan pelanggaran siswa.</p></div>
+
+    <div class="summary-grid" id="classStatsContainer">
+        <div style="grid-column: 1/-1; text-align: center; color: #fff;">Memuat statistik...</div>
+    </div>
+
+    <section class="win">
+        <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Daftar Kasus Siswa</h2></div>
+        <div class="wb">
+            <div class="toolbar">
+                <select id="kelasFilter" class="filter-select" aria-label="Filter kelas">
+                    <option value="">Semua Kelas</option>
+                </select>
+                <input type="text" id="searchInput" class="search-input" placeholder="Cari Siswa / Kelas / Kasus...">
+            </div>
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Id Kasus</th>
+                            <th>Nama Siswa</th>
+                            <th>NISN</th>
+                            <th>Tanggal</th>
+                            <th>Kelas</th>
+                            <th>Mata Pelajaran</th>
+                            <th>Jenis Kasus</th>
+                            <th>Point</th>
+                            <th>Pelapor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kasusTableBody">
+                        <tr><td colspan="10" style="text-align: center;">Memuat data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <p>&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik).2026</p>
+        <p>CopyRight Kenji Studio Developer.</p>
+    </footer>
+</main>
+
+<nav class="dock" aria-label="Menu utama">
+    <a class="d" href="dasboradmin.html"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-home"></i></span>Beranda</a>
+    <button class="d" type="button" id="btnExportPdf"><span class="ic" style="background:linear-gradient(160deg,#f2706b,#c92f2c)"><i class="fas fa-file-pdf"></i></span>Export PDF</button>
+</nav>
+
+<script>
+    const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    let schoolData = {};
+    let allKasusData = [];
+
+    const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const fmtTanggal = t => {
+        if (!t) return '-';
+        const p = String(t).split('-').map(Number);
+        const d = p.length === 3 && !p.some(isNaN) ? new Date(p[0], p[1] - 1, p[2]) : new Date(t);
+        return isNaN(d) ? t : d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    };
+
+    // --- Jam ---
+    function updateLiveTime() {
+        const now = new Date();
+        const d = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const t = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+        document.getElementById('liveDateTime').textContent =
+            `${now.toLocaleDateString('id-ID', d)} | ${now.toLocaleTimeString('id-ID', t).replace(/\./g, ':')} WIB`;
+    }
+    setInterval(updateLiveTime, 1000); updateLiveTime();
+
+    // --- Identitas sekolah ---
+    async function loadSchoolIdentity() {
+        try {
+            const { data } = await supabaseClient.from('identitassekolah')
+                .select('nama_sekolah, logo, kop_sekolah').limit(1).single();
+            if (data) {
+                schoolData = data;
+                if (data.nama_sekolah) document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                if (data.logo) {
+                    const img = document.querySelector('.navbar-brand img');
+                    img.src = data.logo; img.style.display = 'block';
+                }
+            }
+        } catch (err) { console.error('Error loading school identity:', err); }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadSchoolIdentity();
+        loadKasusData();
+    });
+
+    // --- Data kasus dari tabel kasussiswa ---
+    async function loadKasusData() {
+        const tbody = document.getElementById('kasusTableBody');
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">Memuat data...</td></tr>';
+        try {
+            const { data, error } = await supabaseClient
+                .from('kasussiswa')
+                .select('*')
+                .order('tanggal', { ascending: false });
+            if (error) throw error;
+
+            allKasusData = data || [];
+            populateKelasFilter(allKasusData.map(i => i.kelas));
+            renderTable(applyFilters());
+            renderClassStats(allKasusData);
+        } catch (err) {
+            console.error('Error loading kasus:', err);
+            tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: red;">Gagal memuat data: ${esc(err.message)}</td></tr>`;
+            document.getElementById('classStatsContainer').innerHTML = '';
+        }
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('kasusTableBody');
+        if (!data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">Belum ada data kasus.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = data.map((item, i) => `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${esc(item.id_kasus) || '-'}</td>
+                <td>${esc(item.nama_siswa) || '-'}</td>
+                <td>${esc(item.nisn) || '-'}</td>
+                <td>${fmtTanggal(item.tanggal)}</td>
+                <td>${esc(item.kelas) || '-'}</td>
+                <td>${esc(item.mapel) || '-'}</td>
+                <td>${esc(item.jenis_kasus) || '-'}</td>
+                <td>${item.point === null || item.point === undefined ? '-' : `<span class="pt">${esc(item.point)}</span>`}</td>
+                <td>${esc(item.nama_guru) || '-'}</td>
+            </tr>`).join('');
+    }
+
+    // --- Ringkasan per kelas (daftar kelas dari tabel rombel) ---
+    async function renderClassStats(kasusData) {
+        const container = document.getElementById('classStatsContainer');
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #fff;">Memuat statistik...</div>';
+        try {
+            const { data: rombelData, error } = await supabaseClient.from('rombel').select('nama_kelas').order('nama_kelas');
+            if (error) throw error;
+
+            const stats = {};
+            (rombelData || []).forEach(r => { stats[r.nama_kelas] = { kasus: 0, siswa: new Set() }; });
+            (kasusData || []).forEach(item => {
+                if (!item.kelas) return;
+                if (!stats[item.kelas]) stats[item.kelas] = { kasus: 0, siswa: new Set() };
+                stats[item.kelas].kasus++;
+                stats[item.kelas].siswa.add(String(item.nama_siswa || '').trim());
+            });
+
+            const kelasList = Object.keys(stats).sort();
+            populateKelasFilter(kelasList);
+            if (!kelasList.length) { container.innerHTML = ''; return; }
+
+            container.innerHTML = '';
+            kelasList.forEach(kelas => {
+                const s = stats[kelas];
+                const card = document.createElement('div');
+                card.className = 'summary-card';
+                card.innerHTML = `
+                    <div class="summary-header">
+                        <div class="summary-title">${esc(kelas)}</div>
+                        <i class="fas fa-exclamation-triangle summary-icon"></i>
+                    </div>
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <div class="stat-value ${s.kasus > 0 ? 'text-danger' : 'text-success'}">${s.kasus}</div>
+                            <div class="stat-label">Kasus</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value text-warning">${s.siswa.size}</div>
+                            <div class="stat-label">Siswa</div>
+                        </div>
+                    </div>`;
+                container.appendChild(card);
+            });
+        } catch (err) {
+            console.error('Error rendering stats:', err);
+            container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #fff;">Gagal memuat statistik: ${esc(err.message)}</div>`;
+        }
+    }
+
+    // --- Pencarian ---
+    function populateKelasFilter(list) {
+        const sel = document.getElementById('kelasFilter');
+        const current = sel.value;
+        const existing = Array.from(sel.options).slice(1).map(o => o.value);
+        const all = [...new Set([...existing, ...(list || []).map(k => String(k || '').trim()).filter(Boolean)])]
+            .sort((a, b) => a.localeCompare(b, 'id', { numeric: true }));
+        sel.innerHTML = '<option value="">Semua Kelas</option>' +
+            all.map(k => `<option value="${esc(k)}">${esc(k)}</option>`).join('');
+        sel.value = all.includes(current) ? current : '';
+    }
+
+    function filterKasus(term, kelas) {
+        term = (term || '').toLowerCase().trim();
+        return allKasusData.filter(item => {
+            if (kelas && String(item.kelas || '').trim() !== kelas) return false;
+            if (!term) return true;
+            return [item.nama_siswa, item.kelas, item.jenis_kasus, item.id_kasus, item.nama_guru, item.mapel]
+                .some(v => v && String(v).toLowerCase().includes(term));
+        });
+    }
+    function applyFilters() {
+        return filterKasus(document.getElementById('searchInput').value, document.getElementById('kelasFilter').value);
+    }
+    document.getElementById('searchInput').addEventListener('input', () => renderTable(applyFilters()));
+    document.getElementById('kelasFilter').addEventListener('change', () => renderTable(applyFilters()));
+
+    // --- Export PDF ---
+    document.getElementById('btnExportPdf').addEventListener('click', async () => {
+        const dataToExport = applyFilters();
+        if (dataToExport.length === 0) { alert('Tidak ada data untuk diexport.'); return; }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('l', 'mm', 'a4');
+        const pageWidth = doc.internal.pageSize.getWidth();
+        let y = 20;
+
+        if (schoolData.kop_sekolah) {
+            try {
+                const blob = await (await fetch(schoolData.kop_sekolah)).blob();
+                const b64 = await new Promise(res => { const fr = new FileReader(); fr.onloadend = () => res(fr.result); fr.readAsDataURL(blob); });
+                const p = doc.getImageProperties(b64);
+                const w = pageWidth - 20, h = (p.height * w) / p.width;
+                doc.addImage(b64, 'PNG', 10, 10, w, h);
+                y = 10 + h + 10;
+            } catch (err) { console.error('Gagal memuat KOP Sekolah:', err); }
+        }
+
+        doc.setFontSize(18);
+        doc.text('Laporan Data Kasus Siswa', pageWidth / 2, y, { align: 'center' });
+        y += 8;
+        doc.setFontSize(12);
+        doc.setTextColor(100);
+        doc.text(schoolData.nama_sekolah || document.querySelector('.navbar-brand span').textContent || '', pageWidth / 2, y, { align: 'center' });
+        y += 10;
+
+        doc.autoTable({
+            head: [['No', 'Id Kasus', 'Nama Siswa', 'NISN', 'Tanggal', 'Kelas', 'Mata Pelajaran', 'Jenis Kasus', 'Point', 'Pelapor']],
+            body: dataToExport.map((it, i) => [
+                i + 1, it.id_kasus || '-', it.nama_siswa || '-', it.nisn || '-', fmtTanggal(it.tanggal),
+                it.kelas || '-', it.mapel || '-', it.jenis_kasus || '-',
+                (it.point === null || it.point === undefined) ? '-' : it.point, it.nama_guru || '-'
+            ]),
+            startY: y,
+            theme: 'grid',
+            headStyles: { fillColor: [85, 104, 216] },
+            styles: { fontSize: 8.5 }
+        });
+
+        doc.save(`Laporan_Kasus_Siswa_${new Date().toISOString().slice(0, 10)}.pdf`);
+    });
+</script>
+</body>
+</html>

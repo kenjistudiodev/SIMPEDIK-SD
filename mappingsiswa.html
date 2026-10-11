@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Mapping Siswa - SMKN 1 Simpang Teritip</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary-color:#667eea;--secondary-color:#764ba2;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.menubar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-date{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;opacity:.9;white-space:nowrap}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:22px 12px}
+.head{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.head h1{font-size:clamp(28px,4.5vw,38px);letter-spacing:-.02em;line-height:1.1}
+.head p{opacity:.88;font-size:14px;margin-top:4px}
+.win{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663;text-align:center}
+.tb a{position:absolute;right:12px;font-size:12px;font-weight:600;color:#4c5fd5;text-decoration:none}.tb a:hover{text-decoration:underline}
+.wb{padding:16px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.stat .wb{display:flex;align-items:center;gap:14px}
+.stat .ic{flex:none;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.35)}
+.stat small{display:block;color:var(--muted);font-size:13px}.stat b{font-size:30px;line-height:1.1;color:var(--deep)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.grid2>.win{margin-bottom:16px}
+.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:420px;scrollbar-width:thin}
+.table-responsive::-webkit-scrollbar{height:8px;width:8px}.table-responsive::-webkit-scrollbar-thumb{background:rgba(0,0,0,.28);border-radius:9px}
+.custom-table{width:100%;border-collapse:collapse;font-size:14px;min-width:480px}
+.custom-table th{position:sticky;top:0;background:#efecf7;text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--line)}
+.custom-table td{padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.05)}.custom-table tr:last-child td{border:0}.custom-table tbody tr:hover{background:rgba(102,126,234,.07)}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600;color:#fff}.bg-danger{background:#e74c3c}.bg-warning{background:#f1c40f;color:#333}.bg-success{background:#2ecc71}
+.main-footer{text-align:center;color:rgba(255,255,255,.85);font-size:12px;padding:8px 0 4px}
+/* Dock */
+.dock{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:6px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.6);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.d{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:74px;padding:6px 8px;border-radius:16px;font-size:11.5px;font-weight:600;color:var(--ink);transition:transform .2s}
+.d:hover{transform:translateY(-6px) scale(1.08)}.d:active{transform:scale(.95)}
+.d .ic,.item .ic{position:relative;overflow:hidden;display:grid;place-items:center;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.d .ic{width:48px;height:48px;border-radius:13px;font-size:21px}
+.d .ic::after,.item .ic::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+.d .ic i,.item .ic i{position:relative;z-index:1}
+/* Slide-up sheet */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(10,8,30,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.sheet{position:fixed;left:50%;bottom:0;z-index:50;width:min(660px,100%);max-height:86vh;overflow:auto;transform:translate(-50%,105%);transition:transform .38s cubic-bezier(.2,.9,.25,1);padding:10px 16px calc(22px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(36,28,86,.62);backdrop-filter:saturate(200%) blur(28px);-webkit-backdrop-filter:saturate(200%) blur(28px);color:#fff;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 -18px 50px rgba(0,0,0,.4)}
+.open .scrim{opacity:1;visibility:visible}.open .sheet{transform:translate(-50%,0)}
+.grab{width:40px;height:5px;border-radius:9px;background:rgba(255,255,255,.5);margin:0 auto 12px}
+.sh{position:relative;display:flex;align-items:center;justify-content:center;min-height:36px;margin-bottom:12px}.sh h2{font-size:19px}
+.x{position:absolute;right:0;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.25);font-size:20px;line-height:1}.x:hover{background:rgba(255,255,255,.4)}
+.list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 6px}
+.item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 4px;border-radius:18px;text-align:center;font-size:13px;font-weight:700;line-height:1.25;color:#fff;text-decoration:none;transition:transform .2s,background .2s}
+.item:hover{background:rgba(255,255,255,.16);transform:translateY(-3px)}.item:active{transform:scale(.96)}
+.item .ic{width:60px;height:60px;border-radius:16px;font-size:26px}
+.confirm{text-align:center;padding:4px 8px 6px}.confirm p{opacity:.9;margin-bottom:16px}.confirm .acts{display:flex;gap:10px;justify-content:center}
+/* Modal form -> slide-up */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,8,30,.45);backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.modal.active{opacity:1;visibility:visible}
+.modal-content{width:min(560px,100%);max-height:90vh;overflow:auto;padding:12px 20px calc(20px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:rgba(250,248,255,.97);box-shadow:0 -18px 50px rgba(0,0,0,.4);transform:translateY(105%);transition:transform .38s cubic-bezier(.2,.9,.25,1)}
+.modal.active .modal-content{transform:none}
+.modal-content::before{content:"";display:block;width:40px;height:5px;border-radius:9px;background:rgba(0,0,0,.18);margin:0 auto 12px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-header h3{font-size:18px;color:var(--deep)}
+.close-modal{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--track);font-size:20px;cursor:pointer;color:var(--muted)}.close-modal:hover{background:#ff5f57;color:#fff}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:0 0 4px 2px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font:inherit;outline:none}
+.form-group textarea{min-height:110px;resize:vertical}.form-group input[readonly]{background:#f0eef6;color:var(--muted)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.char-counter{display:block;text-align:right;font-size:12px;color:var(--muted)}
+.modal-footer{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:38px;padding:0 18px;border-radius:10px;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(160deg,#7b8cf5,#5568d8);box-shadow:0 1px 2px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn:hover{filter:brightness(1.06)}.btn.alt,.btn-secondary{background:rgba(120,120,128,.2);color:var(--ink);box-shadow:none}.btn.red{background:linear-gradient(160deg,#f2706b,#d63d3a)}
+.btn:disabled,.form-group textarea:disabled,.form-group select:disabled{opacity:.55;cursor:not-allowed}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.list{grid-template-columns:repeat(3,minmax(0,1fr))}.item .ic{width:54px;height:54px}.bar-date i{display:none}.stats{gap:10px}.stat b{font-size:24px}.d{min-width:64px}.dock{gap:2px;padding:6px}.navbar-brand span{max-width:42vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* ===== Komponen khusus halaman Mapping Siswa (tema sama dengan dasboradmin) ===== */
+.table-responsive{max-height:none}
+.custom-table.wide{min-width:1100px}
+.custom-table th,.custom-table td{white-space:nowrap}
+.tabs-header{display:flex;overflow-x:auto;gap:8px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--line);scrollbar-width:thin}
+.tabs-header::-webkit-scrollbar{height:6px}.tabs-header::-webkit-scrollbar-thumb{background:rgba(0,0,0,.28);border-radius:9px}
+.tab-btn{padding:7px 16px;border-radius:999px;font-weight:600;font-size:13px;color:var(--muted);background:var(--track);white-space:nowrap;transition:background .2s,color .2s,transform .2s}
+.tab-btn:hover{color:var(--ink);background:rgba(120,120,128,.26);transform:translateY(-1px)}
+.tab-btn.active{color:#fff;background:linear-gradient(160deg,#7b8cf5,#5568d8);box-shadow:0 2px 8px rgba(85,104,216,.4)}
+.tab-pane{display:none;animation:fadeIn .4s ease-out}.tab-pane.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.empty-note{padding:20px;text-align:center;color:var(--muted);border:1px dashed rgba(0,0,0,.2);border-radius:10px;margin-top:6px}
+.btn,.d{text-decoration:none}
+.btn-action{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:15px;transition:transform .2s,background .2s,color .2s}
+.btn-delete{background:rgba(231,76,60,.14);color:#d63d3a}.btn-delete:hover{background:#d63d3a;color:#fff;transform:translateY(-2px)}
+.searchable-dropdown{position:relative}
+.dropdown-options{position:absolute;top:100%;left:0;right:0;margin-top:4px;background:#fff;border:1px solid rgba(0,0,0,.15);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.2);max-height:200px;overflow-y:auto;z-index:10;display:none}
+.dropdown-options.show{display:block}
+.dropdown-option{padding:9px 12px;cursor:pointer;border-bottom:1px solid rgba(0,0,0,.06);font-size:14px;color:var(--ink)}
+.dropdown-option:last-child{border:0}.dropdown-option:hover{background:rgba(102,126,234,.1)}
+.no-results{padding:10px;color:var(--muted);text-align:center;font-size:14px}
+.dropdown-option.disabled{color:#9a96b0;background:rgba(120,120,128,.08);cursor:not-allowed;font-style:italic}.dropdown-option.disabled:hover{background:rgba(120,120,128,.08)}
+#kodeMapping[readonly]{background:#f0eef6;color:var(--muted)}
+/* ===== Notifikasi gaya macOS ===== */
+.notif-stack{position:fixed;top:calc(12px + env(safe-area-inset-top));right:12px;z-index:100;display:flex;flex-direction:column;gap:10px;width:min(370px,calc(100% - 24px));pointer-events:none}
+.notif{pointer-events:auto;position:relative;display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:18px;background:rgba(246,244,252,.8);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 14px 38px rgba(0,0,0,.3);transform:translateX(125%);opacity:0;transition:transform .5s cubic-bezier(.2,.9,.25,1),opacity .3s;cursor:pointer}
+.notif.show{transform:none;opacity:1}
+.notif.hide{transform:translateX(125%);opacity:0}
+.notif .n-ic{flex:none;width:40px;height:40px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.45);position:relative;overflow:hidden}
+.notif .n-ic::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+.notif .n-ic i{position:relative;z-index:1}
+.notif .n-body{min-width:0;flex:1}
+.notif .n-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.notif .n-title{font-size:13.5px;font-weight:700;color:var(--deep);line-height:1.3}
+.notif .n-time{flex:none;font-size:12px;color:var(--muted)}
+.notif .n-msg{margin-top:2px;font-size:13px;line-height:1.4;color:#3b3852;word-break:break-word}
+.notif .n-msg strong{color:var(--deep)}
+.notif .n-x{position:absolute;left:-7px;top:-7px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:14px;line-height:1;color:#4a4663;background:rgba(240,238,248,.96);box-shadow:0 0 0 .5px rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.2);opacity:0;transition:opacity .2s}
+.notif:hover .n-x{opacity:1}
+@media (hover:none){.notif .n-x{opacity:1}}
+@media (max-width:520px){.notif-stack{right:50%;transform:translateX(50%)}}
+.action-buttons{display:flex;gap:8px}
+.btn-edit{background:rgba(102,126,234,.15);color:#4c5fd5}.btn-edit:hover{background:#5568d8;color:#fff;transform:translateY(-2px)}
+</style>
+</head>
+<body>
+<header class="menubar">
+    <a href="dasboradmin.html" class="navbar-brand"><img src="" alt="Logo Sekolah" style="display:none;"><span></span></a>
+</header>
+<main class="wrap">
+    <div class="head"><h1>Mapping Siswa</h1><p>Halaman ini digunakan untuk pemetaan data siswa.</p></div>
+    <section class="win">
+        <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Mapping Siswa per Kelas</h2></div>
+        <div class="wb">
+            <div class="tabs-container">
+                <div class="tabs-header" id="tabsHeader">
+                    <div style="padding:10px;color:var(--muted);">Memuat data kelas...</div>
+                </div>
+                <div class="tabs-content" id="tabsContent"></div>
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+        <p>&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik) 2026</p>
+        <p>CopyRight Kenji Studio Developer.</p>
+    </footer>
+</main>
+
+<div class="notif-stack" id="notifStack" aria-live="polite"></div>
+
+<!-- Dock menu (footer) -->
+<nav class="dock" aria-label="Menu utama">
+    <a class="d" href="dasboradmin.html"><span class="ic" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"><i class="fas fa-home"></i></span>Beranda</a>
+    <button class="d" type="button" id="addMappingBtn"><span class="ic" style="background:linear-gradient(160deg,#59d6a0,#1b8a5c)"><i class="fas fa-plus"></i></span>Tambah Mapping</button>
+    <button class="d" type="button" id="exportPdfBtn"><span class="ic" style="background:linear-gradient(160deg,#f2706b,#c92f2c)"><i class="fas fa-file-pdf"></i></span>Export PDF</button>
+</nav>
+
+    <div id="mappingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Tambah Mapping Siswa</h3>
+                <span class="close-modal" title="Tutup" aria-label="Close">&times;</span>
+            </div>
+            <form id="mappingForm">
+                <div class="form-group">
+                    <label>Kode Mapping</label>
+                    <input type="text" id="kodeMapping" name="kodeMapping" readonly placeholder="Otomatis terisi setelah kelas & siswa dipilih">
+                </div>
+                <div class="form-group">
+                    <label>Kelas</label>
+                    <select id="kelasMapping" name="kelasMapping" required>
+                        <option value="">Pilih Kelas</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nama Siswa</label>
+                    <div class="searchable-dropdown">
+                        <input type="text" id="namaSiswaSearch" placeholder="Cari Siswa..." autocomplete="off" required>
+                        <input type="hidden" id="namaSiswa" name="namaSiswa">
+                        <div id="siswaDropdown" class="dropdown-options"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>NISN</label>
+                    <input type="text" id="nisn" name="nisn" readonly placeholder="Otomatis terisi">
+                </div>
+                <div class="form-group">
+                    <label>Alamat</label>
+                    <input type="text" id="alamat" name="alamat">
+                </div>
+                <div class="form-group">
+                    <label>Tempat Lahir</label>
+                    <input type="text" id="tempatLahir" name="tempatLahir">
+                </div>
+                <div class="form-group">
+                    <label>Tanggal Lahir</label>
+                    <input type="date" id="tanggalLahir" name="tanggalLahir">
+                </div>
+                <div class="form-group">
+                    <label>Nama Ayah</label>
+                    <input type="text" id="namaAyah" name="namaAyah">
+                </div>
+                <div class="form-group">
+                    <label>Nama Ibu</label>
+                    <input type="text" id="namaIbu" name="namaIbu">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary cancel-btn">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+<!-- Modal Edit Kelas -->
+<div id="editKelasModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Kelas Mapping</h3>
+            <span class="close-modal" id="closeEditKelas" title="Tutup" aria-label="Close">&times;</span>
+        </div>
+        <form id="editKelasForm">
+            <div class="form-group">
+                <label>Kode Mapping</label>
+                <input type="text" id="editKode" readonly>
+            </div>
+            <div class="form-group">
+                <label>Nama Siswa</label>
+                <input type="text" id="editNamaSiswa" readonly>
+            </div>
+            <div class="form-group">
+                <label>NISN</label>
+                <input type="text" id="editNisnField" readonly>
+            </div>
+            <div class="form-group">
+                <label>Kelas</label>
+                <select id="editKelasSelect" required></select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelEditKelas">Batal</button>
+                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <script>
+        const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+        
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        const simpedikClient = supabaseClient;
+        let schoolData = {};
+
+        async function loadSchoolIdentity() {
+            try {
+                const { data, error } = await simpedikClient
+                    .from('identitassekolah')
+                    .select('nama_sekolah, logo, kop_sekolah')
+                    .limit(1)
+                    .maybeSingle();
+                
+                if (data) {
+                    schoolData = data;
+                    if (data.nama_sekolah) {
+                        document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                    }
+                    if (data.logo) {
+                        const img = document.querySelector('.navbar-brand img');
+                        img.src = data.logo;
+                        img.style.display = 'block';
+                    }
+                }
+            } catch (err) {
+                console.log("Info: Gagal memuat identitas sekolah (mungkin tabel belum ada).");
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadSchoolIdentity);
+
+        let activeKelas = '';
+        let mappingIndex = {};
+        let kelasList = [];
+
+        async function loadKelasTabs() {
+            const tabsHeader = document.getElementById('tabsHeader');
+            const tabsContent = document.getElementById('tabsContent');
+            
+            if (!tabsHeader || !tabsContent || !supabaseClient) return;
+
+            let mappingData = [];
+            let waliData = [];
+
+            const resMapping = await supabaseClient
+                .from('mappingsiswa')
+                .select('kelas');
+            if (resMapping.data) mappingData = resMapping.data;
+
+            const resWali = await simpedikClient
+                .from('walikelas')
+                .select('kelas');
+            if (resWali.data) waliData = resWali.data;
+
+            try {
+                tabsHeader.innerHTML = '';
+                tabsContent.innerHTML = '';
+
+                let allClasses = [];
+                if (mappingData.length > 0) allClasses = allClasses.concat(mappingData.map(item => item.kelas));
+                if (waliData.length > 0) allClasses = allClasses.concat(waliData.map(item => item.kelas));
+
+                const uniqueKelas = [...new Set(allClasses)].filter(k => k && k.trim() !== '').sort();
+                const prevKelas = activeKelas;
+                kelasList = uniqueKelas;
+                const activeIndex = Math.max(0, uniqueKelas.indexOf(prevKelas));
+                activeKelas = uniqueKelas[activeIndex] || '';
+
+                if (uniqueKelas.length === 0) {
+                    tabsHeader.innerHTML = '<div style="padding:10px; color:var(--muted);">Belum ada data kelas.</div>';
+                    tabsContent.innerHTML = '<div class="empty-note">Silakan tambah data mapping siswa pertama Anda dengan menekan tombol Tambah Mapping di bawah.</div>';
+                    return;
+                }
+
+                uniqueKelas.forEach((kelasName, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = `tab-btn ${index === activeIndex ? 'active' : ''}`;
+                    btn.textContent = kelasName;
+                    btn.onclick = () => switchTab(index);
+                    tabsHeader.appendChild(btn);
+
+                    const pane = document.createElement('div');
+                    pane.className = `tab-pane ${index === activeIndex ? 'active' : ''}`;
+                    pane.id = `pane-${index}`;
+                    
+                    const tableDiv = document.createElement('div');
+                    const tbodyId = `tbody-${kelasName.replace(/\s+/g, '-')}`;
+                    tableDiv.className = 'table-responsive';
+                    tableDiv.innerHTML = `
+                        <table class="custom-table wide">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Kode Mapping</th>
+                                    <th>Kelas</th>
+                                    <th>NISN</th>
+                                    <th>Nama Siswa</th>
+                                    <th>Alamat</th>
+                                    <th>Tempat Lahir</th>
+                                    <th>Tanggal Lahir</th>
+                                    <th>Nama Ayah</th>
+                                    <th>Nama Ibu</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="${tbodyId}"><tr><td colspan="11" style="text-align:center; padding:20px; color:#6b7280;">Memuat data...</td></tr></tbody>
+                        </table>
+                    `;
+                    pane.appendChild(tableDiv);
+
+                    tabsContent.appendChild(pane);
+
+                    loadMappingDataForClass(kelasName);
+                });
+
+            } catch (err) {
+                console.error('Error loading tabs:', err);
+                tabsHeader.innerHTML = `<div style="color:red; padding:10px;">Gagal memuat data: ${err.message}</div>`;
+            }
+        }
+
+        async function loadMappingDataForClass(kelas) {
+            const tbodyId = `tbody-${kelas.replace(/\s+/g, '-')}`;
+            const tbody = document.getElementById(tbodyId);
+            if (!tbody) return;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('mappingsiswa')
+                    .select('*')
+                    .eq('kelas', kelas)
+                    .order('nama_siswa', { ascending: true });
+
+                if (error) throw error;
+
+                tbody.innerHTML = '';
+
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding:20px; color:#6b7280;">Belum ada data mapping untuk kelas ini.</td></tr>';
+                    return;
+                }
+
+                data.forEach((item, index) => {
+                    mappingIndex[item.kode_maping] = item;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.kode_maping}</td>
+                        <td>${item.kelas}</td>
+                        <td>${item.nisn || '-'}</td>
+                        <td>${item.nama_siswa}</td>
+                        <td>${item.alamat || '-'}</td>
+                        <td>${item.tempat_lahir || '-'}</td>
+                        <td>${item.tanggal_lahir || '-'}</td>
+                        <td>${item.nama_ayah || '-'}</td>
+                        <td>${item.nama_ibu || '-'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-action btn-edit" data-kode="${escHtml(item.kode_maping)}" title="Edit Kelas"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteMapping('${item.kode_maping}', '${item.kelas}')" title="Hapus Mapping"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                console.error(`Error loading data for ${kelas}:`, err);
+                tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:red;">Gagal memuat data: ${err.message}</td></tr>`;
+            }
+        }
+
+        function switchTab(index) {
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === index));
+            document.querySelectorAll('.tab-pane').forEach((pane, i) => pane.classList.toggle('active', i === index));
+            activeKelas = kelasList[index] || '';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadKelasTabs);
+
+        // --- Tombol menu di footer (dock) ---
+        document.getElementById('addMappingBtn').addEventListener('click', () => openMappingModal(activeKelas));
+        document.getElementById('exportPdfBtn').addEventListener('click', () => {
+            if (!activeKelas) { alert('Belum ada data kelas untuk diexport.'); return; }
+            exportMappingPdf(activeKelas);
+        });
+
+        const modal = document.getElementById('mappingModal');
+        const closeSpan = document.querySelector('.close-modal');
+        const cancelBtn = document.querySelector('.cancel-btn');
+        const mappingForm = document.getElementById('mappingForm');
+        
+        const namaSiswaSearch = document.getElementById('namaSiswaSearch');
+        const namaSiswaHidden = document.getElementById('namaSiswa');
+        const siswaDropdown = document.getElementById('siswaDropdown');
+        
+        let rombelCache = [];
+        let siswaCache = [];
+
+        window.openMappingModal = async function(kelasName) {
+            mappingForm.reset();
+            clearSelection();
+            const kelasInput = document.getElementById('kelasMapping');
+            
+            // Load Data Rombel untuk Dropdown dari Project SIMPedik
+            if (rombelCache.length === 0) {
+                try {
+                    const { data, error } = await simpedikClient
+                        .from('rombel')
+                        .select('nama_kelas')
+                        .order('nama_kelas');
+                    if (!error) rombelCache = data;
+                } catch (err) {
+                    console.error('Error loading rombel:', err);
+                }
+            }
+
+            // Populate Dropdown
+            kelasInput.innerHTML = '<option value="">Pilih Kelas</option>';
+            if (rombelCache.length > 0) {
+                rombelCache.forEach(r => {
+                    const opt = document.createElement('option');
+                    opt.value = r.nama_kelas;
+                    opt.textContent = r.nama_kelas;
+                    kelasInput.appendChild(opt);
+                });
+            }
+
+            if (kelasName) {
+                kelasInput.value = kelasName;
+            }
+            
+            if (siswaCache.length === 0) {
+                try {
+                    const { data, error } = await simpedikClient
+                        .from('datasiswa')
+                        .select('*')
+                        .order('nama_siswa');
+                    if (!error) siswaCache = dedupeSiswa(data);
+                } catch (err) {
+                    console.error('Error loading siswa:', err);
+                }
+            }
+
+            // Selalu muat ulang daftar siswa yang sudah dimapping (semua kelas)
+            try { await refreshMapped(); } catch (err) { console.error('Error loading mapping:', err); }
+            
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            siswaDropdown.classList.remove('show');
+        }
+
+        closeSpan.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        namaSiswaSearch.addEventListener('input', function() {
+            if (selectedSiswa && this.value !== selectedSiswa.nama_siswa) clearSelection(true);
+            const filter = this.value.toLowerCase();
+            const filtered = siswaCache.filter(s => s.nama_siswa.toLowerCase().includes(filter));
+            renderDropdown(filtered);
+        });
+
+        namaSiswaSearch.addEventListener('focus', function() {
+            const filter = this.value.toLowerCase();
+            const filtered = filter ? siswaCache.filter(s => s.nama_siswa.toLowerCase().includes(filter)) : siswaCache;
+            renderDropdown(filtered);
+        });
+
+        function renderDropdown(data) {
+            siswaDropdown.innerHTML = '';
+            if (data.length === 0) {
+                siswaDropdown.innerHTML = '<div class="no-results">Tidak ditemukan</div>';
+            } else {
+                data.forEach(siswa => {
+                    const div = document.createElement('div');
+                    const used = mappedByKey[siswaKey(siswa.nisn, siswa.nama_siswa)];
+                    div.className = 'dropdown-option' + (used ? ' disabled' : '');
+                    if (used) {
+                        div.textContent = `${siswa.nama_siswa} — sudah dimapping di kelas ${used.kelas}`;
+                        div.title = 'Siswa ini sudah dimapping, tidak bisa ditambahkan lagi';
+                    } else {
+                        div.textContent = siswa.nama_siswa;
+                        div.onclick = () => selectSiswa(siswa);
+                    }
+                    siswaDropdown.appendChild(div);
+                });
+            }
+            siswaDropdown.classList.add('show');
+        }
+
+        function selectSiswa(siswa) {
+            namaSiswaSearch.value = siswa.nama_siswa;
+            namaSiswaHidden.value = siswa.nama_siswa;
+            
+            document.getElementById('nisn').value = siswa.nisn || '';
+            document.getElementById('alamat').value = siswa.alamat || '';
+            document.getElementById('tempatLahir').value = siswa.tempat_lahir || '';
+            document.getElementById('tanggalLahir').value = siswa.tanggal_lahir || '';
+            document.getElementById('namaAyah').value = siswa.nama_ayah || '';
+            document.getElementById('namaIbu').value = siswa.nama_ibu || '';
+            
+            selectedSiswa = siswa;
+            updateKode();
+            
+            siswaDropdown.classList.remove('show');
+        }
+
+        // Kode mapping selalu mengikuti kelas + siswa yang dipilih (tidak bisa diketik manual)
+        document.getElementById('kelasMapping').addEventListener('change', updateKode);
+
+        document.addEventListener('click', function(e) {
+            if (!namaSiswaSearch.contains(e.target) && !siswaDropdown.contains(e.target)) {
+                siswaDropdown.classList.remove('show');
+            }
+        });
+
+        // --- Anti data ganda: satu siswa hanya boleh dimapping SEKALI (di kelas mana pun) ---
+        let selectedSiswa = null;
+        let mappedByKey = {};
+        let mappedByKode = {};
+
+        const normNama = t => String(t == null ? '' : t).trim().replace(/\s+/g, ' ').toLowerCase();
+        // Kunci identitas siswa: NISN; jika NISN kosong pakai nama (tanpa beda huruf besar/spasi)
+        function siswaKey(nisn, nama) {
+            const n = String(nisn == null ? '' : nisn).trim();
+            return n ? 'n:' + n : 'a:' + normNama(nama);
+        }
+
+        function dedupeSiswa(list) {
+            const seen = new Set();
+            return (list || []).filter(s => {
+                const k = siswaKey(s.nisn, s.nama_siswa);
+                if (seen.has(k)) return false;
+                seen.add(k);
+                return true;
+            });
+        }
+
+        async function refreshMapped() {
+            const byKey = {}, byKode = {};
+            const size = 1000;
+            for (let from = 0; ; from += size) {
+                const { data, error } = await supabaseClient
+                    .from('mappingsiswa')
+                    .select('kode_maping, kelas, nama_siswa, nisn')
+                    .order('kode_maping')
+                    .range(from, from + size - 1);
+                if (error) throw error;
+                (data || []).forEach(r => {
+                    const k = siswaKey(r.nisn, r.nama_siswa);
+                    if (!byKey[k]) byKey[k] = r;
+                    byKode[r.kode_maping] = r;
+                });
+                if (!data || data.length < size) break;
+            }
+            mappedByKey = byKey;
+            mappedByKode = byKode;
+        }
+
+        function updateKode() {
+            const kodeEl = document.getElementById('kodeMapping');
+            const kelasVal = document.getElementById('kelasMapping').value;
+            if (!selectedSiswa || !kelasVal) { kodeEl.value = ''; return; }
+            const nisnVal = String(selectedSiswa.nisn || '').trim();
+            const idPart = nisnVal || normNama(selectedSiswa.nama_siswa).replace(/\s+/g, '').toUpperCase();
+            kodeEl.value = `ID.${kelasVal}-${idPart}`;
+        }
+
+        function clearSelection(keepSearchText) {
+            selectedSiswa = null;
+            namaSiswaHidden.value = '';
+            if (!keepSearchText) namaSiswaSearch.value = '';
+            ['nisn', 'alamat', 'tempatLahir', 'tanggalLahir', 'namaAyah', 'namaIbu', 'kodeMapping']
+                .forEach(id => { document.getElementById(id).value = ''; });
+        }
+
+        // --- Notifikasi gaya macOS ---
+        function escHtml(t) {
+            return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+
+        function showMacNotif({ title, message, icon = 'fa-exclamation-triangle', colors = ['#ffc861', '#e08a0c'], duration = 7000 }) {
+            const stack = document.getElementById('notifStack');
+            const el = document.createElement('div');
+            el.className = 'notif';
+            el.setAttribute('role', 'alert');
+            // **teks** -> tebal (setelah di-escape)
+            const msgHtml = escHtml(message).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            el.innerHTML = `
+                <span class="n-x" title="Tutup">&times;</span>
+                <div class="n-ic" style="background:linear-gradient(160deg,${colors[0]},${colors[1]})"><i class="fas ${icon}"></i></div>
+                <div class="n-body">
+                    <div class="n-top"><span class="n-title">${escHtml(title)}</span><span class="n-time">sekarang</span></div>
+                    <div class="n-msg">${msgHtml}</div>
+                </div>`;
+            stack.appendChild(el);
+            requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
+
+            let timer;
+            const close = () => {
+                clearTimeout(timer);
+                el.classList.remove('show');
+                el.classList.add('hide');
+                setTimeout(() => el.remove(), 500);
+            };
+            const arm = () => { timer = setTimeout(close, duration); };
+            el.addEventListener('mouseenter', () => clearTimeout(timer));
+            el.addEventListener('mouseleave', arm);
+            el.addEventListener('click', close);
+            arm();
+        }
+
+        // Cari mapping yang sudah ada untuk siswa yang sama di SEMUA kelas (NISN, atau nama jika NISN kosong)
+        async function findExistingMapping(f) {
+            try {
+                await refreshMapped();
+                return mappedByKey[siswaKey(f.nisn, f.nama_siswa)] || mappedByKode[f.kode_maping] || null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function notifDuplicate(existing, f) {
+            const nama = (existing && existing.nama_siswa) || f.nama_siswa;
+            const kelas = (existing && existing.kelas) || f.kelas;
+            showMacNotif({
+                title: 'Data Siswa Sudah Dimapping',
+                message: `Data siswa **${nama}** yang Anda pilih telah di-mapping di kelas **${kelas}**.`
+            });
+        }
+
+        // --- Edit Kelas (hanya kolom kelas yang bisa diubah) ---
+        const editModal = document.getElementById('editKelasModal');
+        const editForm = document.getElementById('editKelasForm');
+        const editKelasSelect = document.getElementById('editKelasSelect');
+        let editingKode = null;
+
+        function closeEditModal() {
+            editModal.classList.remove('active');
+            editingKode = null;
+        }
+
+        async function openEditKelas(kode) {
+            const item = mappingIndex[kode];
+            if (!item) return;
+            editingKode = kode;
+
+            document.getElementById('editKode').value = item.kode_maping || '';
+            document.getElementById('editNamaSiswa').value = item.nama_siswa || '';
+            document.getElementById('editNisnField').value = item.nisn || '';
+
+            if (rombelCache.length === 0) {
+                try {
+                    const { data, error } = await simpedikClient
+                        .from('rombel')
+                        .select('nama_kelas')
+                        .order('nama_kelas');
+                    if (!error && data) rombelCache = data;
+                } catch (err) {
+                    console.error('Error loading rombel:', err);
+                }
+            }
+
+            const names = [...new Set([item.kelas, ...rombelCache.map(r => r.nama_kelas)])].filter(Boolean);
+            editKelasSelect.innerHTML = '';
+            names.forEach(n => {
+                const opt = document.createElement('option');
+                opt.value = n;
+                opt.textContent = n;
+                editKelasSelect.appendChild(opt);
+            });
+            editKelasSelect.value = item.kelas;
+
+            editModal.classList.add('active');
+        }
+
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('.btn-edit');
+            if (btn && btn.dataset.kode) openEditKelas(btn.dataset.kode);
+        });
+        document.getElementById('closeEditKelas').addEventListener('click', closeEditModal);
+        document.getElementById('cancelEditKelas').addEventListener('click', closeEditModal);
+        window.addEventListener('click', (e) => { if (e.target === editModal) closeEditModal(); });
+
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const item = mappingIndex[editingKode];
+            if (!item) { closeEditModal(); return; }
+
+            const kelasBaru = editKelasSelect.value;
+            if (!kelasBaru || kelasBaru === item.kelas) {
+                closeEditModal();
+                showMacNotif({
+                    title: 'Tidak Ada Perubahan',
+                    message: `Kelas siswa **${item.nama_siswa}** tidak diubah.`,
+                    icon: 'fa-info', colors: ['#6cb8ff', '#2a74d6'], duration: 4000
+                });
+                return;
+            }
+
+            const submitBtn = editForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Menyimpan...';
+            submitBtn.disabled = true;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('mappingsiswa')
+                    .update({ kelas: kelasBaru })
+                    .eq('kode_maping', item.kode_maping)
+                    .select('kode_maping');
+
+                if (error) throw error;
+                if (!data || data.length === 0) {
+                    throw new Error('Tidak ada data yang berubah. Periksa izin UPDATE (policy RLS) tabel mappingsiswa.');
+                }
+
+                const nama = item.nama_siswa;
+                closeEditModal();
+                activeKelas = kelasBaru;      // tampilkan tab kelas tujuan
+                await loadKelasTabs();
+                showMacNotif({
+                    title: 'Kelas Berhasil Diubah',
+                    message: `Siswa **${nama}** dipindahkan ke kelas **${kelasBaru}**.`,
+                    icon: 'fa-check', colors: ['#59d6a0', '#1b8a5c'], duration: 5000
+                });
+            } catch (err) {
+                console.error('Error updating kelas:', err);
+                showMacNotif({
+                    title: 'Gagal Mengubah Kelas',
+                    message: err.message || 'Terjadi kesalahan saat menyimpan.',
+                    icon: 'fa-times', colors: ['#f2706b', '#c92f2c']
+                });
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        mappingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = mappingForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Menyimpan...';
+            submitBtn.disabled = true;
+
+            const formData = {
+                kode_maping: document.getElementById('kodeMapping').value,
+                kelas: document.getElementById('kelasMapping').value,
+                nama_siswa: namaSiswaHidden.value,
+                nisn: document.getElementById('nisn').value,
+                alamat: document.getElementById('alamat').value,
+                tempat_lahir: document.getElementById('tempatLahir').value,
+                tanggal_lahir: document.getElementById('tanggalLahir').value || null,
+                nama_ayah: document.getElementById('namaAyah').value,
+                nama_ibu: document.getElementById('namaIbu').value
+            };
+
+            try {
+                if (!selectedSiswa || !formData.nama_siswa || !formData.kode_maping) {
+                    showMacNotif({
+                        title: 'Siswa Belum Dipilih',
+                        message: 'Pilih **kelas** lalu **siswa** dari daftar terlebih dahulu.',
+                        icon: 'fa-info', colors: ['#6cb8ff', '#2a74d6'], duration: 4000
+                    });
+                    return;
+                }
+
+                // Cek data ganda (semua kelas) sebelum menyimpan
+                const existing = await findExistingMapping(formData);
+                if (existing) {
+                    notifDuplicate(existing, formData);
+                    return;
+                }
+
+                const { error } = await supabaseClient
+                    .from('mappingsiswa')
+                    .insert([formData]);
+
+                if (error) throw error;
+
+                alert('Data Mapping Berhasil Disimpan!');
+                closeModal();
+                loadKelasTabs();
+
+            } catch (err) {
+                console.error('Error saving mapping:', err);
+                if (err && (err.code === '23505' || /duplicate key/i.test(err.message || ''))) {
+                    notifDuplicate(await findExistingMapping(formData), formData);
+                } else {
+                    alert('Gagal menyimpan data: ' + err.message);
+                }
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        window.deleteMapping = async function(kode, kelas) {
+            if(confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                const { error } = await supabaseClient.from('mappingsiswa').delete().eq('kode_maping', kode);
+                if(error) {
+                    alert('Gagal menghapus: ' + error.message);
+                } else {
+                    loadMappingDataForClass(kelas);
+                }
+            }
+        }
+
+        window.exportMappingPdf = async function(kelasName) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('l', 'mm', 'a4');
+            const pageWidth = doc.internal.pageSize.getWidth();
+            let yPos = 20;
+
+            if (schoolData.kop_sekolah) {
+                try {
+                    const response = await fetch(schoolData.kop_sekolah);
+                    const blob = await response.blob();
+                    const base64data = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.readAsDataURL(blob);
+                    });
+
+                    const imgProps = doc.getImageProperties(base64data);
+                    const pdfWidth = pageWidth - 20;
+                    const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                    
+                    doc.addImage(base64data, 'PNG', 10, 10, pdfWidth, imgHeight);
+                    yPos = 10 + imgHeight + 10;
+                } catch (err) {
+                    console.error("Gagal memuat KOP Sekolah:", err);
+                }
+            }
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('mappingsiswa')
+                    .select('*')
+                    .eq('kelas', kelasName)
+                    .order('nama_siswa', { ascending: true });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    alert('Tidak ada data untuk diexport.');
+                    return;
+                }
+
+                doc.setFontSize(18);
+                doc.text(`Data Mapping Siswa - Kelas ${kelasName}`, pageWidth / 2, yPos, { align: 'center' });
+                yPos += 8;
+                
+                const schoolName = schoolData.nama_sekolah || document.querySelector('.navbar-brand span')?.textContent || 'SMK Negeri 1 Mentok';
+                doc.setFontSize(12);
+                doc.setTextColor(100);
+                doc.text(schoolName, pageWidth / 2, yPos, { align: 'center' });
+                yPos += 10;
+
+                const tableData = data.map((item, index) => [
+                    index + 1,
+                    item.kode_maping,
+                    item.nisn || '-',
+                    item.nama_siswa,
+                    item.alamat || '-',
+                    item.tempat_lahir || '-',
+                    item.tanggal_lahir || '-',
+                    item.nama_ayah || '-',
+                    item.nama_ibu || '-'
+                ]);
+
+                doc.autoTable({
+                    head: [['No', 'Kode', 'NISN', 'Nama Siswa', 'Alamat', 'Tempat Lahir', 'Tgl Lahir', 'Ayah', 'Ibu']],
+                    body: tableData,
+                    startY: yPos,
+                    theme: 'grid',
+                    styles: { fontSize: 9 },
+                    headStyles: { fillColor: [102, 126, 234] }
+                });
+
+                doc.save(`Mapping_Siswa_${kelasName}.pdf`);
+
+            } catch (err) {
+                console.error('Export error:', err);
+                alert('Gagal export PDF: ' + err.message);
+            }
+        }
+    </script>
+</body>
+</html>

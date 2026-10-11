@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Data Siswa - SIMPEDIK</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;--ink:#1d1b33;--muted:#66627f;--primary:#667eea;--deep:#1c1740;--line:rgba(0,0,0,.08);--track:rgba(120,120,128,.16);--text-muted:#66627f;--border-color:rgba(0,0,0,.15)}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
+body{color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(28,23,64,.5),rgba(28,23,64,.5)),url('bg2.jpg') center/cover no-repeat,url('bg1.png') center/cover no-repeat,linear-gradient(135deg,#3b2a8a,#764ba2 55%,#c2569b)}
+:focus-visible{outline:3px solid rgba(245,165,36,.85);outline-offset:2px;border-radius:10px}
+.navbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:7px 14px;padding-top:calc(7px + env(safe-area-inset-top));color:#fff;background:rgba(20,15,50,.55);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border-bottom:.5px solid rgba(255,255,255,.12)}
+.navbar-brand{display:flex;align-items:center;gap:10px;min-width:0;color:#fff;text-decoration:none}
+.navbar-brand img{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.2)}
+.navbar-brand span{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.container{width:100%;max-width:1080px;margin:0 auto;padding:22px 12px}
+.container>header{margin-bottom:18px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.container>header h1{font-size:clamp(26px,4.5vw,36px);letter-spacing:-.02em;line-height:1.1}
+.container>header h1 i{margin-right:8px;font-size:.8em}
+.container>header p{opacity:.88;font-size:14px;margin-top:4px}
+.content{background:rgba(250,248,255,.93);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:14px;overflow:hidden;box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 22px 60px rgba(0,0,0,.32)}
+.tb{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;padding:0 70px;background:linear-gradient(#f5f2fb,#e6e2f1);border-bottom:1px solid var(--line)}
+.dots{position:absolute;left:13px;display:flex;gap:8px}.dots i{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.2)}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.tb h2{font-size:13px;font-weight:600;color:#4a4663}
+.hint{font-size:12px;color:var(--muted);margin:3px 0 0 2px}
+/* Dock */
+.button-group{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin:auto auto calc(12px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 16px);z-index:30;display:flex;gap:4px;padding:8px 10px;border-radius:24px;background:rgba(255,255,255,.62);backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);border:.5px solid rgba(255,255,255,.75);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.button-group button,.button-group a{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:70px;padding:6px 6px;border-radius:16px;border:0;background:none;font-size:11.5px;font-weight:600;color:var(--ink);text-decoration:none;cursor:pointer;transition:transform .2s;white-space:nowrap}
+.button-group button:hover:not(:disabled),.button-group a:hover{transform:translateY(-6px) scale(1.08)}.button-group button:active,.button-group a:active{transform:scale(.95)}
+.button-group button:disabled{opacity:.5;cursor:not-allowed}
+.button-group button>i,.button-group a>i{position:relative;overflow:hidden;width:48px;height:48px;border-radius:13px;display:grid;place-items:center;font-size:21px;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25),inset 0 1.5px 0 rgba(255,255,255,.45)}
+.button-group button>i::after,.button-group a>i::after{content:"";position:absolute;left:0;right:0;top:0;height:50%;background:linear-gradient(rgba(255,255,255,.4),rgba(255,255,255,0))}
+@media (max-width:640px){.button-group{gap:0;padding:6px;overflow-x:auto}.button-group button,.button-group a{min-width:54px;font-size:10px;padding:4px}.button-group button>i,.button-group a>i{width:42px;height:42px;font-size:18px}.navbar-brand span{max-width:60vw}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+#dashboardBtn>i{background:linear-gradient(160deg,#8fa4ff,#4c5fd5)}#refreshBtn>i{background:linear-gradient(160deg,#6cb8ff,#2a74d6)}
+#addSiswaBtn>i{background:linear-gradient(160deg,#59d6a0,#1b8a5c)}#importBtn>i{background:linear-gradient(160deg,#b58cf5,#7a45d0)}
+#templateBtn>i{background:linear-gradient(160deg,#ffc15a,#e08a10)}#exportPdfBtn>i{background:linear-gradient(160deg,#f2706b,#c92f2c)}
+.message{display:none;margin:14px 16px 0;padding:10px 14px;border-radius:10px;font-size:14px;font-weight:600;white-space:pre-line}
+.message.success{background:#e7f7ee;color:#1b6b46}.message.error{background:#fdeaea;color:#a12622}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:16px 16px 0}
+.stat{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:30px;line-height:1.1;color:var(--deep)}
+.stat small{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-top:2px}
+.stat i{flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font-size:18px;box-shadow:0 3px 8px rgba(0,0,0,.2),inset 0 1.5px 0 rgba(255,255,255,.4)}
+.sec{padding:16px}
+.sec>h2{font-size:13px;font-weight:600;color:var(--muted);margin:0 0 7px 6px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.search{position:relative;flex:1;min-width:190px}
+.search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px}
+.search input,.toolbar select{width:100%;height:36px;padding:0 11px 0 33px;border-radius:10px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none}
+.toolbar select{width:auto;min-width:150px;padding-left:11px}
+.search input:focus,.toolbar select:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.tablebox{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:980px}
+th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:11px 14px;background:#f7f5fc;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.05);vertical-align:middle}
+tr:last-child td{border:0}
+tbody tr:hover{background:rgba(102,126,234,.06)}
+td.n{width:48px;color:var(--muted)}
+td.act{text-align:right;white-space:nowrap;width:120px}
+td.nisn{white-space:nowrap;font-variant-numeric:tabular-nums}
+td.nowrap{white-space:nowrap}
+.who{display:flex;align-items:center;gap:10px;font-weight:600;min-width:170px}
+.av{flex:none;width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid var(--line);display:grid;place-items:center;background:#f1f0f7;color:#9a96b3;font-size:14px}
+.kls{display:inline-block;font-weight:600;font-size:12.5px;padding:2px 10px;border-radius:99px;background:#e9edff;color:#3a46a8;white-space:nowrap}
+.ib{width:32px;height:32px;border-radius:9px;border:0;background:rgba(0,0,0,.06);color:#4c5fd5;cursor:pointer;font-size:14px}
+.ib.del{color:#c92f2c}.ib:hover{background:rgba(102,126,234,.2)}.ib.del:hover{background:rgba(229,72,77,.18)}
+.empty{padding:26px 14px;text-align:center;color:var(--muted);font-size:14px}
+.empty.err{color:#a12622}
+.pager{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.pager div{display:flex;gap:6px;align-items:center}
+.pager button{height:30px;min-width:30px;padding:0 10px;border:0;border-radius:8px;background:rgba(0,0,0,.07);color:var(--ink);font-weight:600;cursor:pointer}
+.pager button:hover:not(:disabled){background:rgba(102,126,234,.2)}.pager button:disabled{opacity:.4;cursor:not-allowed}
+.foot{text-align:center;color:rgba(255,255,255,.75);font-size:12px;margin-top:16px;text-shadow:0 1px 6px rgba(0,0,0,.4)}
+/* Modal */
+.overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:12px;background:rgba(20,15,50,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:60}
+.overlay.on{display:flex}
+.modal{width:100%;max-width:440px;max-height:calc(100vh - 24px);display:flex;flex-direction:column;border-radius:14px;overflow:hidden;background:rgba(250,248,255,.97);box-shadow:0 0 0 .5px rgba(0,0,0,.28),0 30px 80px rgba(0,0,0,.45);animation:pop .2s cubic-bezier(.2,.9,.3,1.2)}
+.modal.wide{max-width:660px}
+@keyframes pop{from{opacity:0;transform:scale(.95) translateY(8px)}}
+.tb .x{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.08);font-size:17px;line-height:1;color:#4a4663;cursor:pointer}
+.tb .x:hover{background:rgba(0,0,0,.16)}
+.modal form,.mbody{padding:16px;overflow-y:auto}
+.tabs{display:flex;gap:6px;padding:10px 16px 0}
+.tabs button{flex:1;height:32px;border:0;border-radius:9px;background:rgba(0,0,0,.06);font-weight:600;font-size:13px;color:var(--muted);cursor:pointer}
+.tabs button.on{background:#fff;color:var(--deep);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.pane{display:none}.pane.on{display:block}
+.sub{font-size:12px;font-weight:700;color:var(--deep);margin:16px 0 6px 4px}
+.pane>.sub:first-child{margin-top:0}
+.fg{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:12px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g2 .full{grid-column:1/-1}
+.fg label{display:block;font-size:12px;font-weight:600;line-height:16px;color:var(--muted);margin:0 0 4px 2px}
+.fg label.req::after{content:" *";color:#e5484d}
+.fg input,.fg select{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(0,0,0,.15);background:#fff;font-size:14px;color:var(--ink);outline:none}
+.fg input[readonly]{background:#f3f2f8;color:var(--muted)}
+.fg input:focus,.fg select:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(102,126,234,.25)}
+.up{display:flex;align-items:center;gap:12px}
+.up .pv{flex:none;width:72px;height:72px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:#f1f0f7;color:#9a96b3;font-size:24px;border:1px solid var(--line)}
+.up .pv img{width:100%;height:100%;object-fit:cover;display:none}
+.up .pv.has img{display:block}.up .pv.has i{display:none}
+.up .row{display:flex;gap:8px;flex-wrap:wrap}
+.up .pick,.up .rm{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:9px;background:rgba(0,0,0,.08);font-size:13px;font-weight:600;cursor:pointer;color:var(--ink);margin:0;border:0}
+.up .pick:hover{background:rgba(102,126,234,.2)}
+.up .rm{background:#fdeaea;color:#a12622;display:none}.up .rm.on{display:inline-flex}
+.up input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.up input[type=file]:focus-visible+.pick{outline:3px solid rgba(245,165,36,.85);outline-offset:2px}
+.merr{display:none;margin-top:12px;padding:9px 12px;border-radius:10px;font-size:13px;font-weight:600;background:#fdeaea;color:#a12622;white-space:pre-line}
+.acts{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+.btn{height:38px;padding:0 18px;border:0;border-radius:10px;font-size:14px;font-weight:600;color:#fff;cursor:pointer;background:linear-gradient(#7b8ff0,#4c5fd5);box-shadow:0 1px 2px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn:hover{filter:brightness(1.06)}.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn.alt{background:rgba(0,0,0,.08);color:var(--ink);box-shadow:none}
+.btn.danger{background:#fdeaea;color:#a12622;box-shadow:none}
+/* Detail */
+.dhead{display:flex;gap:14px;align-items:center;margin-bottom:4px}
+.dhead .av{width:64px;height:64px;font-size:24px}
+.dhead b{display:block;font-size:17px;line-height:1.2}.dhead small{color:var(--muted);font-size:12.5px}
+.dg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px}
+.di.full{grid-column:1/-1}
+.di label{display:block;font-size:11.5px;font-weight:600;color:var(--muted)}
+.di span{font-size:14px;word-break:break-word}
+/* Import preview */
+.pv-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pv-stats div{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.pv-stats b{display:block;font-size:22px;color:var(--deep);line-height:1.1}.pv-stats small{font-size:11.5px;font-weight:600;color:var(--muted)}
+.note{font-size:13px;color:var(--muted);margin-top:12px}
+.note.warn{color:#8a5a00;background:#fff4dc;padding:8px 12px;border-radius:10px}
+.mini{width:100%;min-width:0;font-size:13px;margin-top:12px;border:1px solid var(--line);border-radius:10px;overflow:hidden;display:table}
+.mini td,.mini th{padding:6px 10px}
+@media (max-width:640px){.stats{grid-template-columns:minmax(0,1fr)}.sec,.modal form,.mbody{padding:12px}.stats{padding:12px 12px 0}.g2,.dg{grid-template-columns:minmax(0,1fr)}.pv-stats{grid-template-columns:minmax(0,1fr)}}
+</style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="dasboradmin.html" class="navbar-brand">
+            <img src="" alt="Logo Sekolah" style="display: none;">
+            <span></span>
+        </a>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <header>
+                <h1><i class="fas fa-user-graduate"></i> Data Siswa</h1>
+                <p>Kelola data peserta didik, bisa import langsung dari file Excel Dapodik, tersimpan di database Supabase</p>
+            </header>
+
+            <div class="content">
+                <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2>Data Siswa</h2></div>
+                <div id="message" class="message" role="status"></div>
+
+                <section class="stats" aria-label="Ringkasan">
+                    <div class="stat"><div><b id="totalSiswa">0</b><small>Jumlah Siswa</small></div><i class="fas fa-user-graduate" style="background:linear-gradient(160deg,#8fa4ff,#4c5fd5)"></i></div>
+                    <div class="stat"><div><b id="totalL">0</b><small>Laki-laki</small></div><i class="fas fa-mars" style="background:linear-gradient(160deg,#6cb8ff,#2a74d6)"></i></div>
+                    <div class="stat"><div><b id="totalP">0</b><small>Perempuan</small></div><i class="fas fa-venus" style="background:linear-gradient(160deg,#f58ab8,#c9407f)"></i></div>
+                </section>
+
+                <section class="sec">
+                    <h2>Daftar Siswa</h2>
+                    <div class="toolbar">
+                        <div class="search"><i class="fas fa-search"></i><input type="search" id="searchInput" placeholder="Cari NISN, NIPD, atau nama..." autocomplete="off" aria-label="Cari siswa"></div>
+                        <select id="kelasFilter" aria-label="Filter kelas"><option value="">Semua kelas</option></select>
+                    </div>
+                    <div class="tablebox">
+                        <div class="tw">
+                            <table id="siswaTable">
+                                <thead><tr><th>No</th><th>NISN</th><th>Nama Siswa</th><th>Kelas</th><th>Tempat Lahir</th><th>Tanggal Lahir</th><th>Nama Ayah</th><th>Nama Ibu</th><th>Alamat</th><th style="text-align:right">Aksi</th></tr></thead>
+                                <tbody id="siswaBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="pager"><span id="pagerInfo"></span><div><button type="button" id="prevBtn" aria-label="Halaman sebelumnya"><i class="fas fa-chevron-left"></i></button><span id="pagerNo"></span><button type="button" id="nextBtn" aria-label="Halaman berikutnya"><i class="fas fa-chevron-right"></i></button></div></div>
+                    </div>
+                </section>
+            </div>
+
+            <p class="foot">&copy; SIMPPEDIK (Sistem Informasi Manajemen Perkembangan Pembelajaran Peserta Didik) 2026<br>CopyRight Kenji Studio Developer.</p>
+        </div>
+    </main>
+
+    <div class="button-group">
+        <a href="dasboradmin.html" id="dashboardBtn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+        <button type="button" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh Data</button>
+        <button type="button" id="addSiswaBtn"><i class="fas fa-plus"></i> Tambah Siswa</button>
+        <button type="button" id="importBtn"><i class="fas fa-file-import"></i> Import Excel</button>
+        <button type="button" id="templateBtn"><i class="fas fa-file-excel"></i> Export Excel</button>
+        <button type="button" id="exportPdfBtn"><i class="fas fa-file-pdf"></i> Export PDF</button>
+    </div>
+    <input type="file" id="importFile" accept=".xlsx,.xls,.csv" hidden>
+    <div id="datalists" hidden></div>
+
+    <!-- Modal tambah / edit -->
+    <div class="overlay" id="siswaModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal wide">
+            <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2 id="modalTitle">Tambah Siswa Baru</h2><button type="button" class="x" id="closeModalBtn" aria-label="Tutup">&times;</button></div>
+            <div class="tabs" role="tablist">
+                <button type="button" class="on" data-tab="0" role="tab">Data Pribadi</button>
+                <button type="button" data-tab="1" role="tab">Data Keluarga</button>
+            </div>
+            <form id="siswaForm" novalidate>
+                <input type="hidden" id="isEditMode" value="false">
+                <div class="pane on" id="pane0">
+                    <div class="fg" style="margin-bottom:12px">
+                        <div class="up">
+                            <div class="pv" id="photoPv"><i class="fas fa-user"></i><img id="imagePreview" alt="Pratinjau foto"></div>
+                            <div>
+                                <input type="file" id="fotoInput" accept="image/*">
+                                <div class="row">
+                                    <label for="fotoInput" class="pick"><i class="fas fa-camera"></i> Pilih Foto</label>
+                                    <button type="button" class="rm" id="removeFotoBtn"><i class="fas fa-times"></i> Hapus</button>
+                                </div>
+                                <div class="hint" id="fotoHint">JPG atau PNG, maksimal 2MB</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="pane0Fields"></div>
+                </div>
+                <div class="pane" id="pane1"><div id="pane1Fields"></div></div>
+                <div class="merr" id="modalErr" role="alert"></div>
+                <div class="acts">
+                    <button type="button" class="btn alt" id="cancelBtn">Batal</button>
+                    <button type="submit" class="btn" id="saveSiswaBtn">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal detail -->
+    <div class="overlay" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+        <div class="modal wide">
+            <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2 id="detailTitle">Detail Data Siswa</h2><button type="button" class="x" id="closeDetailBtn" aria-label="Tutup">&times;</button></div>
+            <div class="mbody" id="detailBody"></div>
+            <div class="acts" style="padding:0 16px 16px;margin-top:0">
+                <button type="button" class="btn alt" id="detailCloseBtn">Tutup</button>
+                <button type="button" class="btn danger" id="detailDeleteBtn"><i class="fas fa-trash"></i> Hapus</button>
+                <button type="button" class="btn" id="detailEditBtn"><i class="fas fa-edit"></i> Edit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pratinjau import -->
+    <div class="overlay" id="importModal" role="dialog" aria-modal="true" aria-labelledby="importTitle">
+        <div class="modal">
+            <div class="tb"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><h2 id="importTitle">Import Data Siswa</h2><button type="button" class="x" id="closeImportBtn" aria-label="Tutup">&times;</button></div>
+            <div class="mbody" id="importBody"></div>
+            <div class="acts" style="padding:0 16px 16px;margin-top:0">
+                <button type="button" class="btn alt" id="importCancelBtn">Batal</button>
+                <button type="button" class="btn" id="importRunBtn">Import</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* URL dan anon key sama dengan rombel.html */
+        const supabaseUrl = 'https://ovaekdszrtrqyfxubjzw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YWVrZHN6cnRycXlmeHVianp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNDk1MjAsImV4cCI6MjA5OTcyNTUyMH0.UBbE3tgpaVLHWoZX7h30KlrLSOVHTheZw7xvMLOrD_E';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        const TABLE = 'datasiswa';
+        const BUCKET = 'aset';
+        const PAGE_SIZE = 25;
+        const SETUP_HINT = '\nJalankan datasiswa_setup.sql di Supabase > SQL Editor agar kolom tabel lengkap.';
+
+        let schoolData = {};
+        let ROWS = [];      /* semua data */
+        let VIEW = [];      /* hasil filter */
+        let page = 1;
+        let currentPhoto = null;   /* URL foto tersimpan (mode edit) */
+        let removePhoto = false;
+        let detailNisn = null;
+        let pending = null;        /* data import menunggu konfirmasi */
+
+        const $ = (id) => document.getElementById(id);
+        const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+        /* =====================================================================
+           SPESIFIKASI KOLOM  (satu sumber untuk form, detail, import, export)
+           idx = nomor kolom (mulai 0) pada Excel Dapodik "Daftar Peserta Didik"
+           t   = tipe: s teks, n angka, d tanggal
+           ===================================================================== */
+        const f = (db, label, idx, t = 's', o = {}) => ({ db, label, idx, t, ...o });
+        const YN = [['Ya', 'Ya'], ['Tidak', 'Tidak']];
+        const AGAMA = ['Islam', 'Kristen', 'Katholik', 'Hindu', 'Budha', 'Khong Hu Cu', 'Kepercayaan kpd Tuhan YME', 'Lainnya'].map((a) => [a, a]);
+        const fam = (w, nama, thn, jen, pek, peng, nik) => [
+            f(nama[0], 'Nama ' + w, nama[1], 's', { full: true, ph: 'Nama ' + w }),
+            f(thn[0], 'Tahun Lahir', thn[1], 'n', { ui: 'num', ph: '1985', max: 4 }),
+            f(jen[0], 'Jenjang Pendidikan', jen[1], 's', { list: 'pendidikan' }),
+            f(pek[0], 'Pekerjaan', pek[1], 's', { list: 'pekerjaan' }),
+            f(peng[0], 'Penghasilan', peng[1], 's', { list: 'penghasilan' }),
+            f(nik[0], 'NIK', nik[1], 's', { digits: true, max: 16 })
+        ];
+        const SECTIONS = [
+            { tab: 0, title: '', fields: [
+                f('nisn', 'NISN', 4, 's', { req: true, digits: true, max: 10, ph: '10 digit' }),
+                f('nama_siswa', 'Nama Siswa', 1, 's', { req: true }),
+                f('nipd', 'NIPD', 2),
+                f('jk', 'Jenis Kelamin', 3, 's', { sel: [['L', 'Laki-laki'], ['P', 'Perempuan']] }),
+                f('tempat_lahir', 'Tempat Lahir', 5),
+                f('tanggal_lahir', 'Tanggal Lahir', 6, 'd', { ui: 'date' }),
+                f('nik', 'NIK', 7, 's', { digits: true, max: 16 }),
+                f('agama', 'Agama', 8, 's', { sel: AGAMA }),
+                f('nomor_akta', 'No. Registrasi Akta Lahir', 49),
+                f('kebutuhan_khusus', 'Kebutuhan Khusus', 55, 's', { list: 'kebutuhan' }),
+                f('sekolah_asal', 'Sekolah Asal', 56),
+                f('skhun', 'SKHUN', 21),
+                f('rombel_saat_ini', 'Rombel Saat Ini', 42, 's', { list: 'rombel', ph: 'Contoh: KELAS 1' }),
+                f('jenis_tinggal', 'Jenis Tinggal', 16, 's', { list: 'tinggal' }),
+                f('nomor_peserta_ujian', 'No. Peserta Ujian Nasional', 43),
+                f('nomor_seri_ijazah', 'No. Seri Ijazah', 44),
+                f('jumlah_saudara', 'Jumlah Saudara Kandung', 64, 'n', { ui: 'num' }),
+                f('anak_ke', 'Anak Ke-', 57, 'n', { ui: 'num' }),
+                f('nomor_kk', 'No. KK', 60, 's', { digits: true, max: 16 }),
+                f('alat_transportasi', 'Alat Transportasi', 17, 's', { list: 'transport' }),
+                f('berat_badan', 'Berat Badan (kg)', 61, 'n', { ui: 'num', unit: 'kg' }),
+                f('tinggi_badan', 'Tinggi Badan (cm)', 62, 'n', { ui: 'num', unit: 'cm' }),
+                f('lingkar_kepala', 'Lingkar Kepala (cm)', 63, 'n', { ui: 'num', unit: 'cm' }),
+                f('jarak_kesekolah', 'Jarak Rumah ke Sekolah (km)', 65, 'n', { ui: 'num', unit: 'km' })
+            ]},
+            { tab: 0, title: 'Bantuan / Kesejahteraan Sosial', fields: [
+                f('penerima_kps', 'Penerima KPS', 22, 's', { sel: YN }),
+                f('nomor_kps', 'No. KPS', 23),
+                f('penerima_kip', 'Penerima KIP', 45, 's', { sel: YN }),
+                f('nomor_kip', 'Nomor KIP', 46),
+                f('nama_dikip', 'Nama di KIP', 47),
+                f('nomor_kks', 'Nomor KKS', 48),
+                f('layak_pip', 'Layak PIP (usulan sekolah)', 53, 's', { sel: YN }),
+                f('alasan_layah', 'Alasan Layak PIP', 54, 's', { list: 'alasanpip' })
+            ]},
+            { tab: 0, title: 'Rekening Bank', fields: [
+                f('bank', 'Bank', 50),
+                f('nomor_rekening', 'Nomor Rekening Bank', 51, 's', { digits: true }),
+                f('rekening_atasnama', 'Rekening Atas Nama', 52, 's', { full: true })
+            ]},
+            { tab: 0, title: 'Kontak', fields: [
+                f('tlp', 'Telepon', 18, 's', { digits: true }),
+                f('hp', 'HP', 19, 's', { digits: true }),
+                f('email', 'E-Mail', 20, 's', { ui: 'email', full: true })
+            ]},
+            { tab: 0, title: 'Alamat Tempat Tinggal', fields: [
+                f('alamat', 'Alamat (Jalan/Komplek/Gang)', 9, 's', { full: true }),
+                f('rt', 'RT', 10, 's', { digits: true }),
+                f('rw', 'RW', 11, 's', { digits: true }),
+                f('dusun', 'Dusun', 12),
+                f('kelurahan', 'Kelurahan', 13),
+                f('kecamatan', 'Kecamatan', 14),
+                f('kode_pos', 'Kode Pos', 15, 's', { digits: true, max: 5 }),
+                f('lintang', 'Lintang', 58, 'n', { ui: 'num', neg: true, ph: '-1.894796' }),
+                f('bujur', 'Bujur', 59, 'n', { ui: 'num', neg: true, ph: '105.402488' })
+            ]},
+            { tab: 1, title: 'Data Ayah', fields: fam('Ayah', ['nama_ayah', 24], ['tahun_lahir_ayah', 25], ['jenjang_pendidikan_ayah', 26], ['pekerjaan_ayah', 27], ['penghasilan_ayah', 28], ['nik_ayah', 29]) },
+            { tab: 1, title: 'Data Ibu', fields: fam('Ibu', ['nama_ibu', 30], ['tahun_lahir_ibu', 31], ['jenjang_pendidikan_ibu', 32], ['pekerjaan_ibu', 33], ['penghasil_ibu', 34], ['nik_ibu', 35]) },
+            { tab: 1, title: 'Data Wali', fields: fam('Wali', ['nama_wali', 36], ['tahun_lahir_wali', 37], ['jenjang_pendidikan_wali', 38], ['pekerjaan_wali', 39], ['penghasilan_wali', 40], ['nik_wali', 41]) }
+        ];
+        const FIELDS = SECTIONS.flatMap((s) => s.fields);
+        const FBY = Object.fromEntries(FIELDS.map((x) => [x.db, x]));
+
+        /* Judul kolom persis seperti file Dapodik (baris 5 dan baris 6) */
+        const DAP_TOP = ['No', 'Nama', 'NIPD', 'JK', 'NISN', 'Tempat Lahir', 'Tanggal Lahir', 'NIK', 'Agama', 'Alamat', 'RT', 'RW', 'Dusun', 'Kelurahan', 'Kecamatan', 'Kode Pos', 'Jenis Tinggal', 'Alat Transportasi', 'Telepon', 'HP', 'E-Mail', 'SKHUN', 'Penerima KPS', 'No. KPS',
+            'Data Ayah', null, null, null, null, null, 'Data Ibu', null, null, null, null, null, 'Data Wali', null, null, null, null, null,
+            'Rombel Saat Ini', 'No Peserta Ujian Nasional', 'No Seri Ijazah', 'Penerima KIP', 'Nomor KIP', 'Nama di KIP', 'Nomor KKS', 'No Registrasi Akta Lahir', 'Bank', 'Nomor Rekening Bank', 'Rekening Atas Nama', 'Layak PIP (usulan dari sekolah)', 'Alasan Layak PIP', 'Kebutuhan Khusus', 'Sekolah Asal', 'Anak ke-berapa', 'Lintang', 'Bujur', 'No KK', 'Berat Badan', 'Tinggi Badan', 'Lingkar Kepala', 'Jml. Saudara\nKandung', 'Jarak Rumah\nke Sekolah (KM)'];
+        const DAP_SUB = ['Nama', 'Tahun Lahir', 'Jenjang Pendidikan', 'Pekerjaan', 'Penghasilan', 'NIK'];
+        const DAP_NCOL = 66;
+
+        /* Saran isian (datalist), ditambah otomatis dari data yang ada */
+        const LISTS = {
+            pendidikan: ['Tidak sekolah', 'Putus SD', 'SD / sederajat', 'SMP / sederajat', 'SMA / sederajat', 'D1', 'D2', 'D3', 'D4', 'S1', 'S2', 'S3', 'Informal', 'Non formal'],
+            pekerjaan: ['Tidak bekerja', 'Nelayan', 'Petani', 'Peternak', 'PNS/TNI/Polri', 'Karyawan Swasta', 'Pedagang Kecil', 'Pedagang Besar', 'Wiraswasta', 'Wirausaha', 'Buruh', 'Pensiunan', 'Lainnya'],
+            penghasilan: ['Tidak Berpenghasilan', '< Rp1.000.000', 'Rp. 500,000 - Rp. 999,999', 'Rp. 1,000,000 - Rp. 1,999,999', 'Rp. 2,000,000 - Rp. 4,999,999', 'Rp. 5,000,000 - Rp. 20,000,000', 'Lebih dari Rp. 20,000,000'],
+            kebutuhan: ['Tidak ada', 'A - Tuna netra', 'B - Tuna rungu', 'C - Tuna grahita ringan', 'C1 - Tuna grahita sedang', 'D - Tuna daksa ringan', 'D1 - Tuna daksa sedang', 'E - Tuna laras', 'F - Tuna wicara', 'H - Hiperaktif', 'I - Cerdas Istimewa', 'J - Bakat Istimewa', 'K - Kesulitan Belajar', 'P - Down Syndrome', 'Q - Autis'],
+            tinggal: ['Bersama orang tua', 'Wali', 'Kost', 'Asrama', 'Panti asuhan', 'Pesantren', 'Lainnya'],
+            transport: ['Jalan kaki', 'Sepeda', 'Sepeda motor', 'Mobil pribadi', 'Angkutan umum/bus/pete-pete', 'Antar jemput sekolah', 'Ojek', 'Kereta api', 'Lainnya'],
+            alasanpip: ['Siswa Miskin/Rentan Miskin', 'Yatim Piatu/Panti Asuhan/Panti Sosial', 'Pemegang PKH/KPS/KKS', 'Terdampak bencana', 'Daerah konflik', 'Kelainan fisik', 'Pernah drop out'],
+            rombel: []
+        };
+        const LIST_SRC = { pendidikan: ['jenjang_pendidikan_ayah', 'jenjang_pendidikan_ibu', 'jenjang_pendidikan_wali'], pekerjaan: ['pekerjaan_ayah', 'pekerjaan_ibu', 'pekerjaan_wali'], penghasilan: ['penghasilan_ayah', 'penghasil_ibu', 'penghasilan_wali'], kebutuhan: ['kebutuhan_khusus'], tinggal: ['jenis_tinggal'], transport: ['alat_transportasi'], alasanpip: ['alasan_layah'], rombel: ['rombel_saat_ini'] };
+
+        function refreshLists() {
+            Object.keys(LIST_SRC).forEach((k) => {
+                const set = new Set(LISTS[k]);
+                ROWS.forEach((r) => LIST_SRC[k].forEach((c) => { if (r[c]) set.add(String(r[c])); }));
+                LISTS[k] = [...set];
+            });
+            LISTS.rombel.sort((a, b) => a.localeCompare(b, 'id', { numeric: true }));
+            $('datalists').innerHTML = Object.keys(LISTS).map((k) => '<datalist id="dl_' + k + '">' + LISTS[k].map((v) => '<option value="' + esc(v) + '">').join('') + '</datalist>').join('');
+        }
+
+        /* ===== BANGUN FORM DARI SPESIFIKASI ===== */
+        function fieldHTML(x) {
+            const id = 'f_' + x.db;
+            let inp;
+            if (x.sel) {
+                inp = '<select id="' + id + '"><option value="">-- Pilih --</option>' + x.sel.map((o) => '<option value="' + esc(o[0]) + '">' + esc(o[1]) + '</option>').join('') + '</select>';
+            } else {
+                const type = x.ui === 'date' ? 'date' : x.ui === 'num' ? 'number' : x.ui === 'email' ? 'email' : 'text';
+                inp = '<input type="' + type + '" id="' + id + '"' + (x.ui === 'num' ? ' step="any"' + (x.neg ? '' : ' min="0"') : '') + (x.list ? ' list="dl_' + x.list + '"' : '') + (x.max && type === 'text' ? ' maxlength="' + x.max + '"' : '') + (x.digits ? ' inputmode="numeric"' : '') + ' autocomplete="off" placeholder="' + esc(x.ph || '') + '">';
+            }
+            return '<div' + (x.full ? ' class="full"' : '') + '><label for="' + id + '"' + (x.req ? ' class="req"' : '') + '>' + esc(x.label) + '</label>' + inp + '</div>';
+        }
+        (function buildForm() {
+            const out = ['', ''];
+            SECTIONS.forEach((s) => {
+                out[s.tab] += (s.title ? '<div class="sub">' + esc(s.title) + '</div>' : '') + '<div class="fg g2">' + s.fields.map(fieldHTML).join('') + '</div>';
+            });
+            $('pane0Fields').innerHTML = out[0];
+            $('pane1Fields').innerHTML = out[1];
+        })();
+
+        const messageDiv = $('message');
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = 'message ' + type;
+            messageDiv.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            clearTimeout(showMessage.t);
+            showMessage.t = setTimeout(() => { messageDiv.style.display = 'none'; }, 7000);
+        }
+        const errText = (e) => (e && e.message ? e.message : String(e)) + (/column|schema cache/i.test((e && e.message) || '') ? SETUP_HINT : '');
+
+        async function loadSchoolIdentity() {
+            try {
+                const { data } = await supabaseClient.from('identitassekolah').select('nama_sekolah, logo, kop_sekolah').limit(1).single();
+                if (data) {
+                    schoolData = data;
+                    if (data.nama_sekolah) document.querySelector('.navbar-brand span').textContent = data.nama_sekolah;
+                    if (data.logo) {
+                        const img = document.querySelector('.navbar-brand img');
+                        img.src = data.logo;
+                        img.style.display = 'block';
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading school identity:', err);
+            }
+        }
+
+        /* ===== TANGGAL ===== */
+        const pad2 = (n) => String(n).padStart(2, '0');
+        function parseDate(v) {
+            if (v == null || v === '') return null;
+            if (v instanceof Date) {
+                if (isNaN(v)) return null;
+                const d = new Date(v.getTime() + 12 * 3600 * 1000);   /* +12 jam: kebal terhadap selisih zona waktu */
+                return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+            }
+            const s = String(v).trim();
+            let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+            if (m) return m[1] + '-' + pad2(m[2]) + '-' + pad2(m[3]);
+            m = s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+            if (m) return m[3] + '-' + pad2(m[2]) + '-' + pad2(m[1]);
+            return null;
+        }
+        function fmtDate(v) {
+            const m = String(v || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+            if (!m) return v || '-';
+            const bln = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            return parseInt(m[3], 10) + ' ' + bln[parseInt(m[2], 10) - 1] + ' ' + m[1];
+        }
+
+        /* ===== MUAT DATA ===== */
+        async function loadSiswaData(isManual = false) {
+            if (!ROWS.length) $('siswaBody').innerHTML = '<tr><td colspan="10" class="empty">Memuat data...</td></tr>';
+            try {
+                /* ambil semua baris per 1000 sampai habis */
+                const SIZE = 1000;
+                let data = [];
+                let from = 0;
+                while (true) {
+                    const { data: chunk, error } = await supabaseClient.from(TABLE).select('*').order('nama_siswa', { ascending: true }).order('nisn', { ascending: true }).range(from, from + SIZE - 1);
+                    if (error) throw error;
+                    data = data.concat(chunk || []);
+                    if (!chunk || chunk.length < SIZE) break;
+                    from += SIZE;
+                }
+                ROWS = data.sort((a, b) => String(a.nama_siswa || '').localeCompare(String(b.nama_siswa || ''), 'id', { sensitivity: 'base' }));
+                refreshLists();
+                buildKelasFilter();
+                applyFilter();
+                if (isManual) showMessage('Data berhasil diperbarui dari database.', 'success');
+            } catch (err) {
+                console.error('Error loading siswa data:', err);
+                if (!ROWS.length) $('siswaBody').innerHTML = '<tr><td colspan="10" class="empty err">Gagal memuat data: ' + esc(errText(err)) + '</td></tr>';
+                if (isManual) showMessage('Gagal menarik data: ' + errText(err), 'error');
+            }
+        }
+
+        function buildKelasFilter() {
+            const sel = $('kelasFilter');
+            const cur = sel.value;
+            const kelas = [...new Set(ROWS.map((r) => r.rombel_saat_ini).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'id', { numeric: true }));
+            sel.innerHTML = '<option value="">Semua kelas</option>' + kelas.map((k) => '<option value="' + esc(k) + '">' + esc(k) + '</option>').join('');
+            sel.value = kelas.includes(cur) ? cur : '';
+        }
+
+        function applyFilter() {
+            const q = $('searchInput').value.trim().toLowerCase();
+            const k = $('kelasFilter').value;
+            VIEW = ROWS.filter((r) => (!k || r.rombel_saat_ini === k) && (!q || [r.nisn, r.nipd, r.nama_siswa].some((v) => v != null && String(v).toLowerCase().includes(q))));
+            page = 1;
+            render();
+        }
+
+        function render() {
+            $('totalSiswa').textContent = ROWS.length.toLocaleString('id-ID');
+            $('totalL').textContent = ROWS.filter((r) => r.jk === 'L').length.toLocaleString('id-ID');
+            $('totalP').textContent = ROWS.filter((r) => r.jk === 'P').length.toLocaleString('id-ID');
+            const pages = Math.max(1, Math.ceil(VIEW.length / PAGE_SIZE));
+            if (page > pages) page = pages;
+            const start = (page - 1) * PAGE_SIZE;
+            const slice = VIEW.slice(start, start + PAGE_SIZE);
+            const tbody = $('siswaBody');
+            if (!VIEW.length) {
+                tbody.innerHTML = '<tr><td colspan="10" class="empty">' + (ROWS.length ? 'Data tidak ditemukan.' : 'Belum ada data siswa. Klik Tambah Siswa atau Import Excel untuk memulai.') + '</td></tr>';
+            } else {
+                tbody.innerHTML = slice.map((r, i) => {
+                    const av = r.photo ? '<img class="av" src="' + esc(r.photo) + '" alt="" loading="lazy">' : '<span class="av"><i class="fas fa-user"></i></span>';
+                    return '<tr><td class="n">' + (start + i + 1) + '</td>'
+                        + '<td class="nisn">' + esc(r.nisn) + '</td>'
+                        + '<td><div class="who">' + av + '<span>' + esc(r.nama_siswa) + '</span></div></td>'
+                        + '<td class="nowrap">' + (r.rombel_saat_ini ? '<span class="kls">' + esc(r.rombel_saat_ini) + '</span>' : '-') + '</td>'
+                        + '<td>' + esc(r.tempat_lahir || '-') + '</td>'
+                        + '<td class="nowrap">' + esc(r.tanggal_lahir ? fmtDate(r.tanggal_lahir) : '-') + '</td>'
+                        + '<td>' + esc(r.nama_ayah || '-') + '</td>'
+                        + '<td>' + esc(r.nama_ibu || '-') + '</td>'
+                        + '<td>' + esc(r.alamat || '-') + '</td>'
+                        + '<td class="act"><button class="ib" type="button" data-act="view" data-id="' + esc(r.nisn) + '" title="Lihat detail" aria-label="Lihat detail ' + esc(r.nama_siswa) + '"><i class="fas fa-eye"></i></button> '
+                        + '<button class="ib" type="button" data-act="edit" data-id="' + esc(r.nisn) + '" title="Edit siswa" aria-label="Edit ' + esc(r.nama_siswa) + '"><i class="fas fa-edit"></i></button> '
+                        + '<button class="ib del" type="button" data-act="del" data-id="' + esc(r.nisn) + '" title="Hapus siswa" aria-label="Hapus ' + esc(r.nama_siswa) + '"><i class="fas fa-trash"></i></button></td></tr>';
+                }).join('');
+            }
+            $('pagerInfo').textContent = VIEW.length ? 'Menampilkan ' + (start + 1) + '-' + (start + slice.length) + ' dari ' + VIEW.length.toLocaleString('id-ID') + ' siswa' : '0 siswa';
+            $('pagerNo').textContent = page + ' / ' + pages;
+            $('prevBtn').disabled = page <= 1;
+            $('nextBtn').disabled = page >= pages;
+        }
+
+        $('searchInput').addEventListener('input', applyFilter);
+        $('kelasFilter').addEventListener('change', applyFilter);
+        $('prevBtn').addEventListener('click', () => { page--; render(); });
+        $('nextBtn').addEventListener('click', () => { page++; render(); });
+        $('refreshBtn').addEventListener('click', () => loadSiswaData(true));
+
+        $('siswaBody').addEventListener('click', (e) => {
+            const b = e.target.closest('[data-act]');
+            if (!b) return;
+            const row = ROWS.find((r) => String(r.nisn) === b.dataset.id);
+            if (!row) return;
+            if (b.dataset.act === 'view') openDetail(row);
+            if (b.dataset.act === 'edit') openModal(row);
+            if (b.dataset.act === 'del') deleteSiswa(row);
+        });
+
+        /* ===== MODAL FORM ===== */
+        const modal = $('siswaModal');
+        const form = $('siswaForm');
+        function switchTab(n) {
+            document.querySelectorAll('.tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === String(n)));
+            document.querySelectorAll('#siswaModal .pane').forEach((p) => p.classList.toggle('on', p.id === 'pane' + n));
+            form.scrollTop = 0;
+        }
+        document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+
+        function setPreview(url) {
+            const img = $('imagePreview');
+            if (url) { img.src = url; $('photoPv').classList.add('has'); $('removeFotoBtn').classList.add('on'); }
+            else { img.removeAttribute('src'); $('photoPv').classList.remove('has'); $('removeFotoBtn').classList.remove('on'); }
+        }
+        function fillForm(row) {
+            FIELDS.forEach((x) => {
+                const el = $('f_' + x.db);
+                let v = row ? row[x.db] : null;
+                if (v == null) v = '';
+                if (x.sel && v !== '' && ![...el.options].some((o) => o.value === String(v))) el.add(new Option(String(v), String(v)));
+                el.value = v;
+            });
+        }
+        function openModal(row) {
+            form.reset();
+            fillForm(row);
+            $('isEditMode').value = row ? 'true' : 'false';
+            $('modalTitle').textContent = row ? 'Edit Data Siswa' : 'Tambah Siswa Baru';
+            $('saveSiswaBtn').textContent = row ? 'Update Data' : 'Simpan';
+            $('f_nisn').readOnly = !!row;        /* NISN = kunci data, tidak boleh diubah saat edit */
+            currentPhoto = row ? (row.photo || null) : null;
+            removePhoto = false;
+            $('fotoInput').value = '';
+            setPreview(currentPhoto);
+            $('fotoHint').textContent = 'JPG atau PNG, maksimal 2MB';
+            $('modalErr').style.display = 'none';
+            switchTab(0);
+            modal.classList.add('on');
+            (row ? $('f_nama_siswa') : $('f_nisn')).focus();
+        }
+        function closeModal() {
+            modal.classList.remove('on');
+            form.reset();
+            $('f_nisn').readOnly = false;
+            currentPhoto = null;
+            removePhoto = false;
+            setPreview(null);
+        }
+        function modalError(t, tab) { const e = $('modalErr'); e.textContent = t; e.style.display = 'block'; if (tab != null) switchTab(tab); e.scrollIntoView({ block: 'nearest' }); }
+
+        $('addSiswaBtn').addEventListener('click', () => openModal(null));
+        $('closeModalBtn').addEventListener('click', closeModal);
+        $('cancelBtn').addEventListener('click', closeModal);
+        modal.addEventListener('mousedown', (e) => { if (e.target === modal) closeModal(); });
+
+        $('fotoInput').addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) { this.value = ''; return modalError('File yang dipilih harus berupa gambar.'); }
+            if (file.size > 2 * 1024 * 1024) { this.value = ''; return modalError('Ukuran foto maksimal 2MB.'); }
+            $('modalErr').style.display = 'none';
+            removePhoto = false;
+            $('fotoHint').textContent = 'File terpilih: ' + file.name;
+            const reader = new FileReader();
+            reader.onload = (ev) => setPreview(ev.target.result);
+            reader.readAsDataURL(file);
+        });
+        $('removeFotoBtn').addEventListener('click', () => {
+            $('fotoInput').value = '';
+            removePhoto = true;
+            setPreview(null);
+            $('fotoHint').textContent = 'Foto akan dihapus saat disimpan';
+        });
+
+        /* ===== DETAIL ===== */
+        const detail = $('detailModal');
+        function disp(x, v) {
+            if (v == null || v === '') return '-';
+            if (x.db === 'jk') return v === 'L' ? 'Laki-laki' : v === 'P' ? 'Perempuan' : v;
+            if (x.t === 'd') return fmtDate(v);
+            return String(v) + (x.unit ? ' ' + x.unit : '');
+        }
+        function openDetail(row) {
+            detailNisn = row.nisn;
+            const av = row.photo ? '<img class="av" src="' + esc(row.photo) + '" alt="Foto ' + esc(row.nama_siswa) + '">' : '<span class="av"><i class="fas fa-user"></i></span>';
+            let h = '<div class="dhead">' + av + '<div><b>' + esc(row.nama_siswa) + '</b><small>NISN ' + esc(row.nisn) + ' &middot; NIPD ' + esc(row.nipd || '-') + ' &middot; ' + esc(row.rombel_saat_ini || '-') + '</small></div></div>';
+            SECTIONS.forEach((s) => {
+                const items = s.fields.filter((x) => !['nisn', 'nama_siswa'].includes(x.db));
+                h += '<div class="sub">' + esc(s.title || 'Data Pribadi') + '</div><div class="fg"><div class="dg">' + items.map((x) => '<div class="di' + (x.full || x.db === 'alamat' ? ' full' : '') + '"><label>' + esc(x.label) + '</label><span>' + esc(disp(x, row[x.db])) + '</span></div>').join('') + '</div></div>';
+            });
+            $('detailBody').innerHTML = h;
+            $('detailBody').scrollTop = 0;
+            detail.classList.add('on');
+        }
+        function closeDetail() { detail.classList.remove('on'); detailNisn = null; }
+        $('closeDetailBtn').addEventListener('click', closeDetail);
+        $('detailCloseBtn').addEventListener('click', closeDetail);
+        detail.addEventListener('mousedown', (e) => { if (e.target === detail) closeDetail(); });
+        $('detailEditBtn').addEventListener('click', () => { const r = ROWS.find((x) => x.nisn === detailNisn); closeDetail(); if (r) openModal(r); });
+        $('detailDeleteBtn').addEventListener('click', async () => { const r = ROWS.find((x) => x.nisn === detailNisn); if (r && await deleteSiswa(r)) closeDetail(); });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape') return;
+            if ($('importModal').classList.contains('on')) closeImport();
+            else if (detail.classList.contains('on')) closeDetail();
+            else if (modal.classList.contains('on')) closeModal();
+        });
+
+        /* ===== STORAGE FOTO ===== */
+        function storagePath(url) {
+            if (!url) return null;
+            const p = String(url).split('/' + BUCKET + '/')[1];
+            return p ? decodeURIComponent(p.split('?')[0]) : null;
+        }
+        async function removeFromStorage(url) {
+            const path = storagePath(url);
+            if (!path) return;
+            const { error } = await supabaseClient.storage.from(BUCKET).remove([path]);
+            if (error) console.warn('Gagal menghapus file dari storage:', error);
+        }
+
+        /* ===== HAPUS ===== */
+        async function deleteSiswa(row) {
+            if (!confirm('Apakah Anda yakin ingin menghapus siswa "' + row.nama_siswa + '" (NISN ' + row.nisn + ')?')) return false;
+            try {
+                const { error } = await supabaseClient.from(TABLE).delete().eq('nisn', row.nisn);
+                if (error) throw error;
+                try { await removeFromStorage(row.photo); } catch (x) { console.warn(x); }
+                showMessage('Data siswa berhasil dihapus.', 'success');
+                loadSiswaData();
+                return true;
+            } catch (err) {
+                console.error('Gagal menghapus:', err);
+                showMessage('Gagal menghapus data: ' + errText(err), 'error');
+                return false;
+            }
+        }
+
+        /* ===== SIMPAN (tambah / ubah) ===== */
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const isEdit = $('isEditMode').value === 'true';
+            const payload = {};
+            for (const x of FIELDS) {
+                const raw = $('f_' + x.db).value.trim();
+                if (x.t === 'n') {
+                    if (raw === '') payload[x.db] = null;
+                    else {
+                        const n = Number(raw);
+                        if (!isFinite(n)) return modalError(x.label + ' harus berupa angka.', x.db.includes('_ayah') || x.db.includes('_ibu') || x.db.includes('_wali') ? 1 : 0);
+                        payload[x.db] = n;
+                    }
+                } else {
+                    payload[x.db] = raw === '' ? null : raw;
+                }
+                const tab = SECTIONS.find((s) => s.fields.includes(x)).tab;
+                if (x.req && !payload[x.db]) return modalError(x.label + ' wajib diisi.', tab);
+                if (x.digits && payload[x.db] && !/^\d+$/.test(payload[x.db])) return modalError(x.label + ' harus berkarakter angka.', tab);
+                if (x.ui === 'email' && payload[x.db] && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload[x.db])) return modalError('Format E-Mail tidak valid.', tab);
+            }
+            if (!isEdit && ROWS.some((r) => String(r.nisn) === payload.nisn)) return modalError('NISN ' + payload.nisn + ' sudah terdaftar.', 0);
+
+            const btn = $('saveSiswaBtn');
+            const label = btn.textContent;
+            btn.textContent = 'Menyimpan...';
+            btn.disabled = true;
+            $('modalErr').style.display = 'none';
+
+            let uploadedUrl = null;
+            try {
+                let photoUrl = removePhoto ? null : currentPhoto;
+                const file = $('fotoInput').files[0];
+                if (file) {
+                    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+                    const path = 'siswa/' + payload.nisn + '-' + Date.now() + '.' + ext;
+                    const { error: upErr } = await supabaseClient.storage.from(BUCKET).upload(path, file, { upsert: true });
+                    if (upErr) throw new Error('Gagal upload foto: ' + upErr.message);
+                    uploadedUrl = supabaseClient.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+                    photoUrl = uploadedUrl;
+                }
+                payload.photo = photoUrl || null;
+
+                if (isEdit) {
+                    const { nisn, ...upd } = payload;
+                    const { error } = await supabaseClient.from(TABLE).update(upd).eq('nisn', nisn);
+                    if (error) throw error;
+                    if (currentPhoto && (uploadedUrl || removePhoto)) { try { await removeFromStorage(currentPhoto); } catch (x) { console.warn(x); } }
+                } else {
+                    const { error } = await supabaseClient.from(TABLE).insert([payload]);
+                    if (error) throw error;
+                }
+                closeModal();
+                showMessage(isEdit ? 'Data siswa berhasil diupdate!' : 'Data siswa berhasil disimpan!', 'success');
+                loadSiswaData();
+            } catch (err) {
+                console.error('Error saving data:', err);
+                if (uploadedUrl) { try { await removeFromStorage(uploadedUrl); } catch (x) { console.warn(x); } }
+                modalError('Gagal menyimpan data: ' + errText(err));
+            } finally {
+                btn.textContent = label;
+                btn.disabled = false;
+            }
+        });
+
+        /* =====================================================================
+           IMPORT  (format Dapodik persis seperti file unduhan, atau CSV/Excel
+           sederhana dengan header = nama kolom database)
+           ===================================================================== */
+        function conv(v, t) {
+            if (v == null) return null;
+            if (t === 'd') return parseDate(v);
+            if (v instanceof Date) v = v.toISOString();
+            if (typeof v === 'string') {
+                v = v.trim();
+                if (v === '' || v.toLowerCase() === '(tidak diisi)') return null;
+            }
+            if (t === 'n') { const n = Number(String(v).replace(',', '.')); return isFinite(n) ? n : null; }
+            return String(v);
+        }
+        const norm = (v) => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().toLowerCase();
+
+        /* baris header Dapodik: kolom B = Nama, kolom D = JK, kolom E = NISN */
+        function findDapodikHeader(aoa) {
+            for (let i = 0; i < Math.min(aoa.length, 20); i++) {
+                const r = aoa[i] || [];
+                if (norm(r[0]) === 'no' && norm(r[1]) === 'nama' && norm(r[3]) === 'jk' && norm(r[4]) === 'nisn') return i;
+            }
+            return -1;
+        }
+        function parseDapodik(ws) {
+            const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: null });
+            const h = findDapodikHeader(aoa);
+            if (h === -1) return null;
+            const sub = aoa[h + 1] || [];
+            const start = h + (norm(sub[25]).startsWith('tahun') ? 2 : 1);   /* lewati baris sub-header (Nama / Tahun Lahir / ...) */
+            const rows = [];
+            let skipped = 0;
+            for (let r = start; r < aoa.length; r++) {
+                const raw = aoa[r];
+                if (!raw || raw.every((c) => c == null || String(c).trim() === '')) continue;
+                const o = {};
+                FIELDS.forEach((x) => { o[x.db] = conv(raw[x.idx], x.t); });
+                if (typeof raw[4] === 'number' && o.nisn) o.nisn = o.nisn.padStart(10, '0');   /* NISN tersimpan sebagai angka: kembalikan angka 0 di depan */
+                if (!o.nisn || !o.nama_siswa) { skipped++; continue; }
+                rows.push(o);
+            }
+            return { rows, skipped, kind: 'Dapodik', cols: FIELDS.length };
+        }
+        /* CSV / Excel sederhana: header = nama kolom database */
+        function parseSimple(objs) {
+            const rows = [];
+            let skipped = 0;
+            let cols = new Set();
+            objs.forEach((src) => {
+                const k = {};
+                Object.keys(src).forEach((key) => { k[norm(key).replace(/ /g, '_')] = src[key]; });
+                const o = {};
+                FIELDS.forEach((x) => { if (x.db in k) { o[x.db] = conv(k[x.db], x.t); cols.add(x.db); } });
+                if (!o.nisn || !o.nama_siswa) { skipped++; return; }
+                rows.push(o);
+            });
+            return { rows, skipped, kind: 'CSV / Excel sederhana', cols: cols.size };
+        }
+        function dedupe(res) {
+            const map = new Map();
+            let dup = 0;
+            res.rows.forEach((r) => { if (map.has(r.nisn)) dup++; map.set(r.nisn, r); });
+            res.rows = [...map.values()];
+            res.dup = dup;
+            return res;
+        }
+
+        $('importBtn').addEventListener('click', () => $('importFile').click());
+        $('importFile').addEventListener('change', (ev) => {
+            const file = ev.target.files[0];
+            if (!file) return;
+            const ext = file.name.split('.').pop().toLowerCase();
+            const done = (res) => {
+                if (!res || !res.rows.length) { $('importFile').value = ''; return showMessage('Tidak ada data siswa valid pada file ini. Pastikan kolom NISN dan Nama terisi.', 'error'); }
+                openImport(dedupe(res), file.name);
+            };
+            if (ext === 'csv') {
+                Papa.parse(file, { header: true, skipEmptyLines: true, complete: (r) => done(parseSimple(r.data)), error: () => { $('importFile').value = ''; showMessage('Gagal membaca file CSV.', 'error'); } });
+            } else if (ext === 'xlsx' || ext === 'xls') {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array', cellDates: true });
+                        const ws = wb.Sheets[wb.SheetNames[0]];
+                        done(parseDapodik(ws) || parseSimple(XLSX.utils.sheet_to_json(ws, { raw: true, defval: null })));
+                    } catch (err) {
+                        console.error('Excel parse error:', err);
+                        $('importFile').value = '';
+                        showMessage('Gagal membaca file Excel: ' + err.message, 'error');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                $('importFile').value = '';
+                showMessage('Format file tidak didukung. Gunakan .xlsx, .xls, atau .csv.', 'error');
+            }
+        });
+
+        function openImport(res, name) {
+            pending = res;
+            const exist = new Set(ROWS.map((r) => String(r.nisn)));
+            const baru = res.rows.filter((r) => !exist.has(r.nisn)).length;
+            const sample = res.rows.slice(0, 5).map((r) => '<tr><td>' + esc(r.nisn) + '</td><td>' + esc(r.nama_siswa) + '</td><td>' + esc(r.rombel_saat_ini || '-') + '</td></tr>').join('');
+            let h = '<p style="font-size:13px;margin-bottom:12px"><b>' + esc(name) + '</b><br><span style="color:var(--muted)">Format terdeteksi: ' + esc(res.kind) + ' (' + res.cols + ' kolom dibaca)</span></p>'
+                + '<div class="pv-stats"><div><b>' + res.rows.length + '</b><small>Siswa dibaca</small></div><div><b>' + baru + '</b><small>Siswa baru</small></div><div><b>' + (res.rows.length - baru) + '</b><small>Diperbarui</small></div></div>'
+                + '<table class="mini"><thead><tr><th>NISN</th><th>Nama</th><th>Kelas</th></tr></thead><tbody>' + sample + '</tbody></table>'
+                + (res.rows.length > 5 ? '<p class="note" style="margin-top:6px">...dan ' + (res.rows.length - 5) + ' siswa lainnya.</p>' : '')
+                + '<p class="note">Siswa dengan NISN yang sudah ada akan diperbarui, NISN baru akan ditambahkan. Foto tidak berubah.</p>';
+            if (res.skipped || res.dup) h += '<p class="note warn">' + (res.skipped ? res.skipped + ' baris dilewati karena NISN atau nama kosong. ' : '') + (res.dup ? res.dup + ' baris kembar NISN dalam file, dipakai baris terakhir.' : '') + '</p>';
+            $('importBody').innerHTML = h;
+            $('importRunBtn').textContent = 'Import ' + res.rows.length + ' Siswa';
+            $('importRunBtn').disabled = false;
+            $('importModal').classList.add('on');
+        }
+        function closeImport() { $('importModal').classList.remove('on'); $('importFile').value = ''; pending = null; }
+        $('closeImportBtn').addEventListener('click', closeImport);
+        $('importCancelBtn').addEventListener('click', closeImport);
+        $('importModal').addEventListener('mousedown', (e) => { if (e.target === $('importModal')) closeImport(); });
+
+        $('importRunBtn').addEventListener('click', async () => {
+            if (!pending) return;
+            const rows = pending.rows;
+            const btn = $('importRunBtn');
+            btn.disabled = true;
+            $('importCancelBtn').disabled = true;
+            let ok = 0;
+            try {
+                const CH = 100;
+                for (let i = 0; i < rows.length; i += CH) {
+                    btn.textContent = 'Mengimpor ' + Math.min(i + CH, rows.length) + ' / ' + rows.length + '...';
+                    const { error } = await supabaseClient.from(TABLE).upsert(rows.slice(i, i + CH), { onConflict: 'nisn' });
+                    if (error) throw error;
+                    ok = Math.min(i + CH, rows.length);
+                }
+                closeImport();
+                showMessage('Berhasil mengimport ' + rows.length + ' data siswa.', 'success');
+            } catch (err) {
+                console.error('Import error:', err);
+                closeImport();
+                showMessage('Import berhenti setelah ' + ok + ' dari ' + rows.length + ' siswa. ' + errText(err), 'error');
+            } finally {
+                $('importCancelBtn').disabled = false;
+            }
+            loadSiswaData();
+        });
+
+        /* ===== EXPORT EXCEL: format Dapodik yang sama, bisa diimport ulang ===== */
+        $('templateBtn').addEventListener('click', () => {
+            try {
+                const data = VIEW.length || !ROWS.length ? VIEW : ROWS;
+                const aoa = [];
+                aoa.push(['Daftar Peserta Didik']);
+                aoa.push([schoolData.nama_sekolah || document.querySelector('.navbar-brand span').textContent || '']);
+                aoa.push(['']);
+                aoa.push(['Tanggal Unduh: ' + new Date().toISOString().replace('T', ' ').slice(0, 19)]);
+                aoa.push(DAP_TOP.slice());
+                const sub = new Array(DAP_NCOL).fill(null);
+                for (let g = 0; g < 3; g++) DAP_SUB.forEach((s, i) => { sub[24 + g * 6 + i] = s; });
+                aoa.push(sub);
+                const byIdx = {};
+                FIELDS.forEach((x) => { byIdx[x.idx] = x; });
+                data.forEach((r, n) => {
+                    const line = new Array(DAP_NCOL).fill(null);
+                    line[0] = n + 1;
+                    Object.keys(byIdx).forEach((i) => { const v = r[byIdx[i].db]; line[i] = v === undefined || v === '' ? null : v; });
+                    aoa.push(line);
+                });
+                const ws = XLSX.utils.aoa_to_sheet(aoa);
+                const merges = [];
+                for (let c = 0; c < DAP_NCOL; c++) {
+                    if (c >= 24 && c <= 41) { if ((c - 24) % 6 === 0) merges.push({ s: { r: 4, c }, e: { r: 4, c: c + 5 } }); }
+                    else merges.push({ s: { r: 4, c }, e: { r: 5, c } });
+                }
+                ws['!merges'] = merges;
+                ws['!cols'] = DAP_TOP.map((t, c) => ({ wch: c === 0 ? 5 : c === 1 || c === 9 ? 28 : 18 }));
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Daftar Peserta Didik');
+                XLSX.writeFile(wb, 'Daftar_Peserta_Didik.xlsx');
+            } catch (err) {
+                console.error('Export Excel error:', err);
+                showMessage('Gagal mengexport Excel: ' + err.message, 'error');
+            }
+        });
+
+        /* ===== EXPORT PDF ===== */
+        $('exportPdfBtn').addEventListener('click', async () => {
+            const data = VIEW.length || !ROWS.length ? VIEW : ROWS;
+            if (!data.length) return showMessage('Belum ada data siswa untuk diexport.', 'error');
+            const btn = $('exportPdfBtn');
+            btn.disabled = true;
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: 'landscape' });
+                const pageWidth = doc.internal.pageSize.getWidth();
+                let yPos = 20;
+
+                if (schoolData.kop_sekolah) {
+                    try {
+                        const response = await fetch(schoolData.kop_sekolah);
+                        const blob = await response.blob();
+                        const base64data = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.readAsDataURL(blob);
+                        });
+                        const imgProps = doc.getImageProperties(base64data);
+                        const pdfWidth = pageWidth - 20;
+                        const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                        doc.addImage(base64data, imgProps.fileType || 'PNG', 10, 10, pdfWidth, imgHeight);
+                        yPos = 10 + imgHeight + 10;
+                    } catch (err) {
+                        console.error('Gagal memuat KOP Sekolah:', err);
+                    }
+                }
+
+                doc.setFontSize(18);
+                doc.text('Laporan Data Siswa', pageWidth / 2, yPos, { align: 'center' });
+                yPos += 8;
+                doc.setFontSize(12);
+                doc.setTextColor(100);
+                doc.text(schoolData.nama_sekolah || document.querySelector('.navbar-brand span').textContent || '', pageWidth / 2, yPos, { align: 'center' });
+                yPos += 10;
+
+                doc.autoTable({
+                    head: [['No', 'NISN', 'Nama Siswa', 'JK', 'Kelas', 'Tempat Lahir', 'Tgl Lahir', 'Ayah', 'Ibu', 'Alamat']],
+                    body: data.map((r, i) => [String(i + 1), r.nisn, r.nama_siswa, r.jk || '-', r.rombel_saat_ini || '-', r.tempat_lahir || '-', r.tanggal_lahir ? fmtDate(r.tanggal_lahir) : '-', r.nama_ayah || '-', r.nama_ibu || '-', r.alamat || '-']),
+                    startY: yPos,
+                    theme: 'grid',
+                    styles: { fontSize: 8 },
+                    headStyles: { fillColor: [102, 126, 234] }
+                });
+                doc.save('Data_Siswa.pdf');
+            } catch (err) {
+                console.error(err);
+                showMessage('Gagal membuat PDF: ' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshLists();
+            loadSchoolIdentity();
+            loadSiswaData();
+        });
+    </script>
+</body>
+</html>
